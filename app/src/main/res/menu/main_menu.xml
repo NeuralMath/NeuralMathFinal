@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"    >
+    <item
+        android:id="@+id/mItemHome"
+        android:title="@string/accueil"
+        />
+    <item
+        android:id="@+id/mItemPhoto"
+        android:title="@string/photo"
+        />
+    <item
+        android:id="@+id/mItemEcrire"
+        android:title="@string/ecrire"
+        />
+    <item
+        android:id="@+id/mItemClavier"
+        android:title="@string/clavier"
+        />
+    <item
+        android:id="@+id/mItemParamètres"
+        android:title="@string/parametres"
+        />
+</menu>
