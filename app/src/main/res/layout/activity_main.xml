@@ -125,6 +125,12 @@ tools:context="com.example.marc4492.neuralmath.MainActivity">
                     android:text="@string/ecrire"
                     android:id="@+id/writeOption"/>
 
+                <RadioButton
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/clavier"
+                    android:id="@+id/clavierOption"/>
+
             </RadioGroup>
 
             <View style="@style/Divider"/>
@@ -138,5 +144,28 @@ tools:context="com.example.marc4492.neuralmath.MainActivity">
                 android:onClick="confirmPref"/>
         </LinearLayout>
     </ScrollView>
+
+    <!--Photo-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+    </LinearLayout>
+
+    <!--Drawing-->
+
+    <com.example.marc4492.neuralmath.DrawingPage
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/drawPage"/>
+
+    <!--KeyBoard-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+    </LinearLayout>
 
 </ViewFlipper>

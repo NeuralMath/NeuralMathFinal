@@ -2,6 +2,8 @@ package com.example.marc4492.neuralmath;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
+import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -25,8 +27,6 @@ public class MainActivity extends AppCompatActivity {
     private Context context;
 
 
-
-
     private ListView listHome;
     private ArrayList<HomeRow> homeRows;
     private ViewFlipper activity_main;
@@ -38,40 +38,32 @@ public class MainActivity extends AppCompatActivity {
     private RadioGroup layoutOption;
     private RadioGroup langueOption;
     private RadioGroup defautOption;
-
-    /*private RadioButton leftOption;
-    private RadioButton rightOption;
-
-    private RadioButton frenchOption;
-    private RadioButton englishOption;
-
-    private RadioButton homeOption;
-    private RadioButton photoOption;
-    private RadioButton writeOption;
-    private RadioButton menuOption;*/
-
     private int screenWidth, screenHeight;
 
 
-    //Préférences
-    private SharedPreferences.Editor editor;
+    //Preferences
     private SharedPreferences sharedPrefs;
 
     private boolean isDroitier;
     private String langue;
     private String defautMode;
 
+
+    //Drawing part
+    private DrawingPage drawPage;
+    private ImageDecoder imageDecoder;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         context = this;
 
-        //getting all widget
+        //Main view
+        // getting all widget
         activity_main = (ViewFlipper) findViewById(R.id.activity_main);
-        listHome  = (ListView) findViewById(R.id.listHome);
-
+        listHome = (ListView) findViewById(R.id.listHome);
 
         //TextView
         layoutOptionsText = (TextView) findViewById(R.id.layoutOptionsText);
@@ -82,16 +74,6 @@ public class MainActivity extends AppCompatActivity {
         layoutOption = (RadioGroup) findViewById(R.id.layoutOption);
         langueOption = (RadioGroup) findViewById(R.id.langueOption);
         defautOption = (RadioGroup) findViewById(R.id.defautOption);
-
-        //RadioButton
-        /*leftOption = (RadioButton) findViewById(R.id.leftOption);
-        rightOption = (RadioButton) findViewById(R.id.rightOption);
-        frenchOption = (RadioButton) findViewById(R.id.frenchOption);
-        englishOption = (RadioButton) findViewById(R.id.englishOption);
-        homeOption = (RadioButton) findViewById(R.id.homeOption);
-        photoOption = (RadioButton) findViewById(R.id.photoOption);
-        writeOption = (RadioButton) findViewById(R.id.writeOption);
-        menuOption = (RadioButton) findViewById(R.id.menuOption);*/
 
         homeRows = new ArrayList<>();
 
@@ -111,7 +93,6 @@ public class MainActivity extends AppCompatActivity {
         AdapterHome adapterHome = new AdapterHome(MainActivity.this, R.layout.menu_elements_layout, homeRows);
 
         listHome.setAdapter(adapterHome);
-
 
 
         //handling click events for the home page items
@@ -139,10 +120,8 @@ public class MainActivity extends AppCompatActivity {
         adjustTextToScreen(screenHeight);
 
 
-
         //Préférence
         sharedPrefs = getPreferences(Context.MODE_PRIVATE);
-        editor = sharedPrefs.edit();
 
         //on crée les préférences si elles n'existe pas
         //préférence pour la playlist automatique, le saut d'un album à l'autre et pour recommencer une playlist
@@ -151,9 +130,40 @@ public class MainActivity extends AppCompatActivity {
             activity_main.setDisplayedChild(1);
         }
         getPref();
+        if (defautMode.equals(getResources().getString(R.string.photo)))
+            openPhoto();
+        else if (defautMode.equals(getResources().getString(R.string.ecrire)))
+            openWriting();
+        else if (defautMode.equals(getResources().getString(R.string.clavier)))
+            openKeyboard();
+        else if (defautMode.equals(getResources().getString(R.string.accueil)))
+            openHome();
 
+
+        drawPage = (DrawingPage) findViewById(R.id.drawPage);
+        drawPage.getDrawView().setListener(new DrawingView.DrawnListener() {
+            @Override
+            public void drawn(Bitmap b) {
+                //setBitmap(b);
+            }
+        });
+
+        if (isDroitier)
+            drawPage.setLayoutForRightHanded();
+        else
+            drawPage.setLayoutForLeftHanded();
+
+        //Pour pas que le view flipper retourne au menu lors du changement d'orientation
+        //from : http://stackoverflow.com/a/7118495/5224674
+        if (savedInstanceState != null) {
+            int flipperPosition = savedInstanceState.getInt("TAB_NUMBER");
+            activity_main.setDisplayedChild(flipperPosition);
+            if (flipperPosition != 3)
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+            else
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -165,8 +175,8 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * handling click events for the main menu items
-     * @param item
-     * @return
+     * @param item  L'Item pressed
+     * @return  boolean Return false to allow normal menu processing to proceed, true to consume it here
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -196,6 +206,7 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
         if(activity_main.getDisplayedChild() == 1)
         {
+            SharedPreferences.Editor editor = sharedPrefs.edit();
             //Ajouter les nouvelle valeur dans les pref
             if(layoutOption.getCheckedRadioButtonId() == R.id.rightOption)
                 editor.putBoolean("layout", true);
@@ -204,7 +215,7 @@ public class MainActivity extends AppCompatActivity {
 
             editor.putString("langue", ((RadioButton) langueOption.findViewById(langueOption.getCheckedRadioButtonId())).getText().toString());
             editor.putString("defaut", ((RadioButton) defautOption.findViewById(defautOption.getCheckedRadioButtonId())).getText().toString());
-            editor.commit();
+            editor.apply();
             openHome();
         }
         else if(activity_main.getDisplayedChild() != 0)
@@ -213,10 +224,19 @@ public class MainActivity extends AppCompatActivity {
             super.onBackPressed();
     }
 
+    //Pour pas que le view flipper retourne au menu lors du changement d'orientation
+    //from : http://stackoverflow.com/a/7118495/5224674
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        int position = activity_main.getDisplayedChild();
+        savedInstanceState.putInt("TAB_NUMBER", position);
+    }
+
     /**
      * Open the photo mode page
      */
     void openPhoto(){
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
         Toast.makeText(this, "photo", Toast.LENGTH_SHORT).show();
         //activity_main.setDisplayedChild();
     }
@@ -225,14 +245,16 @@ public class MainActivity extends AppCompatActivity {
      * Open Writing page
      */
     void openWriting(){
-        Toast.makeText(this, "writing", Toast.LENGTH_SHORT).show();
-        //activity_main.setDisplayedChild();
+        activity_main.setDisplayedChild(3);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
     }
 
     /**
      * Open Keyboard page
      */
     void openKeyboard(){
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
         Toast.makeText(this, "keyboard", Toast.LENGTH_SHORT).show();
         //activity_main.setDisplayedChild();
     }
@@ -241,6 +263,7 @@ public class MainActivity extends AppCompatActivity {
      * open parameter page
      */
     void openParameter(){
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
         activity_main.setDisplayedChild(1); //the parameter page is 1
     }
 
@@ -248,6 +271,7 @@ public class MainActivity extends AppCompatActivity {
      * open home page
      */
     void openHome() {
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
         activity_main.setDisplayedChild(0); //the home page is 0
     }
 
