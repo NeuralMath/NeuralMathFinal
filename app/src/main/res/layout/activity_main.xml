@@ -153,12 +153,7 @@ tools:context="com.example.marc4492.neuralmath.MainActivity">
 
     </LinearLayout>
 
-    <!--Drawing-->
 
-    <com.example.marc4492.neuralmath.DrawingPage
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/drawPage"/>
 
     <!--KeyBoard-->
     <LinearLayout

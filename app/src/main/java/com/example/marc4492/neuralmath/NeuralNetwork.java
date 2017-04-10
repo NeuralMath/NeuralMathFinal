@@ -42,7 +42,7 @@ public class NeuralNetwork {
      *
      * @throws IOException                      S'il ya des problème de lecture des fichiers
      */
-    public NeuralNetwork(int inputLayer, int hiddenLayer, int outputLayer, double training, String fileWIH, String fileWHO) throws IOException{
+    public NeuralNetwork(int inputLayer, int hiddenLayer, int outputLayer, double training, String fileWIH, String fileWHO) throws IOException {
         INPUT = inputLayer;
         HIDDEN = hiddenLayer;
         OUTPUT = outputLayer;
@@ -51,13 +51,13 @@ public class NeuralNetwork {
         fileWeightsItoH = fileWIH;
         fileWeightsHtoO = fileWHO;
 
-        inputValues = new int[INPUT+1];
+        inputValues = new int[INPUT + 1];
         //Set bias commun
         inputValues[INPUT] = 1;
 
         //Creation des tableaux de weight avec les +1 pour les bias
-        weightsItoH = new double[INPUT+1][HIDDEN+1];
-        weightsHtoO = new double[HIDDEN+1][OUTPUT];
+        weightsItoH = new double[INPUT + 1][HIDDEN + 1];
+        weightsHtoO = new double[HIDDEN + 1][OUTPUT];
 
         //Read les valeurs dans les fichiers
         readFile(fileWeightsItoH, weightsItoH);
@@ -66,7 +66,7 @@ public class NeuralNetwork {
         //Création des layer du réseau avec une neurone de plus dans le hidden layer pour le bias
         reseau = new Neuron[][]
                 {
-                        new Neuron[HIDDEN+1],
+                        new Neuron[HIDDEN + 1],
                         new Neuron[OUTPUT]
                 };
 

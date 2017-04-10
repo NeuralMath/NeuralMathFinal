@@ -19,6 +19,8 @@ public class DrawingPage extends LinearLayout {
     private LinearLayout layoutBtn;
     private EditText txtEquation;
 
+    private Button btnDone;
+
     /**
      * Creation des deux parties de la page
      *
@@ -43,13 +45,23 @@ public class DrawingPage extends LinearLayout {
             }
         });
 
+        btnDone = new Button(context);
+        btnDone.setText(R.string.done);
+        //setting the button click listener
+        btnDone.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                drawView.clear();
+
+            }
+        });
+
         //Creation of the button layout
         layoutBtn = new LinearLayout(context);
         layoutBtn.setOrientation(LinearLayout.VERTICAL);
         layoutBtn.addView(btnRetry);
+        layoutBtn.addView(btnDone);
 
         setOrientation(LinearLayout.HORIZONTAL);
-        addViewsInThePage();
 }
 
     /**
@@ -71,12 +83,12 @@ public class DrawingPage extends LinearLayout {
     }
 
     /**
-     * This add view for right-handed by default when the DrawingPage is created
+     * Getter du bouton finish
+     * @return      Le bouton
      */
-    private void addViewsInThePage(){
-        addView(txtEquation);
-        addView(drawView);
-        addView(layoutBtn);
+    public Button getDoneButton()
+    {
+        return btnDone;
     }
 
     /**

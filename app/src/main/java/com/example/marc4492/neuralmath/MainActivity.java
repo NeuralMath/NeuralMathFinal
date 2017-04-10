@@ -1,12 +1,14 @@
 package com.example.marc4492.neuralmath;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
-import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -38,7 +40,6 @@ public class MainActivity extends AppCompatActivity {
     private RadioGroup layoutOption;
     private RadioGroup langueOption;
     private RadioGroup defautOption;
-    private int screenWidth, screenHeight;
 
 
     //Preferences
@@ -49,9 +50,33 @@ public class MainActivity extends AppCompatActivity {
     private String defautMode;
 
 
-    //Drawing part
-    private DrawingPage drawPage;
-    private ImageDecoder imageDecoder;
+    //Equation
+    private String equation = "";
+
+    //Image decoder and NeuralNetwork
+    private static ImageDecoder imageDecoder;
+
+    private final static int INPUT = 784;
+    private final static int HIDDEN = 200;
+    private final static int OUTPUT = 10;
+    private final static double TRAININGRATE = 0.005;
+
+    private final String fileWeightsItoH = Environment.getExternalStorageDirectory().getPath() + "/NeuralMath/weightsItoH.txt";
+    private final String fileWeightsHtoO = Environment.getExternalStorageDirectory().getPath() + "/NeuralMath/weightsHtoO.txt";
+
+    private String[] charList =
+            {
+                    "0",
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9"
+            };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,8 +106,7 @@ public class MainActivity extends AppCompatActivity {
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
-        screenWidth = size.x;
-        screenHeight = size.y;
+        int screenHeight = size.y;
 
         //adding home element
         homeRows.add(new HomeRow(R.drawable.camera, getResources().getString(R.string.photo)));
@@ -90,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
         homeRows.add(new HomeRow(R.drawable.keyboard, getResources().getString(R.string.clavier)));
         homeRows.add(new HomeRow(R.drawable.wrench, getResources().getString(R.string.parametres)));
 
-        AdapterHome adapterHome = new AdapterHome(MainActivity.this, R.layout.menu_elements_layout, homeRows);
+        final AdapterHome adapterHome = new AdapterHome(MainActivity.this, R.layout.menu_elements_layout, homeRows);
 
         listHome.setAdapter(adapterHome);
 
@@ -120,11 +144,20 @@ public class MainActivity extends AppCompatActivity {
         adjustTextToScreen(screenHeight);
 
 
+
+        try {
+            imageDecoder = new ImageDecoder(INPUT, HIDDEN, OUTPUT, TRAININGRATE, fileWeightsItoH, fileWeightsHtoO, charList);
+        }
+        catch (Exception ex)
+        {
+            Log.e("MainActivity", "ImageDecoder", ex);
+        }
+
+
         //Préférence
         sharedPrefs = getPreferences(Context.MODE_PRIVATE);
 
         //on crée les préférences si elles n'existe pas
-        //préférence pour la playlist automatique, le saut d'un album à l'autre et pour recommencer une playlist
         if (!sharedPrefs.contains("layout") && !sharedPrefs.contains("langue") && !sharedPrefs.contains("defaut")) {
             Toast.makeText(context, "Bienvenue !", Toast.LENGTH_LONG).show();
             activity_main.setDisplayedChild(1);
@@ -138,31 +171,6 @@ public class MainActivity extends AppCompatActivity {
             openKeyboard();
         else if (defautMode.equals(getResources().getString(R.string.accueil)))
             openHome();
-
-
-        drawPage = (DrawingPage) findViewById(R.id.drawPage);
-        drawPage.getDrawView().setListener(new DrawingView.DrawnListener() {
-            @Override
-            public void drawn(Bitmap b) {
-                //setBitmap(b);
-            }
-        });
-
-        if (isDroitier)
-            drawPage.setLayoutForRightHanded();
-        else
-            drawPage.setLayoutForLeftHanded();
-
-        //Pour pas que le view flipper retourne au menu lors du changement d'orientation
-        //from : http://stackoverflow.com/a/7118495/5224674
-        if (savedInstanceState != null) {
-            int flipperPosition = savedInstanceState.getInt("TAB_NUMBER");
-            activity_main.setDisplayedChild(flipperPosition);
-            if (flipperPosition != 3)
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
-            else
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        }
     }
 
     @Override
@@ -216,6 +224,7 @@ public class MainActivity extends AppCompatActivity {
             editor.putString("langue", ((RadioButton) langueOption.findViewById(langueOption.getCheckedRadioButtonId())).getText().toString());
             editor.putString("defaut", ((RadioButton) defautOption.findViewById(defautOption.getCheckedRadioButtonId())).getText().toString());
             editor.apply();
+            getPref();
             openHome();
         }
         else if(activity_main.getDisplayedChild() != 0)
@@ -224,12 +233,19 @@ public class MainActivity extends AppCompatActivity {
             super.onBackPressed();
     }
 
-    //Pour pas que le view flipper retourne au menu lors du changement d'orientation
-    //from : http://stackoverflow.com/a/7118495/5224674
+    //http://stackoverflow.com/a/14292451/5224674
+    //Pour recevoir une string d'une autre activity
     @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        int position = activity_main.getDisplayedChild();
-        savedInstanceState.putInt("TAB_NUMBER", position);
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 1)
+            if(resultCode == RESULT_OK)
+                Toast.makeText(this, data.getStringExtra("EQUATION"), Toast.LENGTH_SHORT).show();
+    }
+
+    public static ImageDecoder getImageDecoder()
+    {
+        return imageDecoder;
     }
 
     /**
@@ -245,9 +261,10 @@ public class MainActivity extends AppCompatActivity {
      * Open Writing page
      */
     void openWriting(){
-        activity_main.setDisplayedChild(3);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        //New Intent pour gerer la sreen orientation
+        Intent i = new Intent(context, DrawingActivity.class);
+        i.putExtra("LAYOUT", String.valueOf(isDroitier));
+        startActivityForResult(i, 1);
     }
 
     /**
@@ -271,6 +288,7 @@ public class MainActivity extends AppCompatActivity {
      * open home page
      */
     void openHome() {
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
         activity_main.setDisplayedChild(0); //the home page is 0
     }

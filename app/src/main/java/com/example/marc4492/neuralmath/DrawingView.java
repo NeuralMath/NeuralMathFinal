@@ -73,7 +73,7 @@ public class DrawingView extends View {
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN:
                 path.moveTo(x, y);
-                return true;
+                break;
             case MotionEvent.ACTION_MOVE:
                 path.lineTo(x, y);
                 break;
@@ -97,6 +97,8 @@ public class DrawingView extends View {
      * Clear the canvas and stop the saving timer
      */
     public void clear(){
+        setDrawingCacheEnabled(false);
+        destroyDrawingCache();
         drawCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
         invalidate();
         saveHandler.removeCallbacks(run);
@@ -119,8 +121,8 @@ public class DrawingView extends View {
         @Override
         public void run() {
             setDrawingCacheEnabled(true);
-            listener.drawn(getDrawingCache());
-            setDrawingCacheEnabled(false);
+            buildDrawingCache(true);
+            listener.drawn(Bitmap.createBitmap(getDrawingCache()));
             clear();
         }
     };

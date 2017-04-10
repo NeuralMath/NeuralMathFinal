@@ -21,4 +21,9 @@ public class HomeRow {
     public String getText() {
         return text;
     }
+
+    public void setText(String val)
+    {
+        text = val;
+    }
 }
