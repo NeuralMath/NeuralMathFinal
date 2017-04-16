@@ -1,14 +1,16 @@
 package com.example.marc4492.neuralmath;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,7 +24,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -56,26 +65,30 @@ public class MainActivity extends AppCompatActivity {
     //Image decoder and NeuralNetwork
     private static ImageDecoder imageDecoder;
 
-    private final static int INPUT = 784;
-    private final static int HIDDEN = 200;
-    private final static int OUTPUT = 10;
+    private final static int INPUT = 2025;
+    private final static int HIDDEN = 1000;
+    private final static int OUTPUT = 78;
     private final static double TRAININGRATE = 0.005;
 
-    private final String fileWeightsItoH = Environment.getExternalStorageDirectory().getPath() + "/NeuralMath/weightsItoH.txt";
-    private final String fileWeightsHtoO = Environment.getExternalStorageDirectory().getPath() + "/NeuralMath/weightsHtoO.txt";
+    private final File fileWeightsItoH = new File(Environment.getExternalStorageDirectory().getPath() + "/NeuralMath/weightsItoH.txt");
+    private final File fileWeightsHtoO = new File(Environment.getExternalStorageDirectory().getPath() + "/NeuralMath/weightsHtoO.txt");
+    private final String tableNameItoH = "weightsItoH";
+    private final String tableNameHtoO = "weightsHtoO";
+
+    private SQLiteDatabase database;
 
     private String[] charList =
             {
-                    "0",
-                    "1",
-                    "2",
-                    "3",
-                    "4",
-                    "5",
-                    "6",
-                    "7",
-                    "8",
-                    "9"
+                    "-","!","(",")",",","[","]","{",
+                    "}","+","=","0","1","2","3","4",
+                    "5","6","7","8","9","a","α","|",
+                    "b","β","c","cos","d","Δ","÷","e",
+                    "f","/","g","γ","≥",">","h","i",
+                    "∞","∫","j","k","l","λ","≤","lim",
+                    "log","<","m","μ","n","≠","o","p",
+                    "ϕ","π","±","·","'","q","r","→",
+                    "s","σ","sin","√","Σ","t","tan","θ",
+                    "u","v","w","x","y","z"
             };
 
     @Override
@@ -84,6 +97,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context = this;
+
+        database = openOrCreateDatabase("BDNM", MODE_PRIVATE, null);
 
         //Main view
         // getting all widget
@@ -109,12 +124,15 @@ public class MainActivity extends AppCompatActivity {
         int screenHeight = size.y;
 
         //adding home element
-        homeRows.add(new HomeRow(R.drawable.camera, getResources().getString(R.string.photo)));
-        homeRows.add(new HomeRow(R.drawable.pen, getResources().getString(R.string.ecrire)));
-        homeRows.add(new HomeRow(R.drawable.keyboard, getResources().getString(R.string.clavier)));
-        homeRows.add(new HomeRow(R.drawable.wrench, getResources().getString(R.string.parametres)));
+        homeRows.add(new HomeRow(this, R.drawable.camera, getResources().getString(R.string.photo)));
+        homeRows.add(new HomeRow(this, R.drawable.pen, getResources().getString(R.string.ecrire)));
+        homeRows.add(new HomeRow(this, R.drawable.keyboard, getResources().getString(R.string.clavier)));
+        homeRows.add(new HomeRow(this, R.drawable.wrench, getResources().getString(R.string.parametres)));
 
         final AdapterHome adapterHome = new AdapterHome(MainActivity.this, R.layout.menu_elements_layout, homeRows);
+
+        adapterHome.getItem(0).setEnabled(false);
+        adapterHome.getItem(1).setEnabled(false);
 
         listHome.setAdapter(adapterHome);
 
@@ -143,34 +161,54 @@ public class MainActivity extends AppCompatActivity {
 
         adjustTextToScreen(screenHeight);
 
-
-
-        try {
-            imageDecoder = new ImageDecoder(INPUT, HIDDEN, OUTPUT, TRAININGRATE, fileWeightsItoH, fileWeightsHtoO, charList);
-        }
-        catch (Exception ex)
-        {
-            Log.e("MainActivity", "ImageDecoder", ex);
-        }
-
-
         //Préférence
         sharedPrefs = getPreferences(Context.MODE_PRIVATE);
 
         //on crée les préférences si elles n'existe pas
         if (!sharedPrefs.contains("layout") && !sharedPrefs.contains("langue") && !sharedPrefs.contains("defaut")) {
-            Toast.makeText(context, "Bienvenue !", Toast.LENGTH_LONG).show();
-            activity_main.setDisplayedChild(1);
+            try {
+                ((RadioButton) layoutOption.getChildAt(0)).setChecked(true);
+                ((RadioButton) langueOption.getChildAt(0)).setChecked(true);
+                ((RadioButton) defautOption.getChildAt(0)).setChecked(true);
+
+                firstTimeOnApp();
+            }
+            catch (IOException ex)
+            {
+                Toast.makeText(this, "Probleme de database", Toast.LENGTH_SHORT).show();
+            }
         }
-        getPref();
-        if (defautMode.equals(getResources().getString(R.string.photo)))
-            openPhoto();
-        else if (defautMode.equals(getResources().getString(R.string.ecrire)))
-            openWriting();
-        else if (defautMode.equals(getResources().getString(R.string.clavier)))
-            openKeyboard();
-        else if (defautMode.equals(getResources().getString(R.string.accueil)))
-            openHome();
+        else {
+            getPref();
+            if (defautMode.equals(getResources().getString(R.string.photo)))
+                openPhoto();
+            else if (defautMode.equals(getResources().getString(R.string.ecrire)))
+                openWriting();
+            else if (defautMode.equals(getResources().getString(R.string.clavier)))
+                openKeyboard();
+            else if (defautMode.equals(getResources().getString(R.string.accueil)))
+                openHome();
+        }
+
+        try {
+            imageDecoder = new ImageDecoder(INPUT, HIDDEN, OUTPUT, TRAININGRATE, database, charList, new NeuralNetwork.OnNetworkReady() {
+                @Override
+                public void ready(boolean value) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            adapterHome.getItem(0).setEnabled(true);
+                            adapterHome.getItem(1).setEnabled(true);
+                            adapterHome.setNetworkReady(true);
+                            adapterHome.notifyDataSetChanged();
+                        }
+                    });
+                }
+            });
+        } catch (IOException ex) {
+            Toast.makeText(context, "Réseau de neurone inacessible.", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     @Override
@@ -179,7 +217,6 @@ public class MainActivity extends AppCompatActivity {
         inflater.inflate(R.menu.main_menu, menu);
         return true;
     }
-
 
     /**
      * handling click events for the main menu items
@@ -247,6 +284,116 @@ public class MainActivity extends AppCompatActivity {
     {
         return imageDecoder;
     }
+
+    /**
+     *
+     * @throws IOException              Problème de lecture de fichier
+     * @throws NumberFormatException    Mauvais format de données
+     */
+    private void firstTimeOnApp() throws IOException, NumberFormatException {
+        //INSERT PROGRESS BAR
+        Toast.makeText(context, "Bienvenue !", Toast.LENGTH_LONG).show();
+
+        final ProgressDialog progress = new ProgressDialog(this);
+        progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progress.setIndeterminate(false);
+        progress.setCancelable(false);
+        progress.setTitle("Transfère du fichier texte 1/2");
+        progress.setMessage("Ce transfère n'arrivera qu'une seule fois!");
+        progress.setProgress(0);
+        progress.setMax(INPUT);
+        progress.show();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+
+                    readFileAndTransferDB(fileWeightsItoH, tableNameItoH, progress);
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            progress.setTitle("Transfère du fichier texte 2/2");
+                            progress.setProgress(0);
+                            progress.setMax(HIDDEN);
+                        }
+                    });
+                    readFileAndTransferDB(fileWeightsHtoO, tableNameHtoO, progress);
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            progress.dismiss();
+                        }
+                    });
+                }
+                catch(IOException ex)
+                {
+
+                }
+            }
+        }).start();
+
+        activity_main.setDisplayedChild(1);
+    }
+
+    /**
+     * Lecture d'un tableau deux dimension depuis un fichier texte.
+     *
+     * @param file                          Le fichier
+     * @param nameTable                     Nom de la table à écrire dans la DB
+     * @throws IOException                  S'il y a des problème de lecture dans le fichier ou que le fichier n'a pas les bonnes tailles. (nbs lignes/colonnes)
+     * @throws NumberFormatException        Si le texte n'est pas en double
+     */
+    private void readFileAndTransferDB(File file, String nameTable, ProgressDialog progress) throws IOException, NumberFormatException
+    {
+        //Obtention du fichier
+        if (!file.exists() && !file.isDirectory())
+            throw new IOException("The file isn't valid");
+
+        database.execSQL("CREATE TABLE IF NOT EXISTS " + nameTable + "(valeur DOUBLE)");
+
+        //From
+        //http://stackoverflow.com/a/19637484
+        String query = "insert into " + nameTable + "(valeur) values (?);";
+        String line;
+        List<String> lineItems;
+
+        //Début de l'ecriture dans la DB
+        database.beginTransaction();
+        SQLiteStatement stmt = database.compileStatement(query);
+
+        //Facon efficace de lire dans un fichier texte
+        FileInputStream fis = new FileInputStream(file);
+        InputStreamReader isr = new InputStreamReader(fis);
+        BufferedReader reader = new BufferedReader(isr);
+
+        int progressVal = 0;
+
+        //Lecture jusqu'à la fin du fichier
+        while ((line = reader.readLine()) != null) {
+            //Split les ", "
+            lineItems = Arrays.asList(line.substring(1, line.length() - 1).split("\\s*,\\s*"));
+
+            //Save dans la DB
+            for (String value : lineItems) {
+                stmt.bindDouble(1, Double.parseDouble(value));
+                stmt.clearBindings();
+            }
+
+            progress.setProgress(++progressVal);
+        }
+
+        reader.close();
+        isr.close();
+        fis.close();
+
+        database.setTransactionSuccessful();
+        database.endTransaction();
+    }
+
+
 
     /**
      * Open the photo mode page

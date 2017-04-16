@@ -4,7 +4,7 @@
     <string name="ecrire">Écrire</string>
     <string name="clavier">Clavier</string>
     <string name="parametres">Paramètres</string>
-    <string name="accueil">Accueil</string>
+    <string name="accueil" translatable="false">Accueil</string>
     <string name="layout">Layout</string>
     <string name="langue">Langue</string>
     <string name="mode_par_defaut">Mode par défaut</string>

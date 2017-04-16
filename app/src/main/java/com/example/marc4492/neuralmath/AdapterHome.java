@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 public class AdapterHome extends ArrayAdapter<HomeRow> {
 
+    private boolean networkReady = false;
 
     public AdapterHome(Context context, int resource, ArrayList<HomeRow> row) {
         super(context, resource, row);
@@ -22,13 +23,12 @@ public class AdapterHome extends ArrayAdapter<HomeRow> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        if (convertView == null) {
+        if (convertView == null)
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.menu_elements_layout, parent, false);
-        }
 
         //setting the height so that the screen is filled regardless of the number of item in the listView
-        int viewsize = parent.getHeight() / (getCount() + 1);
-        convertView.getLayoutParams().height = viewsize;
+        int viewSize = parent.getHeight() / (getCount() + 1);
+        convertView.getLayoutParams().height = viewSize;
 
         HomeRow hRow = getItem(position);
 
@@ -38,9 +38,23 @@ public class AdapterHome extends ArrayAdapter<HomeRow> {
 
             image.setImageResource(hRow.getImage());
             text.setText(hRow.getText());
-            text.setTextSize(viewsize / 10);
+            text.setTextSize(viewSize / 10);
         }
 
+        if(position < 2 && !networkReady)
+            convertView.setBackgroundResource(R.drawable.colored_border);
+        else
+            convertView.setBackgroundResource(0);
+
         return convertView;
+    }
+
+    public void setNetworkReady(boolean val) {
+        networkReady = val;
+    }
+
+    @Override
+    public boolean isEnabled(int position) {
+        return getItem(position).isEnabled();
     }
 }

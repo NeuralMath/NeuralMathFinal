@@ -1,9 +1,14 @@
 package com.example.marc4492.neuralmath;
 
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.os.Environment;
+import android.util.Log;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -28,18 +33,17 @@ public class ImageDecoder {
      * @param hidden      Nombre de neurones de hidden dans le réseau
      * @param output      Nombre de neurones d'output dans le réseau
      * @param training    Training rate du reseau
-     * @param fileWIH     Path du ficher weight entre input et hidden
-     * @param fileWHO     Path du ficher weight entre hidden et output
      * @param charListing List des char avec leur index dans le réseau
      *
      * @throws IOException S'il y a des problèmes de fichier, ...
      */
-    public ImageDecoder(final int input, final int hidden, final int output, final double training, final String fileWIH, final String fileWHO, String[] charListing) throws IOException {
+    public ImageDecoder(final int input, final int hidden, final int output, final double training, final SQLiteDatabase database, String[] charListing, NeuralNetwork.OnNetworkReady listener) throws IOException {
         listChar = new ArrayList<>();
 
         squaredPixNumber = (int) Math.sqrt(input);
-        network = new NeuralNetwork(input, hidden, output, training, fileWIH, fileWHO);
         charList = charListing;
+
+        network = new NeuralNetwork(input, hidden, output, training, database, listener);
     }
 
     /**
@@ -53,8 +57,23 @@ public class ImageDecoder {
         listChar.clear();
         String line = "";
 
+        setIOPixels(btm);
+
         //Split toutes les chars
         splitChar(btm);
+
+        for(int i = 0; i < listChar.size(); i++)
+        {
+            String path = Environment.getExternalStorageDirectory().getPath() + "/NeuralMath/";
+            File f = new File(path + String.valueOf(i) +  ".png");
+            try {
+                FileOutputStream out = new FileOutputStream(f);
+                listChar.get(i).compress(Bitmap.CompressFormat.PNG, 100, out);
+                out.close();
+            }catch (Exception e) {
+                Log.e("Image decoder", "saving", e);
+            }
+        }
 
         //Add le char dans l'eq
         for (int i = 0; i < listChar.size(); i++) {
@@ -91,6 +110,25 @@ public class ImageDecoder {
     private Bitmap resize(Bitmap bitmap, int width, int height) throws IOException
     {
         return Bitmap.createScaledBitmap(bitmap, width, height, false);
+    }
+
+    /**
+     * Set l'image en noir et blanc
+     *
+     * @param btm   L'image à convertir
+     */
+    private void setIOPixels(Bitmap btm)
+    {
+        int pixel;
+        for(int i = 0; i < btm.getWidth(); i++) {
+            for (int j = 0; j < btm.getHeight(); j++) {
+                pixel = btm.getPixel(i, j);
+                if (Color.red(pixel) < 0x0C && Color.green(pixel) < 0x0C && Color.blue(pixel) < 0x0C)
+                    btm.setPixel(i, j, 0xFF000000);
+                else
+                    btm.setPixel(i, j, 0xFFFFFFFF);
+            }
+        }
     }
 
     /**
