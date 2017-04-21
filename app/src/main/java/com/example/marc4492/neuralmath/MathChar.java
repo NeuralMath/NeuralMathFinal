@@ -1,20 +1,23 @@
 package com.example.marc4492.neuralmath;
 
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
 public class MathChar {
+    private int squaredPixNumber = 45;
+
     private Bitmap image;
     private int xStart = 0;
     private int yStart = 0;
     private int width = 0;
     private int height = 0;
+    private String value ="";
 
     private ArrayList<MathChar> listInner = new ArrayList<>();
-
     private static ArrayList<MathChar> listFinal = new ArrayList<>();
 
     public MathChar(Bitmap b, int x, int y, int w, int h) {
@@ -34,6 +37,14 @@ public class MathChar {
     }
 
 
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public String getValue()
+    {
+        return value;
+    }
 
     public int getXStart() {
         return xStart;
@@ -66,7 +77,7 @@ public class MathChar {
             listFinal.add(this);
         else
             for (MathChar mC : listInner)
-                    mC.splitChar(!vertical);
+                mC.splitChar(!vertical);
     }
 
 
@@ -89,7 +100,7 @@ public class MathChar {
         for(int i = 0; i < image.getWidth(); i++) {
             for (int j = 0; j < image.getHeight(); j++) {
                 pixel = image.getPixel(i, j);
-                if (Color.red(pixel) +  Color.green(pixel) + Color.blue(pixel) < 0x0C) {
+                if (Color.red(pixel) +  Color.green(pixel) + Color.blue(pixel) < 320) {
                     listBlack.add(i);
                     break;
                 }
@@ -136,7 +147,7 @@ public class MathChar {
         for(int i = 0; i < image.getHeight() ; i++) {
             for (int j = 0; j <image.getWidth(); j++) {
                 pixel = image.getPixel(j, i);
-                if(Color.red(pixel) + Color.green(pixel) + Color.blue(pixel) < 0x0C) {
+                if(Color.red(pixel) +  Color.green(pixel) + Color.blue(pixel) < 320) {
                     listBlack.add(i);
                     break;
                 }
@@ -180,5 +191,53 @@ public class MathChar {
     private Bitmap crop(Bitmap bitmap, int startX, int startY, int width, int height) throws IOException
     {
         return Bitmap.createBitmap(bitmap, startX, startY, width, height);
+    }
+
+    /**
+     * Changer la grandeur de l'image en gardant le ratio
+     *
+     * @param bitmap        L'image
+     * @return              L'image resized
+     * @throws IOException    S'il y a des problèmes
+     */
+    private Bitmap resize(Bitmap bitmap, int width, int height) throws IOException
+    {
+        return Bitmap.createScaledBitmap(bitmap, width, height, false);
+    }
+
+    private Bitmap fillImage(Bitmap btm)
+    {
+        int width = btm.getWidth();
+        int height = btm.getHeight();
+
+        int borderSize = 5;
+
+        Bitmap newImage;
+        Canvas canvas;
+
+        if(width < height)
+        {
+            newImage = Bitmap.createBitmap(height + 2*borderSize, height + 2*borderSize, btm.getConfig());
+            canvas = new Canvas(newImage);
+            canvas.drawColor(Color.WHITE);
+            canvas.drawBitmap(btm, (newImage.getWidth()-width)/2, borderSize, null);
+            return newImage;
+        }
+        else if (height < width)
+        {
+            newImage = Bitmap.createBitmap(width + 2*borderSize, width + 2*borderSize, btm.getConfig());
+            canvas = new Canvas(newImage);
+            canvas.drawColor(Color.WHITE);
+            canvas.drawBitmap(btm, borderSize, (newImage.getHeight()-height)/2, null);
+            return newImage;
+        }
+        else
+        {
+            newImage = Bitmap.createBitmap(width + 2*borderSize, height + 2*borderSize, btm.getConfig());
+            canvas = new Canvas(newImage);
+            canvas.drawColor(Color.WHITE);
+            canvas.drawBitmap(btm, borderSize, borderSize, null);
+            return newImage;
+        }
     }
 }

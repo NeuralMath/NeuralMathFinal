@@ -23,8 +23,8 @@ public class NeuralNetwork {
     private final double[][] weightsItoH;
     private final double[][] weightsHtoO;
 
-    private final String tableNameItoH = "weightsItoH";
-    private final String tableNameHtoO = "weightsHtoO";
+    private final String tableNameItoH = "weights_i_to_h";
+    private final String tableNameHtoO = "weights_h_to_o";
 
     private final int[] inputValues;
     private final Neuron[][] reseau;
@@ -32,6 +32,7 @@ public class NeuralNetwork {
     private final double trainingRate;
 
     private boolean oneArrayDone = false;
+    private OnNetworkReady listener;
 
     /**
      * Constructeur du réseau, création des neurones
@@ -41,10 +42,12 @@ public class NeuralNetwork {
      * @param outputLayer   Nombre de neurons dans la troisième couche
      * @param training      Vitesse de l'apprentisage
      * @param db            Database pour les données du reseau
+     * @param l             Listener pour avoir l'état du reseau
      * @throws IOException S'il ya des problème de lecture des fichiers
      */
-    public NeuralNetwork(int inputLayer, int hiddenLayer, int outputLayer, double training, SQLiteDatabase db, final OnNetworkReady listener) throws IOException {
+    public NeuralNetwork(int inputLayer, int hiddenLayer, int outputLayer, double training, SQLiteDatabase db, final OnNetworkReady l) throws IOException {
         database = db;
+        listener = l;
 
         INPUT = inputLayer;
         HIDDEN = hiddenLayer;
@@ -59,35 +62,7 @@ public class NeuralNetwork {
         weightsItoH = new double[INPUT + 1][HIDDEN + 1];
         weightsHtoO = new double[HIDDEN + 1][OUTPUT];
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    readData(weightsItoH);
-                    if(oneArrayDone)
-                        listener.ready(true);
-                    else
-                        oneArrayDone = true;
-                } catch (IOException ex) {
-                    listener.ready(false);
-                }
-            }
-        }).start();
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    readData(weightsHtoO);
-                    if(oneArrayDone)
-                        listener.ready(true);
-                    else
-                        oneArrayDone = true;
-                } catch (IOException ex) {
-                    listener.ready(false);
-                }
-            }
-        }).start();
+        updateWeights();
 
         //Création des layer du réseau avec une neurone de plus dans le hidden layer pour le bias
         reseau = new Neuron[][]
@@ -100,6 +75,30 @@ public class NeuralNetwork {
         for (int i = 0; i < reseau.length; i++)
             for (int j = 0; j < reseau[i].length; j++)
                 reseau[i][j] = new Neuron();
+    }
+
+    public void updateWeights() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                readData(weightsItoH, tableNameItoH);
+                if (oneArrayDone)
+                    listener.ready(true);
+                else
+                    oneArrayDone = true;
+            }
+        }).start();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                readData(weightsHtoO, tableNameHtoO);
+                if (oneArrayDone)
+                    listener.ready(true);
+                else
+                    oneArrayDone = true;
+            }
+        }).start();
     }
 
     /**
@@ -206,10 +205,16 @@ public class NeuralNetwork {
      * @param resultat Le tableau des valeure supposé de l'output layer
      */
     private void deepLearningAlgo(int resultat[]) {
+        //Valeurs intermediaire
+        double[] values = new double[OUTPUT];
+
         //Stocastic gradient descent  HIDDEN -> OUTPUT
-        for (int i = 0; i <= HIDDEN; i++)
-            for (int j = 0; j < OUTPUT; j++)
-                weightsHtoO[i][j] -= trainingRate * (reseau[1][j].getOutput() - resultat[j]) * reseau[1][j].getOutput() * (1 - reseau[1][j].getOutput()) * reseau[0][i].getOutput();
+        for (int i = 0; i <= HIDDEN; i++) {
+            for (int j = 0; j < OUTPUT; j++) {
+                values[j] = (reseau[1][j].getOutput() - resultat[j]) * reseau[1][j].getOutput() * (1 - reseau[1][j].getOutput());
+                weightsHtoO[i][j] -= trainingRate * values[j] * reseau[0][i].getOutput();
+            }
+        }
 
         //Stocastic gradient descent  INPUT -> HIDDEN
         for (int k = 0; k <= INPUT; k++) {
@@ -217,7 +222,7 @@ public class NeuralNetwork {
                 double sommation = 0;
 
                 for (int j = 0; j < OUTPUT; j++)
-                    sommation += (reseau[1][j].getOutput() - resultat[j]) * reseau[1][j].getOutput() * (1 - reseau[1][j].getOutput()) * weightsHtoO[i][j];
+                    sommation += values[j] * weightsHtoO[i][j];
 
                 weightsItoH[k][i] -= trainingRate * sommation * reseau[0][i].getOutput() * (1 - reseau[0][i].getOutput()) * inputValues[k];
             }
@@ -238,7 +243,7 @@ public class NeuralNetwork {
     {
         //From
         //http://stackoverflow.com/a/19637484
-        String sql = "insert into " + nameTable + "(valeur) values (?);";
+        String sql = "INSERT INTO " + nameTable + " VALUES(valeur) values (?);";
 
         database.beginTransaction();
         SQLiteStatement stmt = database.compileStatement(sql);
@@ -246,6 +251,7 @@ public class NeuralNetwork {
         for (double[] val : values) {
             for (double innerVal : val) {
                 stmt.bindDouble(1, innerVal);
+                stmt.executeInsert();
                 stmt.clearBindings();
             }
         }
@@ -258,15 +264,13 @@ public class NeuralNetwork {
      * Lecture d'un tableau deux dimension depuis une base de données.
      *
      * @param array                     Le tableau à lire
+     * @param tableName                 Nom de la table à lire
      * @throws IOException              S'il y a des problème de lecture dans le fichier ou que le fichier n'a pas les bonnes tailles. (nbs lignes/colonnes)
      * @throws NumberFormatException    Si le texte n'est pas en double
      */
-    private void readData(double[][] array) throws IOException, NumberFormatException {
+    private void readData(double[][] array, String tableName) throws NumberFormatException {
         int i = 0;
-        Cursor result = database.rawQuery("Select * from weightsItoH", null);
-
-        if(result.getCount() != array.length*array[0].length)
-            throw new IOException("Pas le bon nombres de données");
+        Cursor result = database.rawQuery("Select * from " + tableName, null);
 
         while(result.moveToNext())
         {

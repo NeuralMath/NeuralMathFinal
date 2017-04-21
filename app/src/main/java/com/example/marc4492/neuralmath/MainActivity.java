@@ -7,10 +7,11 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
+import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,9 +26,8 @@ import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     private RadioGroup langueOption;
     private RadioGroup defautOption;
 
+    private AdapterHome adapterHome;
 
     //Preferences
     private SharedPreferences sharedPrefs;
@@ -67,33 +68,29 @@ public class MainActivity extends AppCompatActivity {
 
     private final static int INPUT = 2025;
     private final static int HIDDEN = 1000;
-    private final static int OUTPUT = 78;
+    private final static int OUTPUT = 76;
     private final static double TRAININGRATE = 0.005;
 
-    private final File fileWeightsItoH = new File(Environment.getExternalStorageDirectory().getPath() + "/NeuralMath/weightsItoH.txt");
-    private final File fileWeightsHtoO = new File(Environment.getExternalStorageDirectory().getPath() + "/NeuralMath/weightsHtoO.txt");
-    private final String tableNameItoH = "weightsItoH";
-    private final String tableNameHtoO = "weightsHtoO";
+    private final String tableNameItoH = "weights_i_to_h";
+    private final String tableNameHtoO = "weights_h_to_o";
 
     private SQLiteDatabase database;
 
     private String[] charList =
             {
-                    "-","!","(",")",",","[","]","{",
-                    "}","+","=","0","1","2","3","4",
-                    "5","6","7","8","9","a","α","|",
+                    "!","(",")","+",",","-","0","1","2","3","4",
+                    "5","6","7","8","9", "=", "a","α","|",
                     "b","β","c","cos","d","Δ","÷","e",
                     "f","/","g","γ","≥",">","h","i",
                     "∞","∫","j","k","l","λ","≤","lim",
                     "log","<","m","μ","n","≠","o","p",
                     "ϕ","π","±","·","'","q","r","→",
                     "s","σ","sin","√","Σ","t","tan","θ",
-                    "u","v","w","x","y","z"
+                    "u","v","w","x","y","z", "[", "]", "{", "}"
             };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context = this;
@@ -129,10 +126,10 @@ public class MainActivity extends AppCompatActivity {
         homeRows.add(new HomeRow(this, R.drawable.keyboard, getResources().getString(R.string.clavier)));
         homeRows.add(new HomeRow(this, R.drawable.wrench, getResources().getString(R.string.parametres)));
 
-        final AdapterHome adapterHome = new AdapterHome(MainActivity.this, R.layout.menu_elements_layout, homeRows);
+        adapterHome = new AdapterHome(MainActivity.this, R.layout.menu_elements_layout, homeRows);
 
-        adapterHome.getItem(0).setEnabled(false);
-        adapterHome.getItem(1).setEnabled(false);
+        //adapterHome.getItem(0).setEnabled(false);
+        //adapterHome.getItem(1).setEnabled(false);
 
         listHome.setAdapter(adapterHome);
 
@@ -172,6 +169,7 @@ public class MainActivity extends AppCompatActivity {
                 ((RadioButton) defautOption.getChildAt(0)).setChecked(true);
 
                 firstTimeOnApp();
+
             }
             catch (IOException ex)
             {
@@ -188,27 +186,34 @@ public class MainActivity extends AppCompatActivity {
                 openKeyboard();
             else if (defautMode.equals(getResources().getString(R.string.accueil)))
                 openHome();
+
+            try {
+                createNetworkDecoder();
+            } catch (IOException ex) {
+                Toast.makeText(context, "Réseau de neurone inacessible.", Toast.LENGTH_SHORT).show();
+            }
         }
 
-        try {
-            imageDecoder = new ImageDecoder(INPUT, HIDDEN, OUTPUT, TRAININGRATE, database, charList, new NeuralNetwork.OnNetworkReady() {
-                @Override
-                public void ready(boolean value) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            adapterHome.getItem(0).setEnabled(true);
-                            adapterHome.getItem(1).setEnabled(true);
-                            adapterHome.setNetworkReady(true);
-                            adapterHome.notifyDataSetChanged();
-                        }
-                    });
-                }
-            });
-        } catch (IOException ex) {
-            Toast.makeText(context, "Réseau de neurone inacessible.", Toast.LENGTH_SHORT).show();
-        }
 
+
+    }
+
+    private void createNetworkDecoder() throws IOException {
+        imageDecoder = new ImageDecoder(INPUT, HIDDEN, OUTPUT, TRAININGRATE, database, charList, new NeuralNetwork.OnNetworkReady() {
+            @Override
+            public void ready(boolean value) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapterHome.getItem(0).setEnabled(true);
+                        adapterHome.getItem(1).setEnabled(true);
+                        adapterHome.setNetworkReady(true);
+                        adapterHome.notifyDataSetChanged();
+                    }
+                });
+            }
+        });
+        Toast.makeText(this, imageDecoder.findSting(BitmapFactory.decodeResource(getResources(), R.drawable.complete)), Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -291,7 +296,6 @@ public class MainActivity extends AppCompatActivity {
      * @throws NumberFormatException    Mauvais format de données
      */
     private void firstTimeOnApp() throws IOException, NumberFormatException {
-        //INSERT PROGRESS BAR
         Toast.makeText(context, "Bienvenue !", Toast.LENGTH_LONG).show();
 
         final ProgressDialog progress = new ProgressDialog(this);
@@ -309,7 +313,7 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 try {
 
-                    readFileAndTransferDB(fileWeightsItoH, tableNameItoH, progress);
+                    readFileAndTransferDB(getResources().openRawResource(R.raw.weights_i_to_h), tableNameItoH, progress);
 
                     runOnUiThread(new Runnable() {
                         @Override
@@ -319,7 +323,7 @@ public class MainActivity extends AppCompatActivity {
                             progress.setMax(HIDDEN);
                         }
                     });
-                    readFileAndTransferDB(fileWeightsHtoO, tableNameHtoO, progress);
+                    readFileAndTransferDB(getResources().openRawResource(R.raw.weights_h_to_o), tableNameHtoO, progress);
 
                     runOnUiThread(new Runnable() {
                         @Override
@@ -327,10 +331,12 @@ public class MainActivity extends AppCompatActivity {
                             progress.dismiss();
                         }
                     });
+
+                    createNetworkDecoder();
                 }
                 catch(IOException ex)
                 {
-
+                    Log.e("MARDDEEEEE", "Transfer", ex);
                 }
             }
         }).start();
@@ -341,22 +347,19 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Lecture d'un tableau deux dimension depuis un fichier texte.
      *
-     * @param file                          Le fichier
+     * @param inputStream                   L'inputStream venant des ressources
      * @param nameTable                     Nom de la table à écrire dans la DB
      * @throws IOException                  S'il y a des problème de lecture dans le fichier ou que le fichier n'a pas les bonnes tailles. (nbs lignes/colonnes)
      * @throws NumberFormatException        Si le texte n'est pas en double
      */
-    private void readFileAndTransferDB(File file, String nameTable, ProgressDialog progress) throws IOException, NumberFormatException
+    private void readFileAndTransferDB(InputStream inputStream, String nameTable, ProgressDialog progress) throws IOException, NumberFormatException
     {
-        //Obtention du fichier
-        if (!file.exists() && !file.isDirectory())
-            throw new IOException("The file isn't valid");
-
-        database.execSQL("CREATE TABLE IF NOT EXISTS " + nameTable + "(valeur DOUBLE)");
+        database.execSQL("DROP TABLE IF EXISTS " + nameTable);
+        database.execSQL("CREATE TABLE " + nameTable + "(valeur DOUBLE)");
 
         //From
         //http://stackoverflow.com/a/19637484
-        String query = "insert into " + nameTable + "(valeur) values (?);";
+        String query = "INSERT INTO " + nameTable +" (valeur) values (?);";
         String line;
         List<String> lineItems;
 
@@ -365,8 +368,7 @@ public class MainActivity extends AppCompatActivity {
         SQLiteStatement stmt = database.compileStatement(query);
 
         //Facon efficace de lire dans un fichier texte
-        FileInputStream fis = new FileInputStream(file);
-        InputStreamReader isr = new InputStreamReader(fis);
+        InputStreamReader isr = new InputStreamReader(inputStream);
         BufferedReader reader = new BufferedReader(isr);
 
         int progressVal = 0;
@@ -379,6 +381,7 @@ public class MainActivity extends AppCompatActivity {
             //Save dans la DB
             for (String value : lineItems) {
                 stmt.bindDouble(1, Double.parseDouble(value));
+                stmt.executeInsert();
                 stmt.clearBindings();
             }
 
@@ -387,7 +390,6 @@ public class MainActivity extends AppCompatActivity {
 
         reader.close();
         isr.close();
-        fis.close();
 
         database.setTransactionSuccessful();
         database.endTransaction();
