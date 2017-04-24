@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
 
     private String[] charList =
             {
-                    "!","(",")","+",",","-","0","1","2","3","4",
+                    /*"!","(",")","+",",","-",*/"0","1","2","3","4",
                     "5","6","7","8","9", "=", "a","α","|",
                     "b","β","c","cos","d","Δ","÷","e",
                     "f","/","g","γ","≥",">","h","i",
@@ -213,7 +213,8 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
         });
-        Toast.makeText(this, imageDecoder.findSting(BitmapFactory.decodeResource(getResources(), R.drawable.complete)), Toast.LENGTH_SHORT).show();
+        adapterHome.getItem(3).setText(imageDecoder.findSting(BitmapFactory.decodeResource(getResources(), R.drawable.exposant)));
+        adapterHome.notifyDataSetChanged();
     }
 
     @Override

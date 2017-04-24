@@ -8,14 +8,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class MathChar {
-    private int squaredPixNumber = 45;
 
     private Bitmap image;
     private int xStart = 0;
     private int yStart = 0;
+    private int xEnd;
+    private int yEnd;
     private int width = 0;
     private int height = 0;
     private String value ="";
+
+    private MathChar right = null;
+    private MathChar top = null;
+    private MathChar bottom = null;
 
     private ArrayList<MathChar> listInner = new ArrayList<>();
     private static ArrayList<MathChar> listFinal = new ArrayList<>();
@@ -24,8 +29,24 @@ public class MathChar {
         image = b;
         xStart = x;
         yStart = y;
+        xEnd = x + w;
+        yEnd = y + h;
         width = w;
         height = h;
+    }
+
+    public MathChar(MathChar mC)
+    {
+        image = mC.image;
+        xStart = mC.xStart;
+        yStart = mC.yStart;
+        xEnd = mC.xEnd;
+        yEnd = mC.yEnd;
+        width = mC.width;
+        height = mC.height;
+        right = mC.right;
+        top = mC.top;
+        bottom = mC.bottom;
     }
 
     public Bitmap getImage() {
@@ -54,12 +75,32 @@ public class MathChar {
         return yStart;
     }
 
+    public int getXEnd() {
+        return xEnd;
+    }
+
+    public int getYEnd() {
+        return yEnd;
+    }
+
     public int getWidth() {
         return width;
     }
 
     public int getHeight() {
         return height;
+    }
+
+    public MathChar getRight() {
+        return right;
+    }
+
+    public MathChar getTop() {
+        return top;
+    }
+
+    public MathChar getBottom() {
+        return bottom;
     }
 
     /**
@@ -73,10 +114,54 @@ public class MathChar {
         else
             splitHorizontal();
 
-        if(listInner.size() == 0)
-            listFinal.add(this);
+        if (listInner.size() == 0)
+        {
+            boolean needAdd = true;
+            for(MathChar mC : listFinal)
+            {
+                if(mC.getTop() != null) {
+                    for (MathChar mCInner : mC.getTop().getListChar()) {
+                        if (mCInner == this) {
+                            needAdd = false;
+                            break;
+                        }
+                    }
+                }
+
+                if(needAdd && mC.getBottom() != null) {
+                    for (MathChar mCInner : mC.getBottom().getListChar()) {
+                        if (mCInner == this) {
+                            needAdd = false;
+                            break;
+                        }
+                    }
+                }
+            }
+            if(needAdd)
+                listFinal.add(this);
+        }
+
         else
-            for (MathChar mC : listInner)
+            /*for (int i = 0; i < listInner.size(); i++) {
+                if (vertical) {
+                    if (i != listInner.size() - 1) {
+                        listInner.get(i).right = listInner.get(i + 1);
+                    }
+                } else {
+                    if (i != listInner.size() - 1) {
+                        if (i == 0) {
+                            listInner.get(i).bottom = listInner.get(i + 1);
+                        } else if (i == listInner.size() - 1) {
+                            listInner.get(i).top = listInner.get(i - 1);
+                        } else {
+                            listInner.get(i).top = listInner.get(i - 1);
+                            listInner.get(i).bottom = listInner.get(i + 1);
+                        }
+                    }
+                }
+
+            }*/
+            for(MathChar mC : listInner)
                 mC.splitChar(!vertical);
     }
 
@@ -121,12 +206,15 @@ public class MathChar {
 
                 newWidth = listBlack.get(i-1)-start;
 
-
                 listInner.add(new MathChar(crop(image, start, 0, newWidth, image.getHeight()), start + xStart, yStart, newWidth, image.getHeight()));
 
                 if(i < listBlack.size())
                     start = listBlack.get(i);
                 i++;
+            }
+            for(int j = listInner.size()-1; j > 0; j--) {
+                listInner.get(j - 1).right = listInner.get(j);
+                listInner.remove(j);
             }
         }
     }
@@ -159,6 +247,7 @@ public class MathChar {
         {
             int start = listBlack.get(0);
             int i = 1;
+            MathChar temp = null;
             //Passer au travers de toutes les lignes
             while(i < listBlack.size())
             {
@@ -173,6 +262,10 @@ public class MathChar {
                 if(i < listBlack.size())
                     start = listBlack.get(i);
                 i++;
+            }
+            for(int j = listInner.size()-1; j > 0; j--) {
+                listInner.get(j - 1).bottom = listInner.get(j);
+                listInner.remove(j);
             }
         }
     }

@@ -59,15 +59,22 @@ public class ImageDecoder {
         int index = 0;
         //Add le char dans l'eq
         for (int i = 0; i < listChar.size(); i++) {
-            int[] pix = getIOPixels(listChar.get(i).getImage());
+            //int[] pix = getIOPixels(listChar.get(i).getImage());
             //int index = network.getAnwser(pix);
 
             listChar.get(i).setValue(charList[index]);
 
+            if(listChar.get(i).getTop() != null)
+                listChar.get(i).getTop().setValue(charList[index+1]);
+            if(listChar.get(i).getBottom() != null)
+                listChar.get(i).getBottom().setValue(charList[index+1]);
+
             //TO DO
             //line += charList[index];
-            line += replaceChar();
+
+            index++;
         }
+        line += replaceChar();
 
         return line;
     }
@@ -120,42 +127,101 @@ public class ImageDecoder {
 
     public String replaceChar()
     {
+
+        //TO DO
+        //Checker avec Godefroy pour les x_1, x_2
+        //Check si exposant contient plus qu'un char
+
+
         //Tolerance de 5%
         final int toleranceHeight = (int) (totalHeight *0.05);
         final int toleranceWidth = (int) (totalWidth*0.05);
-        String buildedEq = "";
-        int index = 0;
+        String buildedEq = listChar.get(0).getValue();
 
-        //Ajouter la tolerence
-        /*
-        if(char.getXStart - tolerenceWidth < char2.getXStart && char.getXStart + tolerenceWidth > char2.getXStart)
-        {
-            //Un par dessus l'autre
+        //get le premier char
+        for(int i = 1; i < listChar.size()-1; i++) {
+
+            //Donc un apres lautre
+            /*if (listChar.get(i).getXEnd() < listChar.get(i + 1).getXStart()) {
+                //S'il sont assez proche pour etre des exp/ind
+                if (listChar.get(i + 1).getXStart() - listChar.get(i).getXEnd() < toleranceWidth) {
+                    //TO DO
+                    //Insert tolerance
+                    if (listChar.get(i + 1).getYStart() < listChar.get(i).getYStart()) {
+                        buildedEq += listChar.get(i).getValue() + "^(" + listChar.get(i + 1).getValue() + ")";
+                    } else if (listChar.get(i + 1).getYStart() > listChar.get(i).getYStart()) {
+                        buildedEq += listChar.get(i).getValue() + "_(" + listChar.get(i + 1).getValue() + ")";
+                    }
+                } else {
+                    //Si c'est l'avant dernier, ajouter les deux
+                    if(i+2 == listChar.size())
+                        buildedEq += listChar.get(i).getValue() + "," + listChar.get(i+1).getValue();
+                    else
+                        buildedEq += listChar.get(i).getValue();
+                }
+            }
+            //Donc un par dessus l'autre
+            else {
+                if (listChar.get(i + 1).getXStart() < listChar.get(i).getXStart()) {
+                    if (listChar.get(i + 1).getYStart() > listChar.get(i).getYStart()) {
+                        buildedEq += listChar.get(i + 1).getValue() + "^(" + listChar.get(i).getValue() + ")";
+                    }
+                } else if (listChar.get(i + 1).getXStart() > listChar.get(i).getXStart()) {
+                    if (listChar.get(i + 1).getYStart() > listChar.get(i).getYStart()) {
+                        buildedEq += listChar.get(i).getValue() + "_(" + listChar.get(i + 1).getValue() + ")";
+                    }
+                }*/
+
+
+            if (listChar.get(i).getTop() != null) {
+                String temp = listChar.get(i).getValue() + "^(" + listChar.get(i).getTop().getValue();
+                while (listChar.get(i).getTop().getRight() != null) {
+                    temp += listChar.get(i).getTop().getRight().getValue();
+                    i++;
+                }
+                temp += ")";
+                buildedEq += temp;
+            } else if (listChar.get(i).getBottom() != null) {
+                String temp = listChar.get(i).getValue() + "_(" + listChar.get(i).getTop().getValue();
+                while (listChar.get(i).getRight() != null) {
+                    temp += listChar.get(i).getRight().getValue();
+                    i++;
+                }
+                temp += ")";
+                buildedEq += temp;
+            } else if (listChar.get(i).getRight() != null)
+                buildedEq += listChar.get(i).getRight().getValue();
+
 
         }
 
-        if(char.getXStart + char.getWidth > char2.getXStart)
-        {
-            //Ou fraction
 
-            if(char.getYStart > char2.getYStart)
-                char_(char2)
-             else
-                char^(char2)
-         }
+        /*{
+            //Litteralement char2 dessus char
+            if(listChar.get(i-1).getXStart() - toleranceWidth < listChar.get(i).getXStart() && listChar.get(i-1).getXStart() + toleranceWidth > listChar.get(i).getXStart())
+            {
+                buildedEq += "(" + listChar.get(i).getValue() + "," + listChar.get(i-1).getValue() + ")";
+            }
+            //Si char2 est par dessus char mais pas au complet
+            else if(listChar.get(i-1).getXStart() + listChar.get(i-1).getWidth() + toleranceWidth > listChar.get(i).getXStart() - toleranceWidth)
+            {
+                //TO DO
+                //Fraction
 
-         */
-
-        //get le premier char
-        for(int i = 0; i < listChar.size(); i++)
-            if(listChar.get(i).getXStart() < listChar.get(index).getXStart())
-                index = i;
-
-        buildedEq += listChar.get(index).getValue();
-
+                if(listChar.get(i-1).getYStart() < listChar.get(i).getYStart())
+                    buildedEq += "_(" + listChar.get(i).getValue() + ")";
+                else
+                    buildedEq += "^(" + listChar.get(i).getValue() + ")";
+            }
+            //Un a cote de lautre
+            if(listChar.get(i-1).getXStart() + listChar.get(i-1).getWidth() + toleranceWidth < listChar.get(i).getXStart() - toleranceWidth)
+            {
+                buildedEq += listChar.get(i).getValue();
+            }
+        }*/
 
         //TO DO
-        //Call post traitment
+        //Call post treatment
         return buildedEq;
     }
 }
