@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/NeuralMath.iml" filepath="$PROJECT_DIR$/NeuralMath.iml" />
+      <module fileurl="file://$PROJECT_DIR$/NeuralMathFinal.iml" filepath="$PROJECT_DIR$/NeuralMathFinal.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

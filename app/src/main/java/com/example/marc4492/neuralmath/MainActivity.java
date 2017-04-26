@@ -11,16 +11,20 @@ import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
@@ -51,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
     private RadioGroup defautOption;
 
     private AdapterHome adapterHome;
+
 
     //Preferences
     private SharedPreferences sharedPrefs;
@@ -89,6 +94,11 @@ public class MainActivity extends AppCompatActivity {
                     "u","v","w","x","y","z", "[", "]", "{", "}"
             };
 
+    MathKeyboard mathKeyboard;
+    RelativeLayout mainLayout;
+    MathEditText writingZone;
+    DisplayMetrics screenDimensions;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,13 +122,18 @@ public class MainActivity extends AppCompatActivity {
         langueOption = (RadioGroup) findViewById(R.id.langueOption);
         defautOption = (RadioGroup) findViewById(R.id.defautOption);
 
+        writingZone = (MathEditText) findViewById(R.id.writingZone);
+
+        mathKeyboard = (MathKeyboard) findViewById(R.id.keyboard);
+
         homeRows = new ArrayList<>();
 
         //Getting the screen dimensions
         Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
+        final Point size = new Point();
         display.getSize(size);
         int screenHeight = size.y;
+
 
         //adding home element
         homeRows.add(new HomeRow(this, R.drawable.camera, getResources().getString(R.string.photo)));
@@ -161,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
         //Préférence
         sharedPrefs = getPreferences(Context.MODE_PRIVATE);
 
-        //on crée les préférences si elles n'existe pas
+        //on crée les préférences si elles n'existent pas
         if (!sharedPrefs.contains("layout") && !sharedPrefs.contains("langue") && !sharedPrefs.contains("defaut")) {
             try {
                 ((RadioButton) layoutOption.getChildAt(0)).setChecked(true);
@@ -194,6 +209,33 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+
+        /* ------------------------------------------------
+         * code from: http://stackoverflow.com/a/13975236
+         * author: Eddie Sullivan
+         * consulted date: 22 March 2017
+         */
+        // Update the EditText so it won't popup Android's own keyboard, since I have my own.
+        writingZone.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                v.onTouchEvent(event);
+                InputMethodManager imm = (InputMethodManager)v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null) {
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                }
+                return true;
+            }
+        });
+        //--------------------------------------------------
+
+        writingZone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mathKeyboard.openKeyboard(writingZone, size);
+            }
+        });
 
 
     }
@@ -422,8 +464,8 @@ public class MainActivity extends AppCompatActivity {
      */
     void openKeyboard(){
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
-        Toast.makeText(this, "keyboard", Toast.LENGTH_SHORT).show();
-        //activity_main.setDisplayedChild();
+        activity_main.setDisplayedChild(3);
+        mathKeyboard.setCorrectionMode(false);
     }
 
     /**
