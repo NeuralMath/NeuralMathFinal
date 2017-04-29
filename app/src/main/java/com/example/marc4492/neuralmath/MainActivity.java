@@ -444,9 +444,8 @@ public class MainActivity extends AppCompatActivity {
      * Open the photo mode page
      */
     void openPhoto(){
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
-        Toast.makeText(this, "photo", Toast.LENGTH_SHORT).show();
-        //activity_main.setDisplayedChild();
+        Intent i = new Intent(context, CameraActivity.class);
+        startActivityForResult(i, 1);
     }
 
     /**

@@ -15,4 +15,8 @@
     <string name="confirmer">Confirmer</string>
     <string name="clear">Effacer</string>
     <string name="done">Terminer</string>
+    <string name="callCam">CAMÉRA</string>
+    <string name="callGal">GALLERIE</string>
+    <string name="cropNotSupported">Désolé, votre appareil ne supporte pas l\'action pour rogner</string>
+    <string name="description">image view pour visionner les resultats lors des tests</string>
 </resources>

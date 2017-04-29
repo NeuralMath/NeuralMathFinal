@@ -339,7 +339,6 @@ public class MathKeyboard extends GridLayout {
                     }
                     break;
             }
-
         }
     };
 
@@ -521,7 +520,6 @@ public class MathKeyboard extends GridLayout {
             key[i + 28].getBackground().setColorFilter(new LightingColorFilter(0xFFFFFFFF, 0xFFAA0000));
 
         btn.getBackground().setColorFilter(new LightingColorFilter(0xAAAABB00, 0xFFAA0000));
-
     }
 
     /**
