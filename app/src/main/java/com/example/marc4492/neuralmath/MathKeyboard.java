@@ -170,7 +170,7 @@ public class MathKeyboard extends GridLayout {
         confirmBtn = new Button(context);
         confirmBtn.getBackground().setColorFilter(new LightingColorFilter(0xFFFFFFFF, 0xFFAA0000));
         confirmBtn.setLayoutParams(btnParams);
-        confirmBtn.setText("OK");
+        confirmBtn.setText(R.string.ok);
         confirmBtn.setOnClickListener(confirmClickListener);
         addView(confirmBtn);
 

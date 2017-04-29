@@ -4,7 +4,7 @@
     <string name="ecrire">Écrire</string>
     <string name="clavier">Clavier</string>
     <string name="parametres">Paramètres</string>
-    <string name="accueil" translatable="false">Accueil</string>
+    <string name="accueil">Accueil</string>
     <string name="layout">Layout</string>
     <string name="langue">Langue</string>
     <string name="mode_par_defaut">Mode par défaut</string>
@@ -19,4 +19,16 @@
     <string name="callGal">GALLERIE</string>
     <string name="cropNotSupported">Désolé, votre appareil ne supporte pas l\'action pour rogner</string>
     <string name="description">image view pour visionner les resultats lors des tests</string>
+    <string name="database_error">Probleme de database</string>
+    <string name="network_accessibility_error">Réseau de neurone inacessible.</string>
+    <string name="welcome">Bienvenue !</string>
+    <string name="transfer_fichier_1">Transfère du fichier texte 1/2</string>
+    <string name="transfere_seul_fois">Ce transfère n\'arrivera qu\'une seule fois!</string>
+    <string name="transfer_fichier_2">Transfère du fichier texte 2/2</string>
+    <string name="txt_file_error">Erreur de fichier texte</string>
+    <string name="access_camera">CAMERA permission allow us to access CAMERA app</string>
+    <string name="permission_granted">Permission accordée</string>
+    <string name="permission_cancelled">Permission refusée</string>
+    <string name="select_img_gallery">Selectionnez une image de la gallerie</string>
+    <string name="ok">OK</string>
 </resources>

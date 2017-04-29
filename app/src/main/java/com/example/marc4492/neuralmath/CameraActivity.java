@@ -89,7 +89,7 @@ public class CameraActivity extends AppCompatActivity {
 
         if(ActivityCompat.shouldShowRequestPermissionRationale(CameraActivity.this, android.Manifest.permission.CAMERA))
         {
-            Toast.makeText(this, "CAMERA permission allow us to access CAMERA app", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.access_camera, Toast.LENGTH_SHORT).show();
         }
         else
         {
@@ -106,11 +106,11 @@ public class CameraActivity extends AppCompatActivity {
             {
                 if(grantResults.length>0 && grantResults[0]==PackageManager.PERMISSION_GRANTED)
                 {
-                    Toast.makeText(this, "Permission granted", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.permission_granted, Toast.LENGTH_SHORT).show();
                 }
                 else
                 {
-                    Toast.makeText(this, "Permission cancelled", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.permission_cancelled, Toast.LENGTH_SHORT).show();
                 }
             }
             break;
@@ -120,7 +120,7 @@ public class CameraActivity extends AppCompatActivity {
     private void GalleryOpen()
     {
         galIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(Intent.createChooser(galIntent, "Select image from gallery"),2);
+        startActivityForResult(Intent.createChooser(galIntent, getString(R.string.select_img_gallery)),2);
 
     }
 

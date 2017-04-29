@@ -188,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
             }
             catch (IOException ex)
             {
-                Toast.makeText(this, "Probleme de database", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.database_error, Toast.LENGTH_SHORT).show();
             }
         }
         else {
@@ -205,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 createNetworkDecoder();
             } catch (IOException ex) {
-                Toast.makeText(context, "Réseau de neurone inacessible.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, R.string.network_accessibility_error, Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -339,14 +339,14 @@ public class MainActivity extends AppCompatActivity {
      * @throws NumberFormatException    Mauvais format de données
      */
     private void firstTimeOnApp() throws IOException, NumberFormatException {
-        Toast.makeText(context, "Bienvenue !", Toast.LENGTH_LONG).show();
+        Toast.makeText(context, R.string.welcome, Toast.LENGTH_LONG).show();
 
         final ProgressDialog progress = new ProgressDialog(this);
         progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         progress.setIndeterminate(false);
         progress.setCancelable(false);
-        progress.setTitle("Transfère du fichier texte 1/2");
-        progress.setMessage("Ce transfère n'arrivera qu'une seule fois!");
+        progress.setTitle(getString(R.string.transfer_fichier_1));
+        progress.setMessage(getString(R.string.transfere_seul_fois));
         progress.setProgress(0);
         progress.setMax(INPUT);
         progress.show();
@@ -361,7 +361,7 @@ public class MainActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            progress.setTitle("Transfère du fichier texte 2/2");
+                            progress.setTitle(getString(R.string.transfer_fichier_2));
                             progress.setProgress(0);
                             progress.setMax(HIDDEN);
                         }
@@ -379,7 +379,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 catch(IOException ex)
                 {
-                    Log.e("MARDDEEEEE", "Transfer", ex);
+                    Toast.makeText(context, R.string.txt_file_error, Toast.LENGTH_SHORT).show();
                 }
             }
         }).start();
