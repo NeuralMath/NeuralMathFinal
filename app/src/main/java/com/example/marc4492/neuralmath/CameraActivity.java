@@ -20,45 +20,37 @@ import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.Toast;
+
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 
 public class CameraActivity extends AppCompatActivity {
-
-    File file;
-    Uri uri;
-    Intent camIntent, galIntent, cropIntent;
-    final int RequestPermissionCode=1;
-    String fileName = "";
-
-    Button camButton;
-    Button galButton;
-
-    ImageView imageView1; //Pour tester la fonction toBinary(bitmapGraysacle)
-
-    Bitmap bitmap; //conversion image-bitmap, bitmap-grayscaleBitmap grayscaleBitmap-binaryBitmap
+    private Uri uri;
+    private final int RequestPermissionCode = 1;
+    private ImageDecoder imageDecoder;
+    private Bitmap bitmap;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.camera_layout);
 
-        imageView1 = (ImageView) findViewById(R.id.imageView1); //Pour tester la fonction toBinary(bitmapGraysacle)
+        imageDecoder = MainActivity.getImageDecoder();
 
         //Button to launch cam intent
-        camButton = (Button) findViewById(R.id.camButton);
+        Button camButton = (Button) findViewById(R.id.camButton);
         camButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -67,7 +59,7 @@ public class CameraActivity extends AppCompatActivity {
         });
 
         //Button to launch gallery intent
-        galButton = (Button) findViewById(R.id.galButton);
+        Button galButton = (Button) findViewById(R.id.galButton);
         galButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -77,61 +69,63 @@ public class CameraActivity extends AppCompatActivity {
 
         //Permission camera
         int PermissionCheck = ContextCompat.checkSelfPermission(CameraActivity.this, android.Manifest.permission.CAMERA);
-        if(PermissionCheck == PackageManager.PERMISSION_DENIED)
-        {
+        if (PermissionCheck == PackageManager.PERMISSION_DENIED)
             RequestRuntimePermission();
-        }
-        Bundle extras;
     }
-//Request permission for camera if it's not allowed yet
-    private void RequestRuntimePermission()
-    {
 
-        if(ActivityCompat.shouldShowRequestPermissionRationale(CameraActivity.this, android.Manifest.permission.CAMERA))
-        {
+    //Request permission for camera if it's not allowed yet
+    private void RequestRuntimePermission() {
+
+        if (ActivityCompat.shouldShowRequestPermissionRationale(CameraActivity.this, android.Manifest.permission.CAMERA))
             Toast.makeText(this, R.string.access_camera, Toast.LENGTH_SHORT).show();
-        }
         else
-        {
-            ActivityCompat.requestPermissions(CameraActivity.this,new String[]{android.Manifest.permission.CAMERA},RequestPermissionCode);
-        }
+            ActivityCompat.requestPermissions(CameraActivity.this, new String[]{android.Manifest.permission.CAMERA}, RequestPermissionCode);
     }
-//PERMISSIONS
+
+    //PERMISSIONS
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
-    {
-        switch (requestCode)
-        {
-            case RequestPermissionCode:
-            {
-                if(grantResults.length>0 && grantResults[0]==PackageManager.PERMISSION_GRANTED)
-                {
-                    Toast.makeText(this, R.string.permission_granted, Toast.LENGTH_SHORT).show();
-                }
-                else
-                {
-                    Toast.makeText(this, R.string.permission_cancelled, Toast.LENGTH_SHORT).show();
-                }
-            }
-            break;
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == RequestPermissionCode) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                Toast.makeText(this, R.string.permission_granted, Toast.LENGTH_SHORT).show();
+            else
+                Toast.makeText(this, R.string.permission_cancelled, Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void GalleryOpen()
-    {
-        galIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(Intent.createChooser(galIntent, getString(R.string.select_img_gallery)),2);
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(bitmap != null)
+        {
+            try {
+                //http://stackoverflow.com/a/14292451/5224674
+                //Pour passer la reponse à lactivité principale
+                Intent intent = new Intent();
+                intent.putExtra("EQUATION", imageDecoder.findSting(bitmap));
+                setResult(RESULT_OK, intent);
+                onBackPressed();
+            }
+            catch (IOException ex)
+            {
+                Toast.makeText(this, getString(R.string.problem_image_decoder), Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    private void GalleryOpen() {
+        Intent galIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(Intent.createChooser(galIntent, getString(R.string.select_img_gallery)), 2);
 
     }
 
-    private void CameraOpen()
-    {
-        camIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        fileName = "file"+String.valueOf(System.currentTimeMillis())+".jpg";
-        file = new File(Environment.getExternalStorageDirectory(), fileName);
+    private void CameraOpen() {
+        Intent camIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        String fileName = "NeuralMath_" + String.valueOf(System.currentTimeMillis()) + ".jpg";
+        File file = new File(Environment.getExternalStorageDirectory(), fileName);
         uri = Uri.fromFile(file);
 
-        camIntent.putExtra(MediaStore.EXTRA_OUTPUT,uri);
+        camIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
         camIntent.putExtra("return data", true);
 
         startActivityForResult(camIntent, 0);
@@ -139,20 +133,20 @@ public class CameraActivity extends AppCompatActivity {
 
     /**
      * Crop picture after having taken it with camera or selected it from gallery
+     *
      * @param picUri Uri de la photo prise
      */
-    private void CropImage(Uri picUri)
-    {
+    private void CropImage(Uri picUri) {
         try {
 
-            cropIntent = new Intent("com.android.camera.action.CROP");
+            Intent cropIntent = new Intent("com.android.camera.action.CROP");
 
             cropIntent.setDataAndType(picUri, "image/*");
             cropIntent.putExtra("crop", "true");
-            cropIntent.putExtra("aspectX", 4);
-            cropIntent.putExtra("aspectY", 1);
-            cropIntent.putExtra("outputX", 1200);
-            cropIntent.putExtra("outputY", 300);
+            //cropIntent.putExtra("aspectX", 4);
+            //cropIntent.putExtra("aspectY", 1);
+            //cropIntent.putExtra("outputX", 1200);
+            //cropIntent.putExtra("outputY", 300);
             cropIntent.putExtra("scaleUpIfNeeded", true);
             cropIntent.putExtra("return-data", true);
 
@@ -169,43 +163,45 @@ public class CameraActivity extends AppCompatActivity {
 
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
-        if(requestCode==0 && resultCode==RESULT_OK)
-        {
-             CropImage(uri);
-        }
-        else
-        {
-            if(requestCode==2)
-            {
-                if(data!=null)
-                {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 0 && resultCode == RESULT_OK)
+            CropImage(uri);
+        else {
+            if (requestCode == 2) {
+                if (data != null) {
                     uri = data.getData();
                     CropImage(uri);
                 }
             }
         }
-        if (data != null) //http://stackoverflow.com/questions/14534625/how-to-get-correct-path-after-cropping-the-image
-        {
-            Bundle extras = data.getExtras();
-            bitmap= extras.getParcelable("data");
-           // imageView1.setImageBitmap(bitmap);
 
-            bitmap = toGrayscale(bitmap);
-            // imageView1.setImageBitmap(bitmap);
+        //SI ON ANNULE LE CROP CA CRASH****************************************************************************************
+        //http://stackoverflow.com/questions/14534625/how-to-get-correct-path-after-cropping-the-image
+        if (data != null) {
+            Bundle extras = data.getExtras();
+            bitmap = extras.getParcelable("data");
+
+            bitmap = toGrayScale(bitmap);
 
             bitmap = toBinary(bitmap);
-            //imageView1.setImageBitmap(bitmap); //Pour tester la fonction toBinary(bitmapGraysacle)
+
+            FileOutputStream out;
+            try {
+                out = new FileOutputStream(Environment.getExternalStorageDirectory() + "/NeuralMath/bob.jpg");
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
     /**
      * Convert picture taken(and cropped) to a grayscale bitmap
+     *
      * @param bmpOriginal le bitmap qui sort de la camera/qui vient d'etre rognée
      * @return bitmap converti en grayscale
      */
-    public Bitmap toGrayscale(Bitmap bmpOriginal) //http://stackoverflow.com/questions/3373860/convert-a-bitmap-to-grayscale-in-android
+    public Bitmap toGrayScale(Bitmap bmpOriginal) //http://stackoverflow.com/questions/3373860/convert-a-bitmap-to-grayscale-in-android
     {
         int width, height;
         height = bmpOriginal.getHeight();
@@ -224,6 +220,7 @@ public class CameraActivity extends AppCompatActivity {
 
     /**
      * Threshold the picture (from grayscale)
+     *
      * @param bmpGrayscale bitmap qui vient d'etre converti en grayscale
      * @return bitmap qui a été converti en noir et blanc (image binaire/ threshold)
      */
@@ -235,29 +232,19 @@ public class CameraActivity extends AppCompatActivity {
         threshold = 156; //Best overall value (tested) with optimal lighting
         Bitmap bmpBinary = Bitmap.createBitmap(bmpGrayscale);
 
-        for(int x = 0; x < width; ++x) {
-            for(int y = 0; y < height; ++y) {
+        for (int x = 0; x < width; ++x) {
+            for (int y = 0; y < height; ++y) {
                 // get one pixel color
                 int pixel = bmpGrayscale.getPixel(x, y);
-                int gray = (int)(Color.red(pixel) * 0.3 + Color.green(pixel) * 0.59 + Color.blue(pixel) * 0.11);
+                int gray = (int) (Color.red(pixel) * 0.3 + Color.green(pixel) * 0.59 + Color.blue(pixel) * 0.11);
 
                 //get binary value
-                if(gray < threshold){
+                if (gray < threshold)
                     bmpBinary.setPixel(x, y, 0xFF000000);
-                } else{
+                else
                     bmpBinary.setPixel(x, y, 0xFFFFFFFF);
-                }
             }
         }
         return bmpBinary;
     }
-
-    /**
-     * @return bitmap noir et blanc / bitmap binaire / threshold bitmap
-     */
-    private Bitmap getThresholdBitmap()
-    {
-        return bitmap;
-    }
-
 }

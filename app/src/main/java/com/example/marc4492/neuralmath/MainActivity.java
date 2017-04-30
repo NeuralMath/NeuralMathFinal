@@ -7,12 +7,10 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
-import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -241,7 +239,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void createNetworkDecoder() throws IOException {
-        imageDecoder = new ImageDecoder(INPUT, HIDDEN, OUTPUT, TRAININGRATE, database, charList, new NeuralNetwork.OnNetworkReady() {
+        imageDecoder = new ImageDecoder(context, INPUT, HIDDEN, OUTPUT, TRAININGRATE, database, charList, new NeuralNetwork.OnNetworkReady() {
             @Override
             public void ready(boolean value) {
                 runOnUiThread(new Runnable() {
@@ -255,8 +253,6 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
         });
-        adapterHome.getItem(3).setText(imageDecoder.findSting(BitmapFactory.decodeResource(getResources(), R.drawable.exposant)));
-        adapterHome.notifyDataSetChanged();
     }
 
     @Override

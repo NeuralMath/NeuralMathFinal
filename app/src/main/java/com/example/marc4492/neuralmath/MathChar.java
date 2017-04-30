@@ -1,7 +1,6 @@
 package com.example.marc4492.neuralmath;
 
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
 
 import java.io.IOException;
@@ -10,53 +9,45 @@ import java.util.ArrayList;
 public class MathChar {
 
     private Bitmap image;
+
     private int xStart = 0;
     private int yStart = 0;
     private int xEnd;
     private int yEnd;
+    private int xMiddle;
+    private int yMiddle;
     private int width = 0;
-    private int height = 0;
-    private String value ="";
 
-    private MathChar right = null;
-    private MathChar top = null;
-    private MathChar bottom = null;
+    private int isInFraction = 0;
+
+    private String value = "";
 
     private ArrayList<MathChar> listInner = new ArrayList<>();
     private static ArrayList<MathChar> listFinal = new ArrayList<>();
 
-    public MathChar(Bitmap b, int x, int y, int w, int h) {
+    public MathChar(Bitmap b, int x, int y, int w, int h, int isFrac) {
         image = b;
         xStart = x;
         yStart = y;
+
         xEnd = x + w;
         yEnd = y + h;
-        width = w;
-        height = h;
-    }
 
-    public MathChar(MathChar mC)
-    {
-        image = mC.image;
-        xStart = mC.xStart;
-        yStart = mC.yStart;
-        xEnd = mC.xEnd;
-        yEnd = mC.yEnd;
-        width = mC.width;
-        height = mC.height;
-        right = mC.right;
-        top = mC.top;
-        bottom = mC.bottom;
+        isInFraction = isFrac;
+
+        xMiddle = (xStart + xEnd)/2;
+        yMiddle = (yStart + yEnd)/2;
+
+        width = w;
     }
 
     public Bitmap getImage() {
         return image;
     }
 
-    public ArrayList<MathChar> getListChar() {
+    public ArrayList<MathChar> getStaticList() {
         return listFinal;
     }
-
 
     public void setValue(String value) {
         this.value = value;
@@ -87,84 +78,40 @@ public class MathChar {
         return width;
     }
 
-    public int getHeight() {
-        return height;
+    public int getXMiddle() {
+        return xMiddle;
     }
 
-    public MathChar getRight() {
-        return right;
+    public int getYMiddle() {
+        return yMiddle;
     }
 
-    public MathChar getTop() {
-        return top;
+    public int getIsInFraction() {
+        return isInFraction;
     }
 
-    public MathChar getBottom() {
-        return bottom;
+    public void setIsInFraction(int inFraction) {
+        isInFraction = inFraction;
     }
 
     /**
      * Split toutes les char dans l'image
-     * @param vertical      Si l'on split verticalement ou pas
+     * @param isSplitVertical      Si l'on split verticalement ou pas
      * @throws IOException  S'il y a des problemes avec le splitage
      */
-    public void splitChar(boolean vertical) throws IOException {
-        if (vertical)
+    public void splitChar(boolean isSplitVertical) throws IOException {
+        if (isSplitVertical)
             splitVertical();
         else
             splitHorizontal();
 
-        if (listInner.size() == 0)
-        {
-            boolean needAdd = true;
-            for(MathChar mC : listFinal)
-            {
-                if(mC.getTop() != null) {
-                    for (MathChar mCInner : mC.getTop().getListChar()) {
-                        if (mCInner == this) {
-                            needAdd = false;
-                            break;
-                        }
-                    }
-                }
-
-                if(needAdd && mC.getBottom() != null) {
-                    for (MathChar mCInner : mC.getBottom().getListChar()) {
-                        if (mCInner == this) {
-                            needAdd = false;
-                            break;
-                        }
-                    }
-                }
-            }
-            if(needAdd)
-                listFinal.add(this);
-        }
-
+        //Si le découpage est fini
+        if(listInner.size() == 0)
+            listFinal.add(this);
         else
-            /*for (int i = 0; i < listInner.size(); i++) {
-                if (vertical) {
-                    if (i != listInner.size() - 1) {
-                        listInner.get(i).right = listInner.get(i + 1);
-                    }
-                } else {
-                    if (i != listInner.size() - 1) {
-                        if (i == 0) {
-                            listInner.get(i).bottom = listInner.get(i + 1);
-                        } else if (i == listInner.size() - 1) {
-                            listInner.get(i).top = listInner.get(i - 1);
-                        } else {
-                            listInner.get(i).top = listInner.get(i - 1);
-                            listInner.get(i).bottom = listInner.get(i + 1);
-                        }
-                    }
-                }
-
-            }*/
-            for(MathChar mC : listInner)
-                mC.splitChar(!vertical);
+            for (MathChar mC : listInner)
+                mC.splitChar(!isSplitVertical);
     }
-
 
 
 
@@ -178,7 +125,6 @@ public class MathChar {
     {
         ArrayList<Integer> listBlack = new ArrayList<>();
         int pixel;
-
         int newWidth;
 
         //Check chaque colonne pour voir si elle est blanche : check si + noir que blanc
@@ -204,17 +150,16 @@ public class MathChar {
                 while(i < listBlack.size() && listBlack.get(i) - listBlack.get(i-1) == 1)
                     i++;
 
-                newWidth = listBlack.get(i-1)-start;
+                if(listBlack.get(i-1) != 0)
+                    newWidth = listBlack.get(i-1)-start;
+                else
+                    newWidth = listBlack.get(i);
 
-                listInner.add(new MathChar(crop(image, start, 0, newWidth, image.getHeight()), start + xStart, yStart, newWidth, image.getHeight()));
+                listInner.add(new MathChar(crop(image, start, 0, newWidth, image.getHeight()), start + xStart, yStart, newWidth, image.getHeight(), isInFraction));
 
-                if(i < listBlack.size())
+                if(i < listBlack.size()-1)
                     start = listBlack.get(i);
                 i++;
-            }
-            for(int j = listInner.size()-1; j > 0; j--) {
-                listInner.get(j - 1).right = listInner.get(j);
-                listInner.remove(j);
             }
         }
     }
@@ -228,7 +173,6 @@ public class MathChar {
     {
         ArrayList<Integer> listBlack = new ArrayList<>();
         int pixel;
-
         int newHeight;
 
         //Check chaque colonne pour voir si elle est blanche : check chaque couleurs pour les val hex
@@ -247,7 +191,6 @@ public class MathChar {
         {
             int start = listBlack.get(0);
             int i = 1;
-            MathChar temp = null;
             //Passer au travers de toutes les lignes
             while(i < listBlack.size())
             {
@@ -255,17 +198,31 @@ public class MathChar {
                 while(i < listBlack.size() && listBlack.get(i) - listBlack.get(i-1) == 1)
                     i++;
 
-                newHeight = listBlack.get(i-1)-start;
+                if(listBlack.get(i-1) != 0)
+                    newHeight = listBlack.get(i-1)-start;
+                else
+                    newHeight = listBlack.get(i);
 
-                listInner.add(new MathChar(crop(image, 0, start,image .getWidth(), newHeight), xStart, start + yStart, image.getWidth(), newHeight));
+                listInner.add(new MathChar(crop(image, 0, start,image .getWidth(), newHeight), xStart, start + yStart, image.getWidth(), newHeight, isInFraction));
 
                 if(i < listBlack.size())
                     start = listBlack.get(i);
                 i++;
             }
-            for(int j = listInner.size()-1; j > 0; j--) {
-                listInner.get(j - 1).bottom = listInner.get(j);
-                listInner.remove(j);
+
+            //Probablement des fractions
+            if(listInner.size() >= 7) {
+                for (MathChar mC : listInner)
+                    mC.isInFraction = isInFraction + 3;
+            }
+            else if(listInner.size() >= 5) {
+                for (MathChar mC : listInner)
+                    mC.isInFraction = isInFraction + 2;
+            }
+            else if(listInner.size() >= 3)
+            {
+                for (MathChar mC : listInner)
+                    mC.isInFraction = isInFraction + 1;
             }
         }
     }
@@ -284,53 +241,5 @@ public class MathChar {
     private Bitmap crop(Bitmap bitmap, int startX, int startY, int width, int height) throws IOException
     {
         return Bitmap.createBitmap(bitmap, startX, startY, width, height);
-    }
-
-    /**
-     * Changer la grandeur de l'image en gardant le ratio
-     *
-     * @param bitmap        L'image
-     * @return              L'image resized
-     * @throws IOException    S'il y a des problèmes
-     */
-    private Bitmap resize(Bitmap bitmap, int width, int height) throws IOException
-    {
-        return Bitmap.createScaledBitmap(bitmap, width, height, false);
-    }
-
-    private Bitmap fillImage(Bitmap btm)
-    {
-        int width = btm.getWidth();
-        int height = btm.getHeight();
-
-        int borderSize = 5;
-
-        Bitmap newImage;
-        Canvas canvas;
-
-        if(width < height)
-        {
-            newImage = Bitmap.createBitmap(height + 2*borderSize, height + 2*borderSize, btm.getConfig());
-            canvas = new Canvas(newImage);
-            canvas.drawColor(Color.WHITE);
-            canvas.drawBitmap(btm, (newImage.getWidth()-width)/2, borderSize, null);
-            return newImage;
-        }
-        else if (height < width)
-        {
-            newImage = Bitmap.createBitmap(width + 2*borderSize, width + 2*borderSize, btm.getConfig());
-            canvas = new Canvas(newImage);
-            canvas.drawColor(Color.WHITE);
-            canvas.drawBitmap(btm, borderSize, (newImage.getHeight()-height)/2, null);
-            return newImage;
-        }
-        else
-        {
-            newImage = Bitmap.createBitmap(width + 2*borderSize, height + 2*borderSize, btm.getConfig());
-            canvas = new Canvas(newImage);
-            canvas.drawColor(Color.WHITE);
-            canvas.drawBitmap(btm, borderSize, borderSize, null);
-            return newImage;
-        }
     }
 }

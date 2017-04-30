@@ -1,11 +1,16 @@
 package com.example.marc4492.neuralmath;
 
+import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * Class qui contient le réseau de neurones et qui obtient l'équation en string
@@ -15,12 +20,11 @@ import java.util.ArrayList;
  */
 
 public class ImageDecoder {
-    private ArrayList<MathChar> listChar;
-    private NeuralNetwork network;
     private String[] charList;
 
-    private int totalWidth;
-    private int totalHeight;
+    private int originalTolWidth;
+
+    private Context context;
 
     /**
      * Contructeur qui initialise le réseau
@@ -33,11 +37,10 @@ public class ImageDecoder {
      *
      * @throws IOException S'il y a des problèmes de fichier, ...
      */
-    public ImageDecoder(final int input, final int hidden, final int output, final double training, final SQLiteDatabase database, String[] charListing, NeuralNetwork.OnNetworkReady listener) throws IOException {
-        listChar = new ArrayList<>();
-        charList = charListing;
+    public ImageDecoder(Context c, final int input, final int hidden, final int output, final double training, final SQLiteDatabase database, String[] charListing) throws IOException {
+        context = c;
 
-        //network = new NeuralNetwork(input, hidden, output, training, database, listener);
+        charList = charListing;
     }
 
     /**
@@ -48,35 +51,107 @@ public class ImageDecoder {
      * @throws IOException S'il y a des problème avec l'image
      */
     public String findSting(Bitmap btm) throws IOException {
-        totalHeight = btm.getHeight();
-        totalWidth = btm.getWidth();
+        ArrayList<MathChar> listChar;
+        int totalHeight = btm.getHeight();
+        int totalWidth = btm.getWidth();
 
-        listChar.clear();
+        //Split tous les chars
+        listChar = splitChar(btm);
+
+        //Trier par ordre croisant de l'ordre d'arriver (x)
+        Collections.sort(listChar, new Comparator<MathChar>() {
+            @Override
+            public int compare(MathChar mathChar, MathChar t1) {
+                return mathChar.getXStart() - t1.getXStart();
+            }
+        });
+
+        for(int i = 0; i < listChar.size(); i++)
+            listChar.get(i).setValue(String.valueOf(i));
+
+        originalTolWidth = (int) (totalWidth *0.1);
+        int originalTolHeight = (int) (totalHeight * 0.1);
+
+        return postTreatment(replaceChar(listChar, originalTolWidth, originalTolHeight));
+    }
+
+    /**
+     * Replacer les exposant, les indices et les fractions
+     *
+     * @param listChar      Liste des l'élements à comparer
+     * @return              La String résultante
+     */
+    private String replaceChar(ArrayList<MathChar> listChar, int toleranceWidth, int toleranceHeight) {
         String line = "";
+        boolean notCheckingLast = false;
+        int indexToLook = 0;
+        ArrayList<MathChar> listFraction = new ArrayList<>();
 
-        //Split toutes les chars
-        splitChar(btm);
-        int index = 0;
-        //Add le char dans l'eq
-        for (int i = 0; i < listChar.size(); i++) {
-            //int[] pix = getIOPixels(listChar.get(i).getImage());
-            //int index = network.getAnwser(pix);
-
-            listChar.get(i).setValue(charList[index]);
-
-            if(listChar.get(i).getTop() != null)
-                listChar.get(i).getTop().setValue(charList[index+1]);
-            if(listChar.get(i).getBottom() != null)
-                listChar.get(i).getBottom().setValue(charList[index+1]);
-
-            //TO DO
-            //line += charList[index];
-
-            index++;
+        //si le premier char n'est pas dans un fraction
+        int index;
+        if(listChar.get(0).getIsInFraction() == 0) {
+            line += listChar.get(0).getValue();
+            index = 1;
         }
-        line += replaceChar();
+        else
+            index = 0;
 
+        //Repalcer les caractères
+        for(; index < listChar.size(); index++)
+        {
+            if(!notCheckingLast)
+                indexToLook = index - 1;
+
+            //Si fraction
+            if(listChar.get(index).getIsInFraction() > 0) {
+                notCheckingLast = true;
+                indexToLook = index;
+                listFraction.clear();
+                while (index < listChar.size() && listChar.get(index).getIsInFraction() > 0) {
+                    listFraction.add(listChar.get(index));
+                    index++;
+                }
+                line = findFraction(line, listFraction, toleranceHeight/2);
+                if(index < listChar.size())
+                    index--;
+            }
+            //Si un =
+            else if(Math.abs(listChar.get(index).getWidth() - listChar.get(indexToLook).getWidth()) < toleranceWidth/2 && Math.abs(listChar.get(index).getXMiddle() - listChar.get(indexToLook).getXMiddle()) < toleranceWidth/2 && Math.abs(listChar.get(index).getYEnd() - listChar.get(indexToLook).getYStart()) < 1.5*toleranceHeight)
+                line = line.substring(0, line.length()-1) + "=";
+
+            //Si un à côté de l'autre
+            else if(isBeside(listChar.get(indexToLook), listChar.get(index), toleranceHeight)) {
+                notCheckingLast = false;
+                line += listChar.get(index).getValue();
+            }
+
+            //Si un exposant
+            else if(listChar.get(index).getYEnd() <= listChar.get(indexToLook).getYMiddle()) {
+                notCheckingLast = true;
+                line = findExposant(listChar, line, toleranceHeight/2, index);
+            }
+
+            //Si un indice
+            else if(listChar.get(index).getYStart() > listChar.get(indexToLook).getYMiddle()) {
+                notCheckingLast = true;
+                line = findIndice(listChar, line, toleranceHeight/2, index);
+            }
+            else
+                Toast.makeText(context, "Le découpage de caractère ne s'est pas déroulé normalement", Toast.LENGTH_LONG).show();
+        }
         return line;
+    }
+
+    /**
+     * Vérification si deux élements sont un à coté de l'autre selon une tolérance.
+     *
+     * @param first                 Premier élement à comparer
+     * @param second                Premier élement à comparer
+     * @param tolerance             Tolérance autorisée
+     * @return                      Si les deux élements sont un à coté de l'autre
+     */
+    private boolean isBeside(MathChar first, MathChar second, int tolerance) {
+        return Math.abs(second.getYMiddle() - first.getYMiddle()) <= tolerance;
     }
 
     /**
@@ -85,14 +160,147 @@ public class ImageDecoder {
      * @param btm               L'image à analyser
      * @throws IOException        S'il y a des problèmes
      */
-    private void splitChar(Bitmap btm) throws IOException
+    private ArrayList<MathChar> splitChar(Bitmap btm) throws IOException
     {
-        MathChar mC = new MathChar(btm, 0, 0, btm.getWidth(), btm.getHeight());
-        mC.getListChar().clear();
+        MathChar mC = new MathChar(btm, 0, 0, btm.getWidth(), btm.getHeight(), 0);
         mC.splitChar(true);
-        for(MathChar mCInnerFirst : mC.getListChar())
-            listChar.add(mCInnerFirst);
+        return mC.getStaticList();
     }
+
+
+    /**
+     * Obtenir les exposants dans une équation
+     *
+     * @param listChar              List des élements à vérifier
+     * @param line                  String comprenant le début de l'équation
+     * @param toleranceHeight       La tolérence en hauteur pour accepter qu'ils sont un a coté de l'autre
+     * @param index                 Index de la premiere postion à vérifier dans la list
+     * @return                      La String complèter avec les exposants
+     */
+    public String findExposant(ArrayList<MathChar> listChar, String line,  int toleranceHeight, int index)
+    {
+        line += "^(" + listChar.get(index).getValue();
+        if(index < listChar.size()-1) {
+            index++;
+            while (index < listChar.size()) {
+                //S'il sont un à coté de l'autre
+                if(isBeside(listChar.get(index - 1), listChar.get(index), toleranceHeight))
+                    line += listChar.get(index).getValue();
+                //S'il sont en exposants
+                else if(listChar.get(index).getYEnd() <= listChar.get(index-1).getYMiddle())
+                    line = findExposant(listChar, line, toleranceHeight, index);
+
+                //Sinon sortir
+                else
+                    break;
+                index++;
+            }
+        }
+        line += ")";
+
+        return line;
+    }
+
+    /**
+     * Obtenir les indices dans une équation
+     *
+     * @param listChar              List des élements à vérifier
+     * @param line                  String comprenant le début de l'équation
+     * @param toleranceHeight       La tolérence en hauteur pour accepter qu'ils sont un a coté de l'autre
+     * @param index                 Index de la premiere postion à vérifier dans la list
+     * @return                      La String complèter avec les indices
+     */
+    public String findIndice(ArrayList<MathChar> listChar, String line,  int toleranceHeight, int index)
+    {
+        line += "_(" + listChar.get(index).getValue();
+        if(index < listChar.size()-1) {
+            index++;
+            while (index < listChar.size()) {
+                //S'il sont un à coté de l'autre
+                if(isBeside(listChar.get(index - 1), listChar.get(index), toleranceHeight))
+                    line += listChar.get(index).getValue();
+
+                //S'il sont en indices
+                else if(listChar.get(index).getYStart() > listChar.get(index -1).getYMiddle())
+                    line = findIndice(listChar, line, toleranceHeight, index);
+
+                //Sinon sortir
+                else
+                    break;
+                index++;
+            }
+        }
+        line += ")";
+
+        return line;
+    }
+
+    /**
+     * Obtenir les fractions dans la liste fournie
+     *
+     * @param line                      Le début de l'équation
+     * @param list                      La liste à vérifier
+     * @param tolerenceHeight           La tolérence en hauteur pour accepter qu'ils sont un a coté de l'autre
+     * @return                          La String complèté avec les fractions
+     */
+    private String findFraction(String line, ArrayList<MathChar> list, int tolerenceHeight)
+    {
+        ArrayList<MathChar> listTopFraction = new ArrayList<>();
+        ArrayList<MathChar> listBottomFraction = new ArrayList<>();
+        int indexBarreFraction = 0;
+
+        line += "(";
+
+
+        //Tri up down de la ligne de fraction
+        for(int i = 1; i < list.size(); i++) {
+            list.get(i).setIsInFraction(list.get(i).getIsInFraction() - 1);
+            if (list.get(i).getYEnd() < list.get(indexBarreFraction).getYStart())
+                listTopFraction.add(list.get(i));
+            else if (list.get(i).getYStart() > list.get(indexBarreFraction).getYEnd())
+                listBottomFraction.add(list.get(i));
+        }
+        line += replaceChar(listTopFraction, originalTolWidth, tolerenceHeight/2);
+
+        line += ")/(";
+
+        line += replaceChar(listBottomFraction, originalTolWidth, tolerenceHeight/2);
+
+        line += ")";
+        return line;
+    }
+
+    /**
+     * Vérification s'il reste une fraction dans la list
+     *
+     * @param list                  List à vérifer
+     * @return                      S'il reste une fraction
+     */
+    private ArrayList<MathChar> isHavingFraction(ArrayList<MathChar> list) {
+        ArrayList<MathChar> listFraction = new ArrayList<>();
+        for(int i = 0; i < list.size(); i++) {
+            if(list.get(i).getIsInFraction() == 1)
+                listFraction.add(list.get(i));
+        }
+        return listFraction;
+    }
+
+    /**
+     * Traiter les problèmes potentielles et récurant
+     *
+     * @param line      L'équation à revérifier
+     * @return          L'équation vérifié
+     */
+    private String postTreatment(String line)
+    {
+        line = line.replaceAll("1og", "lo");
+        line = line.replaceAll("s1n", "sin");
+        line = line.replace("c0s", "cos");
+        line = line.replace("o,", "0,");
+        line = line.replace("o.", "0.");
+        return line;
+    }
+
 
     /**
      * Get un array une dimension de la valeur binaire des pixels d'une iimage
@@ -125,103 +333,47 @@ public class ImageDecoder {
         return inputValues;
     }
 
-    public String replaceChar()
+
+    /**
+     * Remplir l'image (centé) pour les grandeures de l'AI
+     *
+     * @param btm       L'image à remplir
+     * @return          L'image remple
+     */
+    private Bitmap fillImage(Bitmap btm)
     {
+        int width = btm.getWidth();
+        int height = btm.getHeight();
 
-        //TO DO
-        //Checker avec Godefroy pour les x_1, x_2
-        //Check si exposant contient plus qu'un char
+        int borderSize = 5;
 
+        Bitmap newImage;
+        Canvas canvas;
 
-        //Tolerance de 5%
-        final int toleranceHeight = (int) (totalHeight *0.05);
-        final int toleranceWidth = (int) (totalWidth*0.05);
-        String buildedEq = listChar.get(0).getValue();
-
-        //get le premier char
-        for(int i = 1; i < listChar.size()-1; i++) {
-
-            //Donc un apres lautre
-            /*if (listChar.get(i).getXEnd() < listChar.get(i + 1).getXStart()) {
-                //S'il sont assez proche pour etre des exp/ind
-                if (listChar.get(i + 1).getXStart() - listChar.get(i).getXEnd() < toleranceWidth) {
-                    //TO DO
-                    //Insert tolerance
-                    if (listChar.get(i + 1).getYStart() < listChar.get(i).getYStart()) {
-                        buildedEq += listChar.get(i).getValue() + "^(" + listChar.get(i + 1).getValue() + ")";
-                    } else if (listChar.get(i + 1).getYStart() > listChar.get(i).getYStart()) {
-                        buildedEq += listChar.get(i).getValue() + "_(" + listChar.get(i + 1).getValue() + ")";
-                    }
-                } else {
-                    //Si c'est l'avant dernier, ajouter les deux
-                    if(i+2 == listChar.size())
-                        buildedEq += listChar.get(i).getValue() + "," + listChar.get(i+1).getValue();
-                    else
-                        buildedEq += listChar.get(i).getValue();
-                }
-            }
-            //Donc un par dessus l'autre
-            else {
-                if (listChar.get(i + 1).getXStart() < listChar.get(i).getXStart()) {
-                    if (listChar.get(i + 1).getYStart() > listChar.get(i).getYStart()) {
-                        buildedEq += listChar.get(i + 1).getValue() + "^(" + listChar.get(i).getValue() + ")";
-                    }
-                } else if (listChar.get(i + 1).getXStart() > listChar.get(i).getXStart()) {
-                    if (listChar.get(i + 1).getYStart() > listChar.get(i).getYStart()) {
-                        buildedEq += listChar.get(i).getValue() + "_(" + listChar.get(i + 1).getValue() + ")";
-                    }
-                }*/
-
-
-            if (listChar.get(i).getTop() != null) {
-                String temp = listChar.get(i).getValue() + "^(" + listChar.get(i).getTop().getValue();
-                while (listChar.get(i).getTop().getRight() != null) {
-                    temp += listChar.get(i).getTop().getRight().getValue();
-                    i++;
-                }
-                temp += ")";
-                buildedEq += temp;
-            } else if (listChar.get(i).getBottom() != null) {
-                String temp = listChar.get(i).getValue() + "_(" + listChar.get(i).getTop().getValue();
-                while (listChar.get(i).getRight() != null) {
-                    temp += listChar.get(i).getRight().getValue();
-                    i++;
-                }
-                temp += ")";
-                buildedEq += temp;
-            } else if (listChar.get(i).getRight() != null)
-                buildedEq += listChar.get(i).getRight().getValue();
-
-
+        //Pour faire un carré
+        if(width < height)
+        {
+            newImage = Bitmap.createBitmap(height + 2*borderSize, height + 2*borderSize, btm.getConfig());
+            canvas = new Canvas(newImage);
+            canvas.drawColor(Color.WHITE);
+            canvas.drawBitmap(btm, (newImage.getWidth()-width)/2, borderSize, null);
+            return newImage;
         }
-
-
-        /*{
-            //Litteralement char2 dessus char
-            if(listChar.get(i-1).getXStart() - toleranceWidth < listChar.get(i).getXStart() && listChar.get(i-1).getXStart() + toleranceWidth > listChar.get(i).getXStart())
-            {
-                buildedEq += "(" + listChar.get(i).getValue() + "," + listChar.get(i-1).getValue() + ")";
-            }
-            //Si char2 est par dessus char mais pas au complet
-            else if(listChar.get(i-1).getXStart() + listChar.get(i-1).getWidth() + toleranceWidth > listChar.get(i).getXStart() - toleranceWidth)
-            {
-                //TO DO
-                //Fraction
-
-                if(listChar.get(i-1).getYStart() < listChar.get(i).getYStart())
-                    buildedEq += "_(" + listChar.get(i).getValue() + ")";
-                else
-                    buildedEq += "^(" + listChar.get(i).getValue() + ")";
-            }
-            //Un a cote de lautre
-            if(listChar.get(i-1).getXStart() + listChar.get(i-1).getWidth() + toleranceWidth < listChar.get(i).getXStart() - toleranceWidth)
-            {
-                buildedEq += listChar.get(i).getValue();
-            }
-        }*/
-
-        //TO DO
-        //Call post treatment
-        return buildedEq;
+        else if (height < width)
+        {
+            newImage = Bitmap.createBitmap(width + 2*borderSize, width + 2*borderSize, btm.getConfig());
+            canvas = new Canvas(newImage);
+            canvas.drawColor(Color.WHITE);
+            canvas.drawBitmap(btm, borderSize, (newImage.getHeight()-height)/2, null);
+            return newImage;
+        }
+        else
+        {
+            newImage = Bitmap.createBitmap(width + 2*borderSize, height + 2*borderSize, btm.getConfig());
+            canvas = new Canvas(newImage);
+            canvas.drawColor(Color.WHITE);
+            canvas.drawBitmap(btm, borderSize, borderSize, null);
+            return newImage;
+        }
     }
 }
