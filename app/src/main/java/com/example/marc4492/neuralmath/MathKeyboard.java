@@ -31,18 +31,19 @@ public class MathKeyboard extends GridLayout {
 
     private  CorrectionManager correctionManager;
 
-    private boolean correctionMode; //the correction mode will keep in memory the modification of the equation and will
+    //the correction mode will keep in memory the modification of the equation and will
     // tell the neural network the correction to improve the accuracy of the neural network
+    private boolean correctionMode;
     private boolean keyboardIsOpen;
-
 
     private ImageButton backspaceBtn;
     private EditText typingZone;
     private int screenWidth;
     private Handler backspaceHandler;
 
-    SpannableStringBuilder exponentBuilder;
+    private SpannableStringBuilder exponentBuilder;
 
+    private OnStringReadyListener listener;
 
     private String[] keyText = {
 
@@ -102,11 +103,6 @@ public class MathKeyboard extends GridLayout {
             "", "",
             "", "",
     };
-
-
-    public MathKeyboard(Context context) {
-        super(context);
-    }
 
     public MathKeyboard(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -181,6 +177,10 @@ public class MathKeyboard extends GridLayout {
 
         //initialisation of the correction manager
         correctionManager = new CorrectionManager();
+    }
+
+    public void setListener(OnStringReadyListener listener) {
+        this.listener = listener;
     }
 
     /**
@@ -401,6 +401,8 @@ public class MathKeyboard extends GridLayout {
             temp = temp.replace("tan-1", "arctan");
 
             typingZone.setText(temp);
+
+            listener.done(temp);
         }
     };
 
@@ -543,5 +545,7 @@ public class MathKeyboard extends GridLayout {
         correctionMode = mode;
     }
 
-
+    public interface OnStringReadyListener {
+        void done(String value);
+    }
 }

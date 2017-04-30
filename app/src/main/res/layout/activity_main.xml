@@ -162,7 +162,7 @@ tools:context="com.example.marc4492.neuralmath.MainActivity">
         <com.example.marc4492.neuralmath.MathEditText
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:hint="text zone"
+            android:hint="@string/text_zone"
             android:gravity="center"
             android:layout_centerHorizontal="true"
             android:layout_alignParentTop="true"

@@ -32,4 +32,5 @@
     <string name="ok">OK</string>
     <string name="problem_decoupage">Le découpage de caractère ne s\'est pas déroulé normalement</string>
     <string name="problem_image_decoder">Incapable de travailler avec l\'image reçu</string>
+    <string name="text_zone">Équation</string>
 </resources>

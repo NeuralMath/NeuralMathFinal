@@ -21,7 +21,7 @@ import java.util.Comparator;
 
 public class ImageDecoder {
     private String[] charList;
-
+    private NeuralNetwork network;
     private int originalTolWidth;
 
     private Context context;
@@ -37,10 +37,10 @@ public class ImageDecoder {
      *
      * @throws IOException S'il y a des problèmes de fichier, ...
      */
-    public ImageDecoder(Context c, final int input, final int hidden, final int output, final double training, final SQLiteDatabase database, String[] charListing) throws IOException {
+    public ImageDecoder(Context c, final int input, final int hidden, final int output, final double training, final SQLiteDatabase database, String[] charListing, NeuralNetwork.OnNetworkReady listener) throws IOException {
         context = c;
-
         charList = charListing;
+        network = new NeuralNetwork(input, hidden, output, training, database, listener);
     }
 
     /**
@@ -66,8 +66,11 @@ public class ImageDecoder {
             }
         });
 
-        for(int i = 0; i < listChar.size(); i++)
+        for(int i = 0; i < listChar.size(); i++) {
+            /*int index = network.getAnwser(getIOPixels(listChar.get(i).getImage()));
+            listChar.get(i).setValue(charList[index]);*/
             listChar.get(i).setValue(String.valueOf(i));
+        }
 
         originalTolWidth = (int) (totalWidth *0.1);
         int originalTolHeight = (int) (totalHeight * 0.1);

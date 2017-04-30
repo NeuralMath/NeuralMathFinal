@@ -147,15 +147,17 @@ public class MathChar {
             while(i < listBlack.size())
             {
                 //Trouver le end du char
-                while(i < listBlack.size() && listBlack.get(i) - listBlack.get(i-1) == 1)
+                while(i < listBlack.size() && listBlack.get(i) - listBlack.get(i-1) <= 3)
                     i++;
 
-                if(listBlack.get(i-1) != 0)
-                    newWidth = listBlack.get(i-1)-start;
-                else
-                    newWidth = listBlack.get(i);
+                if(listBlack.get(i-1)-start != 0) {
+                    if (listBlack.get(i - 1) != 0)
+                        newWidth = listBlack.get(i - 1) - start;
+                    else
+                        newWidth = listBlack.get(i);
 
-                listInner.add(new MathChar(crop(image, start, 0, newWidth, image.getHeight()), start + xStart, yStart, newWidth, image.getHeight(), isInFraction));
+                    listInner.add(new MathChar(crop(image, start, 0, newWidth, image.getHeight()), start + xStart, yStart, newWidth, image.getHeight(), isInFraction));
+                }
 
                 if(i < listBlack.size()-1)
                     start = listBlack.get(i);
@@ -195,15 +197,17 @@ public class MathChar {
             while(i < listBlack.size())
             {
                 //Trouver le end du char
-                while(i < listBlack.size() && listBlack.get(i) - listBlack.get(i-1) == 1)
+                while(i < listBlack.size() && listBlack.get(i) - listBlack.get(i-1) <= 3)
                     i++;
 
-                if(listBlack.get(i-1) != 0)
-                    newHeight = listBlack.get(i-1)-start;
-                else
-                    newHeight = listBlack.get(i);
+                if(listBlack.get(i-1)-start != 0) {
+                    if (listBlack.get(i - 1) != 0)
+                        newHeight = listBlack.get(i - 1) - start;
+                    else
+                        newHeight = listBlack.get(i);
 
-                listInner.add(new MathChar(crop(image, 0, start,image .getWidth(), newHeight), xStart, start + yStart, image.getWidth(), newHeight, isInFraction));
+                    listInner.add(new MathChar(crop(image, 0, start, image.getWidth(), newHeight), xStart, start + yStart, image.getWidth(), newHeight, isInFraction));
+                }
 
                 if(i < listBlack.size())
                     start = listBlack.get(i);

@@ -10,7 +10,6 @@ import android.database.sqlite.SQLiteStatement;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,7 +21,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
@@ -93,9 +91,7 @@ public class MainActivity extends AppCompatActivity {
             };
 
     MathKeyboard mathKeyboard;
-    RelativeLayout mainLayout;
     MathEditText writingZone;
-    DisplayMetrics screenDimensions;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,6 +119,15 @@ public class MainActivity extends AppCompatActivity {
         writingZone = (MathEditText) findViewById(R.id.writingZone);
 
         mathKeyboard = (MathKeyboard) findViewById(R.id.keyboard);
+        mathKeyboard.setListener(new MathKeyboard.OnStringReadyListener() {
+            @Override
+            public void done(String value) {
+                Toast.makeText(context, value, Toast.LENGTH_LONG).show();
+                onBackPressed();
+
+                //Call reslution
+            }
+        });
 
         homeRows = new ArrayList<>();
 
@@ -322,6 +327,8 @@ public class MainActivity extends AppCompatActivity {
         if(requestCode == 1)
             if(resultCode == RESULT_OK)
                 Toast.makeText(this, data.getStringExtra("EQUATION"), Toast.LENGTH_SHORT).show();
+
+        //Call resolution î
     }
 
     public static ImageDecoder getImageDecoder()
@@ -513,6 +520,8 @@ public class MainActivity extends AppCompatActivity {
         ((RadioButton) layoutOption.getChildAt(1)).setChecked(!isDroitier);
 
         langue = sharedPrefs.getString("langue", getResources().getString(R.string.francais));
+
+        //Changer la langue----------
 
         for(int i = 0; i < langueOption.getChildCount(); i++) {
             if (((RadioButton) langueOption.getChildAt(i)).getText().equals(langue))
