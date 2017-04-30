@@ -18,7 +18,7 @@
         http://stackoverflow.com/a/12504768/5224674
           -->
         <activity android:name=".MainActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize">
+            android:configChanges="orientation|screenSize|keyboardHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -27,10 +27,12 @@
         </activity>
 
         <activity android:name=".DrawingActivity"
-            android:screenOrientation="landscape"/>
+            android:screenOrientation="landscape"
+            android:configChanges="orientation|screenSize|keyboardHidden"/>
 
         <activity android:name=".CameraActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|screenSize|keyboardHidden"/>
     </application>
 
 </manifest>

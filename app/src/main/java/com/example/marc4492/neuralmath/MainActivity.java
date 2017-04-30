@@ -10,6 +10,7 @@ import android.database.sqlite.SQLiteStatement;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -37,6 +38,9 @@ public class MainActivity extends AppCompatActivity {
 
     private Context context;
 
+    //Info screen
+    private int largeurScreen;
+    private int hauteurScreen;
 
     private ListView listHome;
     private ArrayList<HomeRow> homeRows;
@@ -79,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
 
     private String[] charList =
             {
-                    /*"!","(",")","+",",","-",*/"0","1","2","3","4",
+                    "!","(",")","+",",","-","0","1","2","3","4",
                     "5","6","7","8","9", "=", "a","α","|",
                     "b","β","c","cos","d","Δ","÷","e",
                     "f","/","g","γ","≥",">","h","i",
@@ -98,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context = this;
+        getScreenSize();
 
         database = openOrCreateDatabase("BDNM", MODE_PRIVATE, null);
 
@@ -236,7 +241,7 @@ public class MainActivity extends AppCompatActivity {
         writingZone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mathKeyboard.openKeyboard(writingZone, size);
+                mathKeyboard.openKeyboard(writingZone, largeurScreen);
             }
         });
 
@@ -334,6 +339,17 @@ public class MainActivity extends AppCompatActivity {
     public static ImageDecoder getImageDecoder()
     {
         return imageDecoder;
+    }
+
+    /**
+     * Get largueur et hauteur de la fenêtre
+     */
+    void getScreenSize() {
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+
+        largeurScreen = displaymetrics.widthPixels;
+        hauteurScreen = displaymetrics.heightPixels;
     }
 
     /**
@@ -465,7 +481,6 @@ public class MainActivity extends AppCompatActivity {
      * Open Keyboard page
      */
     void openKeyboard(){
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
         activity_main.setDisplayedChild(3);
         mathKeyboard.setCorrectionMode(false);
     }
@@ -474,7 +489,6 @@ public class MainActivity extends AppCompatActivity {
      * open parameter page
      */
     void openParameter(){
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
         activity_main.setDisplayedChild(1); //the parameter page is 1
     }
 

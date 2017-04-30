@@ -2,7 +2,9 @@ package com.example.marc4492.neuralmath;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -17,7 +19,8 @@ public class DrawingPage extends LinearLayout {
 
     private DrawingView drawView;
     private LinearLayout layoutBtn;
-    private EditText txtEquation;
+    private MathEditText txtEquation;
+    private MathKeyboard mathKeyboard;
 
     private Button btnDone;
 
@@ -25,7 +28,7 @@ public class DrawingPage extends LinearLayout {
      * Creation des deux parties de la page
      *
      * @param context       Context de l'app
-     * @param attrs         ?
+     * @param attrs
      */
     public DrawingPage(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -33,8 +36,32 @@ public class DrawingPage extends LinearLayout {
         drawView = new DrawingView(context);
         drawView.setLayoutParams(new LayoutParams(0, LayoutParams.MATCH_PARENT, 1f));
 
-        txtEquation = new EditText(context);
+        mathKeyboard = (MathKeyboard) findViewById(R.id.keyboardDrawing);
+
+        txtEquation = new MathEditText(context);
         txtEquation.setLayoutParams(new LayoutParams(0, LayoutParams.MATCH_PARENT, 0.5f));
+
+
+        /* ------------------------------------------------
+         * code from: http://stackoverflow.com/a/13975236
+         * author: Eddie Sullivan
+         * consulted date: 22 March 2017
+         */
+        // Update the EditText so it won't popup Android's own keyboard, since I have my own.
+        txtEquation.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                v.onTouchEvent(event);
+                InputMethodManager imm = (InputMethodManager)v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null) {
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                }
+                return true;
+            }
+        });
+
+        //--------------------------------------------------
 
         Button btnRetry = new Button(context);
         btnRetry.setText(R.string.clear);
@@ -70,6 +97,10 @@ public class DrawingPage extends LinearLayout {
      */
     public EditText getTextEquation()
     {
+        return txtEquation;
+    }
+
+    public MathEditText getTxtEquation() {
         return txtEquation;
     }
 

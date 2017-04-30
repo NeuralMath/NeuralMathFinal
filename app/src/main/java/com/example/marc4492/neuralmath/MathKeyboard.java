@@ -2,7 +2,6 @@ package com.example.marc4492.neuralmath;
 
 import android.content.Context;
 import android.graphics.LightingColorFilter;
-import android.graphics.Point;
 import android.os.Handler;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -185,12 +184,12 @@ public class MathKeyboard extends GridLayout {
 
     /**
      * This method open the mathematical keyboard
-     * @param writingZone The textView where we want to  write
-     * @param screenDimensions The screen dimensions
+     * @param writingZone   The textView where we want to  write
+     * @param screenW       The screen dimensions
      */
-    public void openKeyboard(EditText writingZone, Point screenDimensions){
+    public void openKeyboard(EditText writingZone, int screenW){
         if(!keyboardIsOpen){
-            screenWidth = screenDimensions.x;
+            screenWidth = screenW;
             setKeyWidth();
             setVisibility(VISIBLE);
             typingZone = writingZone;

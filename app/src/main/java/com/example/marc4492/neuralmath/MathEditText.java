@@ -16,12 +16,20 @@ public class MathEditText extends android.support.v7.widget.AppCompatEditText{
 
     public MathEditText(Context context, AttributeSet attrs) {
         super(context, attrs);
+        createEditText();
+    }
 
-        /* ------------------------------------------------
-         * code from: http://stackoverflow.com/a/12331404
-         * author: Zain Ali
-         * consulted date: 1 April 2017
-         */
+    public MathEditText(Context context) {
+        super(context);
+        createEditText();
+    }
+
+    private void createEditText() {
+    /* ------------------------------------------------
+             * code from: http://stackoverflow.com/a/12331404
+             * author: Zain Ali
+             * consulted date: 1 April 2017
+             */
         //disable the copy, cut and other context menu
         setCustomSelectionActionModeCallback(new ActionMode.Callback() {
 
