@@ -74,8 +74,10 @@ public class DrawingActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if(mathKeyboard.getVisibility() == View.VISIBLE)
+        if(mathKeyboard.getVisibility() == View.VISIBLE){
             mathKeyboard.setVisibility(View.GONE);
+            mathKeyboard.setKeyboardIsOpen(false);
+        }
         else
             super.onBackPressed();
     }

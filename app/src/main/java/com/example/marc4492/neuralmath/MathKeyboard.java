@@ -103,6 +103,10 @@ public class MathKeyboard extends GridLayout {
             "", "",
     };
 
+    public void setKeyboardIsOpen(boolean keyboardIsOpen) {
+        this.keyboardIsOpen = keyboardIsOpen;
+    }
+
     public MathKeyboard(Context context, AttributeSet attrs) {
         super(context, attrs);
 
