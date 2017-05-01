@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="accueil">Home</string>
+    <string name="app_name" translatable="false">NeuralMaths</string>
+    <string name="callCam">CAMERA</string>
+    <string name="callGal">GALLERY</string>
+    <string name="clavier">Keyboard</string>
+    <string name="clear">Erase</string>
+    <string name="confirmer">"confirm "</string>
+    <string name="cropNotSupported">Sorry, your device don\'t support the crop</string>
+    <string name="database_error">Database error</string>
+    <string name="description">image view to see teh results of the test</string>
+    <string name="done">Finish</string>
+    <string name="droitier">Right-handed</string>
+    <string name="ecrire">write</string>
+    <string name="gaucher">Left-handed</string>
+    <string name="langue">"language "</string>
+    <string name="layout">Layout</string>
+    <string name="mode_par_defaut">Default mode</string>
+    <string name="network_accessibility_error">Neural network</string>
+    <string name="ok">OK</string>
+    <string name="parametres">parameter</string>
+    <string name="permission_cancelled">permission denied</string>
+    <string name="permission_granted">permission granted</string>
+    <string name="photo">Photo</string>
+    <string name="select_img_gallery">Select a picture from the gallery</string>
+    <string name="transfer_fichier_1">Text file transfer 1/2</string>
+    <string name="transfer_fichier_2">Text file transfer 2/2</string>
+    <string name="transfere_seul_fois">This transfer only happen  once</string>
+    <string name="txt_file_error">Text file error</string>
+    <string name="welcome">Welcome !</string>
+    <string name="access_camera">CAMERA permission allow us to access CAMERA app</string>
+    <string name="english">English</string>
+    <string name="francais">Français</string>
+</resources>
