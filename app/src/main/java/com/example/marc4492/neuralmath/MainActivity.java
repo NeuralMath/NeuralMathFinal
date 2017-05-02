@@ -130,10 +130,10 @@ public class MainActivity extends AppCompatActivity {
         mathKeyboard.setListener(new MathKeyboard.OnStringReadyListener() {
             @Override
             public void done(String value) {
-                Toast.makeText(context, value, Toast.LENGTH_LONG).show();
+                Intent i = new Intent(context, procedureResolutionEquation.class);
+                i.putExtra("EQUATION", value);
+                startActivity(i);
                 onBackPressed();
-
-                //Call reslution
             }
         });
 
@@ -338,11 +338,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == 1)
-            if(resultCode == RESULT_OK)
-                Toast.makeText(this, data.getStringExtra("EQUATION"), Toast.LENGTH_SHORT).show();
-
-        //Call resolution î
+        if(requestCode == 1) {
+            if (resultCode == RESULT_OK) {
+                Intent i = new Intent(context, procedureResolutionEquation.class);
+                i.putExtra("EQUATION", data.getStringExtra("EQUATION"));
+                startActivity(i);
+            }
+        }
     }
 
     public static ImageDecoder getImageDecoder()

@@ -35,4 +35,11 @@
     <string name="text_zone">Équation</string>
     <string name="feuille_blanche_option">Feuille blanche</string>
     <string name="feuilles_lignees_option">Feuilles lignées</string>
+    <string name="TrouverY">TrouverY</string>
+    <string name="TrouverZéros">TrouverZéros</string>
+    <string name="TrouverX">TrouverX</string>
+    <string name="Simplification">Simplification</string>
+    <string name="Factorisation">Factorisation</string>
+    <string name="Deriver">Deriver</string>
+    <string name="Integrer">Integrer</string>
 </resources>

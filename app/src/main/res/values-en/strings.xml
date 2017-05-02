@@ -36,4 +36,11 @@
     <string name="text_zone">Equation</string>
     <string name="feuille_blanche_option">White sheet</string>
     <string name="feuilles_lignees_option">Line sheet</string>
+    <string name="Deriver">Derivate</string>
+    <string name="Factorisation">factor</string>
+    <string name="Integrer">Integral</string>
+    <string name="Simplification">Simplification</string>
+    <string name="TrouverX">FindX</string>
+    <string name="TrouverY">FindY</string>
+    <string name="TrouverZéros">FindZeros</string>
 </resources>
