@@ -285,7 +285,7 @@ public class TrouverY extends General_Equation {
      * @return
      */
     public double evaluateString(String str) {
-        final String str2 = str.replaceAll(",",".");
+        final String str2 = str.replaceAll(",","."); //Remplace la décimale , par une décimale .
         return new Object() {
             int pos = -1, ch;
 
@@ -372,83 +372,21 @@ public class TrouverY extends General_Equation {
         m_EtapesText.add(m_explication);
         mettreEnGras(m_debut,m_fin);
     }
-    public double getX() {
-        return x;
-    }
 
-    public void setX(double x) {
-        this.x = x;
-    }
-
+    //Getters, Setters
     public double getY() {
         return y;
     }
-
     public void setY(double y) {
         this.y = y;
     }
-
-    public String getM_separated_equation() {
-        return m_separated_equation;
-    }
-
-    public void setM_separated_equation(String m_separated_equation) {
-        this.m_separated_equation = m_separated_equation;
-    }
-
-    public String getM_equation() {
-        return m_equation;
-    }
-
-    public void setM_equation(String m_equation) {
-        this.m_equation = m_equation;
-    }
-
     public String getM_FirstEquationHalf() {
         return m_FirstEquationHalf;
     }
-
-    public void setM_FirstEquationHalf(String m_FirstEquationHalf) {
-        this.m_FirstEquationHalf = m_FirstEquationHalf;
-    }
-
-    public ArrayList<String> getM_DemarcheText() {
-        return m_DemarcheText;
-    }
-
-    public void setM_DemarcheText(ArrayList<String> m_DemarcheText) {
-        this.m_DemarcheText = m_DemarcheText;
-    }
-
-    public String getValueOfX() {
-        return valueOfX;
-    }
-
-    public void setValueOfX(String valueOfX) {
-        this.valueOfX = valueOfX;
-    }
-
-    public ArrayList<String> getM_EtapesText() {
-        return m_EtapesText;
-    }
-
-    public void setM_EtapesText(ArrayList<String> m_EtapesText) {
-        this.m_EtapesText = m_EtapesText;
-    }
-
     public ArrayList<Integer> getM_EtapesGrasI() {
         return m_EtapesGrasI;
     }
-
-    public void setM_EtapesGrasI(ArrayList<Integer> m_EtapesGrasI) {
-        this.m_EtapesGrasI = m_EtapesGrasI;
-    }
-
     public ArrayList<Integer> getM_EtapesGrasF() {
         return m_EtapesGrasF;
-    }
-
-    public void setM_EtapesGrasF(ArrayList<Integer> m_EtapesGrasF) {
-        this.m_EtapesGrasF = m_EtapesGrasF;
     }
 }

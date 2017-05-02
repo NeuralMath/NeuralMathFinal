@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
  * Created by Alex on 01/05/2017.
  */
 
-public class procedureResolutionEquation extends AppCompatActivity {
+public class ProcedureResolutionEquation extends AppCompatActivity {
 
 
         private TextView TextViewReponse;
@@ -32,6 +32,8 @@ public class procedureResolutionEquation extends AppCompatActivity {
 
         private ArrayList<String> etapesText;           //String des étapes de résolution d'une équation mathématique
         private ArrayList<String> demarcheText ;        //String des explications par étapes de résolution d'une équation mathématique
+
+        private ArrayList<String> var = new ArrayList<>();
         private ArrayList<ExpandableTextView> texViewList;  //Liste des textView de démarches (TextView Custom)
         private Spinner spinnerMethode;
 
@@ -59,9 +61,10 @@ public class procedureResolutionEquation extends AppCompatActivity {
 
             spinnerMethode = (Spinner) findViewById(R.id.spinner);
 
+            equation = getIntent().getStringExtra("EQUATION");
             List<String> spinnerArray =  new ArrayList<String>();
             equation = equation.replaceAll(" ", "");  //Donne une copie de l'équation sans les espaces
-
+            var.add("x");       //ajout de la variable
 
             for(int i=0;i<equation.length()-1;i++)    //Début de la normalisation des équations : mets un * entre les lettres et les chiffres ainsi que lettres et parenthèses ou chiffre + parenthèses
             {
@@ -139,6 +142,13 @@ public class procedureResolutionEquation extends AppCompatActivity {
         }
         public void ajouterEtapes()     //Méthode qui sert à ajouter les étapes dans les textView custom en enlevant les précédents. (utilisée pour vider )
         {
+            texViewList.clear();
+            linearDemarche.removeAllViews();
+            linearDemarche.addView(demarche);
+        }
+        public void ajouterEtapes(ArrayList<String> m_demarche)
+        {
+            demarcheText = m_demarche;
             texViewList.clear();
             linearDemarche.removeAllViews();
             linearDemarche.addView(demarche);
@@ -262,8 +272,7 @@ public class procedureResolutionEquation extends AppCompatActivity {
         }
 
         /**
-         *
-         * donction qui sert à mettre en gras une étape de résolution
+         * Fonction qui sert à mettre en gras une étape de résolution
          * @param debut
          * @param fin
          * @param m_string
@@ -301,10 +310,11 @@ public class procedureResolutionEquation extends AppCompatActivity {
         }
         public void simplification()
         {
+            Resolution simplificationEQ = new Resolution(equation,var);
             demarche.setText("DÉMONSTRATION : Trouver simplification\n");
-            TextViewReponse.setText("Erreur 404");
+            TextViewReponse.setText(simplificationEQ.get_equation());
             demarcheText = new ArrayList<>(0);
-            ajouterEtapes();
+            //ajouterEtapes(simplificationEQ.getM_DemarcheText(),);
         }
         public void factorisation()
         {

@@ -607,7 +607,7 @@ class Resolution extends General_Equation
         }
         else
         {
-            System.out.println("Aucune solution reelle\n" + _variables.get(0) + " = " + _df.format((-1 * b) / (a * 2)) + " ± sqrt(" + _df.format(Math.pow(b, 2) - (4 * a * c)) + ") / " + _df.format(a * 2));
+            System.out.println("Aucune solution réelle\n" + _variables.get(0) + " = " + _df.format((-1 * b) / (a * 2)) + " ± sqrt(" + _df.format(Math.pow(b, 2) - (4 * a * c)) + ") / " + _df.format(a * 2));
         }
     }
 
@@ -1262,6 +1262,11 @@ class Resolution extends General_Equation
         resolution.manageParenthesis();
         resolution.solve();
     }
+
+    public String get_equation() {
+        return _equation;
+    }
+
 }
 
 //DecimalFormat: http://stackoverflow.com/questions/14204905/java-how-to-remove-trailing-zeros-from-a-double

@@ -34,7 +34,7 @@
             android:screenOrientation="portrait"
             android:configChanges="orientation|screenSize|keyboardHidden"/>
 
-        <activity android:name=".procedureResolutionEquation"
+        <activity android:name=".ProcedureResolutionEquation"
             android:configChanges="keyboardHidden"/>
 
     </application>

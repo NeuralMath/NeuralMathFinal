@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
         mathKeyboard.setListener(new MathKeyboard.OnStringReadyListener() {
             @Override
             public void done(String value) {
-                Intent i = new Intent(context, procedureResolutionEquation.class);
+                Intent i = new Intent(context, ProcedureResolutionEquation.class);
                 i.putExtra("EQUATION", value);
                 startActivity(i);
                 onBackPressed();
@@ -353,7 +353,7 @@ public class MainActivity extends AppCompatActivity {
                         .setMessage(getString(R.string.your_eq_confirm) + eq + " ?")
                         .setNegativeButton(R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-                                Intent i = new Intent(context, procedureResolutionEquation.class);
+                                Intent i = new Intent(context, ProcedureResolutionEquation.class);
                                 i.putExtra("EQUATION", eq);
                                 startActivity(i);
                             }

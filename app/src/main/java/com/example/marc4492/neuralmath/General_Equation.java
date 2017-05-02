@@ -44,4 +44,10 @@ public class General_Equation {
         }
         m_DemarcheText.add(" " + tempString + "\n");
     }
+    public ArrayList<String> getM_DemarcheText() {
+        return m_DemarcheText;
+    }
+    public ArrayList<String> getM_EtapesText() {
+        return m_EtapesText;
+    }
 }
