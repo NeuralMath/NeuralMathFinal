@@ -37,9 +37,7 @@ public class CorrectionManager {
      * @param index the position of the char
      */
     public void deleteChar(Character character, int index){
-        ReplacedChar temp = new ReplacedChar();
-        temp.setOldChar(character);
-        temp.setPosition(index);
+        ReplacedChar temp = new ReplacedChar(character, index);
 
         replacedCharList.add(temp);
         indexList.add(index);

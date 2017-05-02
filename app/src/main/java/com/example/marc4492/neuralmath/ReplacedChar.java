@@ -11,7 +11,9 @@ public class ReplacedChar {
     private char oldChar;
     private char newChar;
 
-    public ReplacedChar() {
+    public ReplacedChar(char oldChar, int position) {
+        this.position = position;
+        this.oldChar = oldChar;
     }
 
     public int getPosition() {
