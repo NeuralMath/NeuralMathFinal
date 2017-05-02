@@ -9,27 +9,19 @@ public class ReplacedChar {
 
     private int position;
     private char oldChar;
-    private char newChar;
+    private char newChar = '\0';
 
-    public ReplacedChar(char oldChar, int position) {
-        this.position = position;
-        this.oldChar = oldChar;
+    public ReplacedChar(char oldC, int pos) {
+        position = pos;
+        oldChar = oldC;
     }
 
     public int getPosition() {
         return position;
     }
 
-    public void setPosition(int position) {
-        this.position = position;
-    }
-
     public char getOldChar() {
         return oldChar;
-    }
-
-    public void setOldChar(char oldChar) {
-        this.oldChar = oldChar;
     }
 
     public char getNewChar() {

@@ -46,4 +46,5 @@
     <string name="no">No</string>
     <string name="yes">Yes</string>
     <string name="your_eq_confirm">"Is this your equation: "</string>
+    <string name="sheet_type">Sheet type</string>
 </resources>
