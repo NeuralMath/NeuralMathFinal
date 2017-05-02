@@ -10,8 +10,8 @@
     <string name="mode_par_defaut">Mode par défaut</string>
     <string name="gaucher">Gaucher</string>
     <string name="droitier">Droitier</string>
-    <string name="francais">Français</string>
-    <string name="english">English</string>
+    <string name="francais" translatable="false">Français</string>
+    <string name="english" translatable="false">English</string>
     <string name="confirmer">Confirmer</string>
     <string name="clear">Effacer</string>
     <string name="done">Terminer</string>

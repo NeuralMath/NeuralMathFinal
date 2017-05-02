@@ -28,8 +28,6 @@
     <string name="txt_file_error">Text file error</string>
     <string name="welcome">Welcome !</string>
     <string name="access_camera">CAMERA permission allow us to access CAMERA app</string>
-    <string name="english">English</string>
-    <string name="francais">Français</string>
     <string name="problem_decoupage">Splitting char went wrong</string>
     <string name="problem_image_decoder">Unable to work with received image</string>
     <string name="text_zone">Equation</string>

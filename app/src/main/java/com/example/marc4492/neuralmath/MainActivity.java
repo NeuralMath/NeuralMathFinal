@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.graphics.Point;
@@ -33,6 +34,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -53,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
 
     private RadioGroup layoutOption;
     private RadioGroup langueOption;
-    private RadioGroup defautOption;
+    private RadioGroup defaultOption;
     private RadioGroup feuilleOption;
 
     private AdapterHome adapterHome;
@@ -124,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
         //RadioGroup
         layoutOption = (RadioGroup) findViewById(R.id.layoutOption);
         langueOption = (RadioGroup) findViewById(R.id.langueOption);
-        defautOption = (RadioGroup) findViewById(R.id.defautOption);
+        defaultOption = (RadioGroup) findViewById(R.id.defautOption);
         feuilleOption = (RadioGroup) findViewById(R.id.feuilleTypeOption);
 
         writingZone = (MathEditText) findViewById(R.id.writingZone);
@@ -195,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 ((RadioButton) layoutOption.getChildAt(0)).setChecked(true);
                 ((RadioButton) langueOption.getChildAt(0)).setChecked(true);
-                ((RadioButton) defautOption.getChildAt(0)).setChecked(true);
+                ((RadioButton) defaultOption.getChildAt(0)).setChecked(true);
                 ((RadioButton) feuilleOption.getChildAt(0)).setChecked(true);
 
                 firstTimeOnApp();
@@ -325,7 +327,7 @@ public class MainActivity extends AppCompatActivity {
                 editor.putBoolean("feuille", false);
 
             editor.putString("langue", ((RadioButton) langueOption.findViewById(langueOption.getCheckedRadioButtonId())).getText().toString());
-            editor.putString("defaut", ((RadioButton) defautOption.findViewById(defautOption.getCheckedRadioButtonId())).getText().toString());
+            editor.putString("defaut", ((RadioButton) defaultOption.findViewById(defaultOption.getCheckedRadioButtonId())).getText().toString());
             editor.apply();
             getPref();
             openHome();
@@ -346,7 +348,7 @@ public class MainActivity extends AppCompatActivity {
         final String eq = data.getStringExtra("EQUATION");
 
         if(requestCode == 1) {
-            if (resultCode == RESULT_OK) {
+            if (resultCode == RESULT_OK && eq != "") {
 
                 new AlertDialog.Builder(context)
                         .setTitle(R.string.confirmation)
@@ -557,8 +559,8 @@ public class MainActivity extends AppCompatActivity {
         for(int i = 0; i < langueOption.getChildCount(); i++)
             ((RadioButton) langueOption.getChildAt(i)).setTextSize(radioBtnTxtSize);
 
-        for(int i = 0; i < defautOption.getChildCount(); i++)
-            ((RadioButton) defautOption.getChildAt(i)).setTextSize(radioBtnTxtSize);
+        for(int i = 0; i < defaultOption.getChildCount(); i++)
+            ((RadioButton) defaultOption.getChildAt(i)).setTextSize(radioBtnTxtSize);
 
         for(int i = 0; i < feuilleOption.getChildCount(); i++)
             ((RadioButton) feuilleOption.getChildAt(i)).setTextSize(radioBtnTxtSize);
@@ -581,8 +583,29 @@ public class MainActivity extends AppCompatActivity {
 
 
         langue = sharedPrefs.getString("langue", getResources().getString(R.string.francais));
+        String languageToLoad  = "fr";
 
-        //Changer la langue----------
+        if(langue == getString(R.string.francais)){
+            languageToLoad = "fr";
+        }else if(langue == getString(R.string.english)){
+            languageToLoad = "en";
+        }
+
+
+        Locale locale = new Locale(languageToLoad);
+        Locale.setDefault(locale);
+        String temp = getResources().getConfiguration().locale.toString();
+        String temp2 = locale.toString();
+        if(!temp2.equals(temp)){
+            Configuration config = new Configuration();
+            config.locale = locale;
+            context.getResources().updateConfiguration(config,context.getResources().getDisplayMetrics());
+
+            Intent intent = new Intent(context, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }
+
 
         for(int i = 0; i < langueOption.getChildCount(); i++) {
             if (((RadioButton) langueOption.getChildAt(i)).getText().equals(langue))
@@ -593,11 +616,11 @@ public class MainActivity extends AppCompatActivity {
 
 
         defautMode = sharedPrefs.getString("defaut", getResources().getString(R.string.accueil));
-        for(int i = 0; i < defautOption.getChildCount(); i++) {
-            if (((RadioButton) defautOption.getChildAt(i)).getText().equals(defautMode))
-                ((RadioButton) defautOption.getChildAt(i)).setChecked(true);
+        for(int i = 0; i < defaultOption.getChildCount(); i++) {
+            if (((RadioButton) defaultOption.getChildAt(i)).getText().equals(defautMode))
+                ((RadioButton) defaultOption.getChildAt(i)).setChecked(true);
             else
-                ((RadioButton) defautOption.getChildAt(i)).setChecked(false);
+                ((RadioButton) defaultOption.getChildAt(i)).setChecked(false);
         }
     }
 
