@@ -47,7 +47,7 @@ public class MathChar {
         return image;
     }
 
-    public ArrayList<MathChar> getStaticList() {
+    public static ArrayList<MathChar> getStaticList() {
         return listFinal;
     }
 

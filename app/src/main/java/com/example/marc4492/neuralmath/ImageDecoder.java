@@ -96,7 +96,7 @@ public class ImageDecoder {
         int index;
         if(listChar.get(0).getIsInFraction() == 0) {
             line += listChar.get(0).getValue();
-            setIndexOfString(listChar, line, 0);
+            setIndexOfString(line, 0);
             index = 1;
         }
         else
@@ -129,7 +129,7 @@ public class ImageDecoder {
             else if(isBeside(listChar.get(indexToLook), listChar.get(index), toleranceHeight)) {
                 notCheckingLast = false;
                 line += listChar.get(index).getValue();
-                setIndexOfString(listChar, line, index);
+                setIndexOfString(line, index);
             }
 
             //Si un exposant
@@ -187,7 +187,7 @@ public class ImageDecoder {
     public String findExposant(ArrayList<MathChar> listChar, String line,  int toleranceHeight, int index)
     {
         line += "^(" + listChar.get(index).getValue();
-        setIndexOfString(listChar, line, index);
+        setIndexOfString(line, index);
 
         if(index < listChar.size()-1) {
             index++;
@@ -195,7 +195,7 @@ public class ImageDecoder {
                 //S'il sont un à coté de l'autre
                 if(isBeside(listChar.get(index - 1), listChar.get(index), toleranceHeight)) {
                     line += listChar.get(index).getValue();
-                    setIndexOfString(listChar, line, index);
+                    setIndexOfString(line, index);
                 }
                 //S'il sont en exposants
                 else if(listChar.get(index).getYEnd() <= listChar.get(index-1).getYMiddle())
@@ -224,7 +224,7 @@ public class ImageDecoder {
     public String findIndice(ArrayList<MathChar> listChar, String line,  int toleranceHeight, int index)
     {
         line += "_(" + listChar.get(index).getValue();
-        setIndexOfString(listChar, line, index);
+        setIndexOfString(line, index);
 
         if(index < listChar.size()-1) {
             index++;
@@ -232,7 +232,7 @@ public class ImageDecoder {
                 //S'il sont un à coté de l'autre
                 if(isBeside(listChar.get(index - 1), listChar.get(index), toleranceHeight)) {
                     line += listChar.get(index).getValue();
-                    setIndexOfString(listChar, line, index);
+                    setIndexOfString(line, index);
                 }
 
                 //S'il sont en indices
@@ -250,8 +250,8 @@ public class ImageDecoder {
         return line;
     }
 
-    public void setIndexOfString(ArrayList<MathChar> listChar, String line, int index) {
-        listChar.get(index).setIndexInString(line.length()-1);
+    public void setIndexOfString(String line, int index) {
+        MathChar.getStaticList().get(index).setIndexInString(line.length()-1);
     }
 
     /**
