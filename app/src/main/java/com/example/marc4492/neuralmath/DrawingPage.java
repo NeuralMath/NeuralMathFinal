@@ -98,10 +98,6 @@ public class DrawingPage extends LinearLayout {
         return txtEquation;
     }
 
-    public MathEditText getTxtEquation() {
-        return txtEquation;
-    }
-
     /**
      * Getter du drawing view
      * @return      Drawing View

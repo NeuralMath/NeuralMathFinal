@@ -63,7 +63,7 @@ tools:context="com.example.marc4492.neuralmath.MainActivity">
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/langue"
+                android:text="@string/sheet_type"
                 android:id="@+id/feuilleTypeOptionText" />
 
             <View style="@style/Divider"/>

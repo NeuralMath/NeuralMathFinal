@@ -20,6 +20,8 @@ public class MathChar {
 
     private int isInFraction = 0;
 
+    private int indexInString = 0;
+
     private String value = "";
 
     private ArrayList<MathChar> listInner = new ArrayList<>();
@@ -66,10 +68,6 @@ public class MathChar {
         return yStart;
     }
 
-    public int getXEnd() {
-        return xEnd;
-    }
-
     public int getYEnd() {
         return yEnd;
     }
@@ -92,6 +90,14 @@ public class MathChar {
 
     public void setIsInFraction(int inFraction) {
         isInFraction = inFraction;
+    }
+
+    public int getIndexInString() {
+        return indexInString;
+    }
+
+    public void setIndexInString(int index) {
+        indexInString = index;
     }
 
     /**
