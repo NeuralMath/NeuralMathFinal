@@ -3,9 +3,8 @@ package com.example.marc4492.neuralmath;
 import java.util.ArrayList;
 import java.text.DecimalFormat;
 
-class Resolution extends General_Equation
+public class Resolution extends General_Equation
 {
-    private String _equation;                           //L'equation a resoudre.
     private ArrayList<String> _variables;               //Les variables dans l'equation.
     private ArrayList<Term> _leftTerms;                 //Les termes de l'equation a gauche du egal.
     private ArrayList<Term> _rightTerms;                //Les termes de l'equation a droite du egal.
@@ -23,9 +22,9 @@ class Resolution extends General_Equation
 
         _equationLengthDisplay = 0;
 
-        normalize(equation);
+        normalize(m_equation);
 
-        System.out.println("Equation:\t" + _equation + "\n");
+        System.out.println("Equation:\t" + m_equation + "\n");
     }
 
     private void normalize(String e)
@@ -33,7 +32,7 @@ class Resolution extends General_Equation
         //String e = "x = 7 * 2";
         //String equation = "+1*x^1=+7*x^0*2*x^0";
 
-        _equation = e;
+        m_equation = e;
     }
 
     private int findCharPositionInString(String c, String s, int begin)
@@ -55,15 +54,15 @@ class Resolution extends General_Equation
 
         for (int i = 0; i < _variables.size(); i++)
         {
-            int posNextVar = findCharPositionInString(_variables.get(i), _equation, 0), posEqual = findCharPositionInString("=", _equation, 0);
+            int posNextVar = findCharPositionInString(_variables.get(i), m_equation, 0), posEqual = findCharPositionInString("=", m_equation, 0);
 
             while (posNextVar != 0)
             {
                 for (int j = 0; j < _variables.size(); j++)
                 {
-                    if (_equation.charAt(posNextVar - 1) == _variables.get(i).charAt(0))
+                    if (m_equation.charAt(posNextVar - 1) == _variables.get(i).charAt(0))
                     {
-                        temp = fillTerm(posNextVar, _equation);
+                        temp = fillTerm(posNextVar, m_equation);
                     }
                 }
 
@@ -78,7 +77,7 @@ class Resolution extends General_Equation
 
                 temp.erase();
 
-                posNextVar = findCharPositionInString(_variables.get(i), _equation, posNextVar);
+                posNextVar = findCharPositionInString(_variables.get(i), m_equation, posNextVar);
             }
         }
 
@@ -633,9 +632,9 @@ class Resolution extends General_Equation
         ArrayList<Term> groupPriority = new ArrayList<>();
 
         //Enlever toutes les parentheses possibles.
-        while(parenthesisLeft() && !lastEquation.equals(_equation))
+        while(parenthesisLeft() && !lastEquation.equals(m_equation))
         {
-            lastEquation = _equation;
+            lastEquation = m_equation;
 
             //Gauche du egal.
             for (int i = 0; i < _leftTerms.size(); i++)
@@ -1064,29 +1063,29 @@ class Resolution extends General_Equation
 
     private void updateEquation(String etape)
     {
-        String lastEquation = _equation;
-        _equation = "";                                         //Efface l'equation
+        String lastEquation = m_equation;
+        m_equation = "";                                         //Efface l'equation
 
         //Gauche du egal.
         int index = 0;
         while (_leftTerms.size() > index)			//S'il y a un prochain terme.
         {
-            _equation += _leftTerms.get(index).display();       //Affiche le prochain terme et son operateur devant.
+            m_equation += _leftTerms.get(index).display();       //Affiche le prochain terme et son operateur devant.
             index++;
         }
 
-        _equation += "=";					//Rajoute le egal.
+        m_equation += "=";					//Rajoute le egal.
 
         //Droite du egal.
         index = 0;
         while (_rightTerms.size() > index)			//S'il y a un prochain terme.
         {
-            _equation += _rightTerms.get(index).display();      //Affiche le prochain terme et son operateur devant.
+            m_equation += _rightTerms.get(index).display();      //Affiche le prochain terme et son operateur devant.
             index++;
         }
 
         //Affichage de l'equation.
-        if (!_equation.equals(lastEquation) || etape.equals("Equation recue"))
+        if (!m_equation.equals(lastEquation) || etape.equals("Equation recue"))
         {
             displayEquation(etape);
         }
@@ -1263,8 +1262,8 @@ class Resolution extends General_Equation
         resolution.solve();
     }
 
-    public String get_equation() {
-        return _equation;
+    public String getM_equation() {
+        return m_equation;
     }
 
 }

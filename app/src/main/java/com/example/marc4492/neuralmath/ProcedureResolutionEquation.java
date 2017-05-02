@@ -312,7 +312,7 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
         {
             Resolution simplificationEQ = new Resolution(equation,var);
             demarche.setText("DÉMONSTRATION : Trouver simplification\n");
-            TextViewReponse.setText(simplificationEQ.get_equation());
+            TextViewReponse.setText(simplificationEQ.getM_equation());
             demarcheText = new ArrayList<>(0);
             //ajouterEtapes(simplificationEQ.getM_DemarcheText(),);
         }
