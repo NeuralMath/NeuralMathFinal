@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView layoutOptionsText;
     private TextView languageOptionsText;
     private TextView defaultModeOptionsText;
+    private TextView feuilleOptionsText;
 
     private RadioGroup layoutOption;
     private RadioGroup langueOption;
@@ -115,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
         layoutOptionsText = (TextView) findViewById(R.id.layoutOptionsText);
         languageOptionsText = (TextView) findViewById(R.id.languageOptionsText);
         defaultModeOptionsText = (TextView) findViewById(R.id.defaultModeOptionsText);
+        feuilleOptionsText = (TextView) findViewById(R.id.feuilleTypeOptionText);
 
         //RadioGroup
         layoutOption = (RadioGroup) findViewById(R.id.layoutOption);
@@ -471,6 +473,7 @@ public class MainActivity extends AppCompatActivity {
      */
     void openPhoto(){
         Intent i = new Intent(context, CameraActivity.class);
+        i.putExtra("feuilleType", isBlankPage);
         startActivityForResult(i, 1);
     }
 
@@ -519,6 +522,8 @@ public class MainActivity extends AppCompatActivity {
         layoutOptionsText.setTextSize(textViewSize);
         languageOptionsText.setTextSize(textViewSize);
         defaultModeOptionsText.setTextSize(textViewSize);
+        feuilleOptionsText.setTextSize(textViewSize);
+
 
         for(int i = 0; i < layoutOption.getChildCount(); i++)
             ((RadioButton) layoutOption.getChildAt(i)).setTextSize(radioBtnTxtSize);
@@ -528,6 +533,9 @@ public class MainActivity extends AppCompatActivity {
 
         for(int i = 0; i < defautOption.getChildCount(); i++)
             ((RadioButton) defautOption.getChildAt(i)).setTextSize(radioBtnTxtSize);
+
+        for(int i = 0; i < feuilleOption.getChildCount(); i++)
+            ((RadioButton) feuilleOption.getChildAt(i)).setTextSize(radioBtnTxtSize);
     }
 
 
