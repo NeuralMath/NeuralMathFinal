@@ -1,7 +1,9 @@
 package com.example.marc4492.neuralmath;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -57,6 +59,9 @@ public class MainActivity extends AppCompatActivity {
     private AdapterHome adapterHome;
 
 
+    private MathKeyboard mathKeyboard;
+    private MathEditText writingZone;
+
     //Preferences
     private SharedPreferences sharedPrefs;
 
@@ -95,8 +100,6 @@ public class MainActivity extends AppCompatActivity {
                     "u","v","w","x","y","z", "[", "]", "{", "}"
             };
 
-    MathKeyboard mathKeyboard;
-    MathEditText writingZone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -338,11 +341,34 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+
+        final String eq = data.getStringExtra("EQUATION");
+
         if(requestCode == 1) {
             if (resultCode == RESULT_OK) {
-                Intent i = new Intent(context, procedureResolutionEquation.class);
-                i.putExtra("EQUATION", data.getStringExtra("EQUATION"));
-                startActivity(i);
+
+                new AlertDialog.Builder(context)
+                        .setTitle(R.string.confirmation)
+                        .setMessage(getString(R.string.your_eq_confirm) + eq + " ?")
+                        .setNegativeButton(R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent i = new Intent(context, procedureResolutionEquation.class);
+                                i.putExtra("EQUATION", eq);
+                                startActivity(i);
+                            }
+                        })
+                        .setPositiveButton(R.string.no, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                mathKeyboard.setCorrectionMode(true);
+                                writingZone.getText().clear();
+                                writingZone.setText(eq);
+                                activity_main.setDisplayedChild(3);
+                            }
+                        })
+                        .show();
+
+
             }
         }
     }

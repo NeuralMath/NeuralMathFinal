@@ -38,8 +38,8 @@ public class Term
         _coefficient = t._coefficient;
         _exponent = t._exponent;
         _operator = t._operator;
-        _openParenthesis = new ArrayList(t._openParenthesis);
-        _closeParenthesis = new ArrayList(t._closeParenthesis);
+        _openParenthesis = new ArrayList<>(t._openParenthesis);
+        _closeParenthesis = new ArrayList<>(t._closeParenthesis);
     }
 
     int getPosition()
@@ -69,7 +69,7 @@ public class Term
 
     void setOpenParenthesis(ArrayList<String> op)
     {
-        _openParenthesis = new ArrayList(op);
+        _openParenthesis = new ArrayList<>(op);
     }
 
     ArrayList<String> getCloseParenthesis()
@@ -79,7 +79,7 @@ public class Term
 
     void setCloseParenthesis(ArrayList<String> cp)
     {
-        _closeParenthesis = new ArrayList(cp);
+        _closeParenthesis = new ArrayList<>(cp);
     }
 
     String getOperator()

@@ -18,6 +18,8 @@ import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
+import java.util.ArrayList;
+
 /**
  * custom keyboard
  * Created by Mathieu Boucher on 2017-03-13.
@@ -36,7 +38,7 @@ public class MathKeyboard extends GridLayout {
     private boolean keyboardIsOpen;
 
     private ImageButton backspaceBtn;
-    private EditText typingZone;
+    private MathEditText typingZone;
     private int screenWidth;
     private Handler backspaceHandler;
 
@@ -191,7 +193,7 @@ public class MathKeyboard extends GridLayout {
      * @param writingZone   The textView where we want to  write
      * @param screenW       The screen dimensions
      */
-    public void openKeyboard(EditText writingZone, int screenW){
+    public void openKeyboard(MathEditText writingZone, int screenW){
         if(!keyboardIsOpen){
             screenWidth = screenW;
             setKeyWidth();
@@ -550,5 +552,9 @@ public class MathKeyboard extends GridLayout {
 
     public interface OnStringReadyListener {
         void done(String value);
+    }
+
+    public ArrayList<ReplacedChar> getReplacedCharList() {
+        return correctionManager.getReplacedCharList();
     }
 }

@@ -114,4 +114,12 @@ public class CorrectionManager {
         return true;
     }
 
+
+    /**
+     * return the list of replaced char
+     * @return
+     */
+    public ArrayList<ReplacedChar> getReplacedCharList() {
+        return replacedCharList;
+    }
 }

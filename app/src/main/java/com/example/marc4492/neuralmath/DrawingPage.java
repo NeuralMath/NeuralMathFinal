@@ -20,7 +20,6 @@ public class DrawingPage extends LinearLayout {
     private DrawingView drawView;
     private LinearLayout layoutBtn;
     private MathEditText txtEquation;
-    private MathKeyboard mathKeyboard;
 
     private Button btnDone;
 
@@ -36,7 +35,6 @@ public class DrawingPage extends LinearLayout {
         drawView = new DrawingView(context);
         drawView.setLayoutParams(new LayoutParams(0, LayoutParams.MATCH_PARENT, 1f));
 
-        mathKeyboard = (MathKeyboard) findViewById(R.id.keyboardDrawing);
 
         txtEquation = new MathEditText(context);
         txtEquation.setLayoutParams(new LayoutParams(0, LayoutParams.MATCH_PARENT, 0.5f));

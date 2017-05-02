@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="accueil">Home</string>
-    <string name="app_name" translatable="false">NeuralMaths</string>
     <string name="callCam">CAMERA</string>
     <string name="callGal">GALLERY</string>
     <string name="clavier">Keyboard</string>
@@ -43,4 +42,8 @@
     <string name="TrouverX">FindX</string>
     <string name="TrouverY">FindY</string>
     <string name="TrouverZéros">FindZeros</string>
+    <string name="confirmation">Confirmation</string>
+    <string name="no">No</string>
+    <string name="yes">Yes</string>
+    <string name="your_eq_confirm">"Is this your equation: "</string>
 </resources>
