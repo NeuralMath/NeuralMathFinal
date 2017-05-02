@@ -10,22 +10,19 @@ import java.util.regex.Pattern;
  * Created by Alex on 29/03/2017.
  */
 
-public class TrouverY {
+public class TrouverY extends General_Equation {
     private String valueOfX = "", m_separated_equation = "", m_FirstEquationHalf ="";
     private double x , y , nestedValue;
     private int indexI , indexF ;
-    private ArrayList<String> m_DemarcheText;
-    private ArrayList<String> m_EtapesText;
     private ArrayList<Integer> m_EtapesGrasI;
     private ArrayList<Integer> m_EtapesGrasF;
-    private final int nbDecimales = 3;
     private boolean operateurTrigo = false;
-    private String m_equation;
+
 
 
     TrouverY(String equation)
     {
-
+        super(equation);
         m_equation = equation;
         indexI = 0;
         indexF = m_equation.length()-1;
@@ -33,8 +30,6 @@ public class TrouverY {
         m_equation = m_equation.substring(m_equation.indexOf("=")+1);
         m_separated_equation = m_equation;
         nestedValue = 0;
-        m_DemarcheText = new ArrayList<>();
-        m_EtapesText = new ArrayList<>();
         m_EtapesGrasI = new ArrayList<>();
         m_EtapesGrasF = new ArrayList<>();
 
@@ -369,31 +364,6 @@ public class TrouverY {
                 return x;
             }
         }.parse();
-    }
-
-    /**
-     * Méthode qui ajoute la ligne de résolution et les étapes dans des Array tout en changeant le nombre de décimales maximales à 3
-     */
-    private void PrintLine()
-    {
-        String tempString = m_equation;
-        List<String> allMatches = new ArrayList<String>();
-        Matcher m = Pattern.compile("(\\d+\\.\\d+)")
-                .matcher(tempString);
-        while (m.find()) {
-            allMatches.add(m.group().toString());
-            System.out.print("|||||"+ m.group().toString()+ "|||||");
-        }
-        if (! allMatches.isEmpty()) {
-
-            for(int i = 0; i-1 != allMatches.size()-1;i++)
-            {
-                String remplacer = allMatches.get(i).toString();
-                tempString = tempString.replace(remplacer,String.format( "%."+String.valueOf(nbDecimales)+"f", Double.parseDouble(remplacer) ));
-            }
-        }
-        m_DemarcheText.add(" " + tempString + "\n");
-        System.out.println(tempString  + "       " + nestedValue);
     }
 
     private void ajouterUneEtape(int m_debut, int m_fin, String m_explication)

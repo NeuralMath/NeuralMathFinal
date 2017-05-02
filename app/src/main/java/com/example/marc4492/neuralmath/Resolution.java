@@ -3,7 +3,7 @@ package com.example.marc4492.neuralmath;
 import java.util.ArrayList;
 import java.text.DecimalFormat;
 
-class Resolution
+class Resolution extends General_Equation
 {
     private String _equation;                           //L'equation a resoudre.
     private ArrayList<String> _variables;               //Les variables dans l'equation.
@@ -15,6 +15,7 @@ class Resolution
 
     public Resolution(String equation, ArrayList<String> var)
     {
+        super(equation);
         _variables = new ArrayList<>(var);
 
         _leftTerms = new ArrayList<>();
