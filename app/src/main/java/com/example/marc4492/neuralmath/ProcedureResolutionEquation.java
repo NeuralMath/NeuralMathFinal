@@ -39,7 +39,7 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
 
         private LinearLayout linearDemarche;            //Layout des démarches
 
-        private String equation = "f(7,5)= 2^(2^(2)) ";     //Équation reçue
+        private String equation ;     //Équation reçue
 
         @Override
         protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +54,9 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
 
             texViewList = new ArrayList<ExpandableTextView>(10);
 
+            equation = getIntent().getStringExtra("EQUATION");
+            equation = equation.replaceAll(" ", "");  //Donne une copie de l'équation sans les espaces
+            var.add("x");       //ajout de la variable
 
             demarcheText = new ArrayList<>();
             TextViewEquation.setText(equation);
@@ -61,10 +64,9 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
 
             spinnerMethode = (Spinner) findViewById(R.id.spinner);
 
-            equation = getIntent().getStringExtra("EQUATION");
+
             List<String> spinnerArray =  new ArrayList<String>();
-            equation = equation.replaceAll(" ", "");  //Donne une copie de l'équation sans les espaces
-            var.add("x");       //ajout de la variable
+
 
             for(int i=0;i<equation.length()-1;i++)    //Début de la normalisation des équations : mets un * entre les lettres et les chiffres ainsi que lettres et parenthèses ou chiffre + parenthèses
             {
@@ -110,7 +112,7 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
             }
             else          //Aucune méthode de résolution possible.
             {
-                spinnerArray.add("0");
+                spinnerArray.add(getString(R.string.Aucune));
             }
 
             ArrayAdapter<String> adapter = new ArrayAdapter<String>(
@@ -128,7 +130,7 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
                             Object item = parent.getItemAtPosition(pos);
                             System.out.println(item.toString());     //Montre en console le choix pris
 
-                            if(item.toString() == "0") TextViewReponse.setText("Aucune réponse possible \n(0 méthode de résolution)");
+                            if(item.toString() == getString(R.string.Aucune)) TextViewReponse.setText(R.string.AucuneMethodeResolution);
                             else if(item.toString() == getString(R.string.TrouverY))trouverY();
                             else if(item.toString() == getString(R.string.TrouverX))trouverX();
                             else if(item.toString() == getString(R.string.TrouverZéros))trouverZeros();
