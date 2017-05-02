@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Class qui contient le réseau de neurones et qui peut obtenir la valeur de sortie du réseau
@@ -265,19 +266,24 @@ public class NeuralNetwork {
      *
      * @param array                     Le tableau à lire
      * @param tableName                 Nom de la table à lire
-     * @throws IOException              S'il y a des problème de lecture dans le fichier ou que le fichier n'a pas les bonnes tailles. (nbs lignes/colonnes)
      * @throws NumberFormatException    Si le texte n'est pas en double
      */
     private void readData(double[][] array, String tableName) throws NumberFormatException {
-        int i = 0;
         Cursor result = database.rawQuery("Select * from " + tableName, null);
+        ArrayList<Double> listData = new ArrayList<>();
 
         while(result.moveToNext())
-        {
-            array[(int) Math.floor(i/array[0].length)][i%array[0].length] = Double.parseDouble(result.getString(0));
-            i++;
-        }
+            listData.add(result.getDouble(0));
         result.close();
+
+        for(int i = 0; i < array.length-1; i++)
+        {
+            for(int j = 0; j < array[i].length; j++)
+                array[i][j] = listData.get(j);
+
+            //Pas sur que ca marche**********************************************
+            listData = new ArrayList<>(listData.subList(array[i].length-1, listData.size()));
+        }
     }
 
     public interface OnNetworkReady

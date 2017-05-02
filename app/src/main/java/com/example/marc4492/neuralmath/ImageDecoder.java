@@ -67,8 +67,8 @@ public class ImageDecoder {
         });
 
         for(int i = 0; i < listChar.size(); i++) {
-            /*int index = network.getAnwser(getIOPixels(listChar.get(i).getImage()));
-            listChar.get(i).setValue(charList[index]);*/
+            //int index = network.getAnwser(getIOPixels(listChar.get(i).getImage()));
+            //listChar.get(i).setValue(charList[index]);
             listChar.get(i).setValue(String.valueOf(i));
         }
 

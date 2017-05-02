@@ -9,7 +9,6 @@
     <string name="confirmer">"confirm "</string>
     <string name="cropNotSupported">Sorry, your device don\'t support the crop</string>
     <string name="database_error">Database error</string>
-    <string name="description">image view to see teh results of the test</string>
     <string name="done">Finish</string>
     <string name="droitier">Right-handed</string>
     <string name="ecrire">write</string>
@@ -32,4 +31,9 @@
     <string name="access_camera">CAMERA permission allow us to access CAMERA app</string>
     <string name="english">English</string>
     <string name="francais">Français</string>
+    <string name="problem_decoupage">Splitting char went wrong</string>
+    <string name="problem_image_decoder">Unable to work with received image</string>
+    <string name="text_zone">Equation</string>
+    <string name="feuille_blanche_option">White sheet</string>
+    <string name="feuilles_lignees_option">Line sheet</string>
 </resources>

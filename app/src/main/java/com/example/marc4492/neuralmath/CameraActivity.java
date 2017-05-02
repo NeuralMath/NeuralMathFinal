@@ -98,6 +98,18 @@ public class CameraActivity extends AppCompatActivity {
         super.onResume();
         if(bitmap != null)
         {
+            bitmap = toGrayScale(bitmap);
+            bitmap = toBinary(bitmap);
+
+
+            FileOutputStream out;
+            try {
+                out = new FileOutputStream(Environment.getExternalStorageDirectory() + "/NeuralMath/bob.jpg");
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
             try {
                 //http://stackoverflow.com/a/14292451/5224674
                 //Pour passer la reponse à lactivité principale
@@ -180,18 +192,6 @@ public class CameraActivity extends AppCompatActivity {
         if (data != null) {
             Bundle extras = data.getExtras();
             bitmap = extras.getParcelable("data");
-
-            bitmap = toGrayScale(bitmap);
-
-            bitmap = toBinary(bitmap);
-
-            FileOutputStream out;
-            try {
-                out = new FileOutputStream(Environment.getExternalStorageDirectory() + "/NeuralMath/bob.jpg");
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
         }
     }
 
@@ -229,7 +229,7 @@ public class CameraActivity extends AppCompatActivity {
         int width, height, threshold;
         height = bmpGrayscale.getHeight();
         width = bmpGrayscale.getWidth();
-        threshold = 156; //Best overall value (tested) with optimal lighting
+        threshold = 127; //Best overall value (tested) with optimal lighting
         Bitmap bmpBinary = Bitmap.createBitmap(bmpGrayscale);
 
         for (int x = 0; x < width; ++x) {

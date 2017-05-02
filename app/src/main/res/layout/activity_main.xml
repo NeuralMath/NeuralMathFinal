@@ -64,6 +64,36 @@ tools:context="com.example.marc4492.neuralmath.MainActivity">
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/langue"
+                android:id="@+id/feuilleTypeOptionText" />
+
+            <View style="@style/Divider"/>
+
+            <RadioGroup
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:id="@+id/feuilleTypeOption">
+
+                <RadioButton
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/feuille_blanche_option"
+                    android:id="@+id/blancheOption"/>
+
+                <RadioButton
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/feuilles_lignees_option"
+                    android:id="@+id/ligneOption"/>
+
+            </RadioGroup>
+
+            <View style="@style/Divider"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/langue"
                 android:id="@+id/languageOptionsText" />
 
             <View style="@style/Divider"/>

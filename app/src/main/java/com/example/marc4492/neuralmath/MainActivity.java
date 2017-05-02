@@ -31,8 +31,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -53,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private RadioGroup layoutOption;
     private RadioGroup langueOption;
     private RadioGroup defautOption;
+    private RadioGroup feuilleOption;
 
     private AdapterHome adapterHome;
 
@@ -63,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean isDroitier;
     private String langue;
     private String defautMode;
+    private boolean isBlankPage;
 
 
     //Equation
@@ -120,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
         layoutOption = (RadioGroup) findViewById(R.id.layoutOption);
         langueOption = (RadioGroup) findViewById(R.id.langueOption);
         defautOption = (RadioGroup) findViewById(R.id.defautOption);
+        feuilleOption = (RadioGroup) findViewById(R.id.feuilleTypeOption);
 
         writingZone = (MathEditText) findViewById(R.id.writingZone);
 
@@ -185,11 +186,12 @@ public class MainActivity extends AppCompatActivity {
         sharedPrefs = getPreferences(Context.MODE_PRIVATE);
 
         //on crée les préférences si elles n'existent pas
-        if (!sharedPrefs.contains("layout") && !sharedPrefs.contains("langue") && !sharedPrefs.contains("defaut")) {
+        if (!sharedPrefs.contains("layout") && !sharedPrefs.contains("langue") && !sharedPrefs.contains("defaut") || !sharedPrefs.contains("feuille")) {
             try {
                 ((RadioButton) layoutOption.getChildAt(0)).setChecked(true);
                 ((RadioButton) langueOption.getChildAt(0)).setChecked(true);
                 ((RadioButton) defautOption.getChildAt(0)).setChecked(true);
+                ((RadioButton) feuilleOption.getChildAt(0)).setChecked(true);
 
                 firstTimeOnApp();
 
@@ -312,6 +314,11 @@ public class MainActivity extends AppCompatActivity {
             else
                 editor.putBoolean("layout", false);
 
+            if(feuilleOption.getCheckedRadioButtonId() == R.id.blancheOption)
+                editor.putBoolean("feuille", true);
+            else
+                editor.putBoolean("feuille", false);
+
             editor.putString("langue", ((RadioButton) langueOption.findViewById(langueOption.getCheckedRadioButtonId())).getText().toString());
             editor.putString("defaut", ((RadioButton) defautOption.findViewById(defautOption.getCheckedRadioButtonId())).getText().toString());
             editor.apply();
@@ -421,9 +428,9 @@ public class MainActivity extends AppCompatActivity {
 
         //From
         //http://stackoverflow.com/a/19637484
-        String query = "INSERT INTO " + nameTable +" (valeur) values (?);";
+        String query = "INSERT INTO " + nameTable + " (valeur) values (?);";
         String line;
-        List<String> lineItems;
+        String[] lineItems;
 
         //Début de l'ecriture dans la DB
         database.beginTransaction();
@@ -438,13 +445,13 @@ public class MainActivity extends AppCompatActivity {
         //Lecture jusqu'à la fin du fichier
         while ((line = reader.readLine()) != null) {
             //Split les ", "
-            lineItems = Arrays.asList(line.substring(1, line.length() - 1).split("\\s*,\\s*"));
+            lineItems = line.substring(1, line.length() - 1).split("\\s*,\\s*");
 
             //Save dans la DB
             for (String value : lineItems) {
                 stmt.bindDouble(1, Double.parseDouble(value));
                 stmt.executeInsert();
-                stmt.clearBindings();
+                //stmt.clearBindings();
             }
 
             progress.setProgress(++progressVal);
@@ -532,6 +539,12 @@ public class MainActivity extends AppCompatActivity {
         isDroitier = sharedPrefs.getBoolean("layout", true);
         ((RadioButton) layoutOption.getChildAt(0)).setChecked(isDroitier);
         ((RadioButton) layoutOption.getChildAt(1)).setChecked(!isDroitier);
+
+        isBlankPage = sharedPrefs.getBoolean("feuille", true);
+        ((RadioButton) feuilleOption.getChildAt(0)).setChecked(isDroitier);
+        ((RadioButton) feuilleOption.getChildAt(1)).setChecked(!isDroitier);
+
+
 
         langue = sharedPrefs.getString("langue", getResources().getString(R.string.francais));
 

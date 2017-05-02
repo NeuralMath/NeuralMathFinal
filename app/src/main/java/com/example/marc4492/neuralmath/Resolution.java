@@ -1,33 +1,33 @@
-package resolution;
+package com.example.marc4492.neuralmath;
 
 import java.util.ArrayList;
 import java.text.DecimalFormat;
 
 class Resolution
 {
-    String _equation;                           //L'equation a resoudre.
-    ArrayList<String> _variables;               //Les variables dans l'equation.
-    ArrayList<Term> _leftTerms;                 //Les termes de l'equation a gauche du egal.
-    ArrayList<Term> _rightTerms;                //Les termes de l'equation a droite du egal.
-    int _equationLegthDisplay;                  //La grandeur de l'equation dans l'affichage. Sert uniquement a l'affichage.
+    private String _equation;                           //L'equation a resoudre.
+    private ArrayList<String> _variables;               //Les variables dans l'equation.
+    private ArrayList<Term> _leftTerms;                 //Les termes de l'equation a gauche du egal.
+    private ArrayList<Term> _rightTerms;                //Les termes de l'equation a droite du egal.
+    private int _equationLengthDisplay;                  //La grandeur de l'equation dans l'affichage. Sert uniquement a l'affichage.
 
-    DecimalFormat _df = new DecimalFormat("0.####");  //Format de l'affichage.
+    private DecimalFormat _df = new DecimalFormat("0.####");  //Format de l'affichage.
 
-    Resolution(String equation, ArrayList<String> var)
+    public Resolution(String equation, ArrayList<String> var)
     {
-        _variables = new ArrayList(var);
+        _variables = new ArrayList<>(var);
 
-        _leftTerms = new ArrayList();
-        _rightTerms = new ArrayList();
+        _leftTerms = new ArrayList<>();
+        _rightTerms = new ArrayList<>();
 
-        _equationLegthDisplay = 0;
+        _equationLengthDisplay = 0;
 
         normalize(equation);
 
         System.out.println("Equation:\t" + _equation + "\n");
     }
 
-    void normalize(String e)
+    private void normalize(String e)
     {
         //String e = "x = 7 * 2";
         //String equation = "+1*x^1=+7*x^0*2*x^0";
@@ -35,7 +35,7 @@ class Resolution
         _equation = e;
     }
 
-    int findCharPositionInString(String c, String s, int begin)
+    private int findCharPositionInString(String c, String s, int begin)
     {
         for (int i = begin; i < s.length(); i++)
         {
@@ -48,7 +48,7 @@ class Resolution
         return 0;
     }
 
-    void fillAllTerms()
+    public void fillAllTerms()
     {
         Term temp = new Term();
 
@@ -84,11 +84,11 @@ class Resolution
         fixSignOperators();
     }
 
-    Term fillTerm(int pos, String s)//Permettre les parentheses multiples.
+    private Term fillTerm(int pos, String s)//Permettre les parentheses multiples.
     {
         double coeff = 0, exp = 0;
         String temp = "", op = "";
-        ArrayList<String> open = new ArrayList(), close = new ArrayList();
+        ArrayList<String> open = new ArrayList<>(), close = new ArrayList<>();
 
         //Trouve le coefficient du terme.
         for (int i = pos - 3; i >= 0; i--)  //Recule de 2 positions avant la variable puis ramasse tous les chiffres.
@@ -158,7 +158,7 @@ class Resolution
         return new Term(pos, "" + s.charAt(pos - 1), coeff, exp, op, open, close);
     }
 
-    void fixSignOperators()
+    private void fixSignOperators()
     {
         //Gauche du egal.
         for (int i = 0; i < _leftTerms.size(); i++)
@@ -181,7 +181,7 @@ class Resolution
         }
     }
 
-    String simplify(ArrayList<Term> terms)
+    private String simplify(ArrayList<Term> terms)
     {
         String  etape = "";
 
@@ -200,10 +200,10 @@ class Resolution
         return etape;
     }
 
-    ArrayList<Term> sortTermsViaGroups(ArrayList<Term> terms)
+    private ArrayList<Term> sortTermsViaGroups(ArrayList<Term> terms)
     {
-        ArrayList<Term> termsTemp = new ArrayList();
-        ArrayList<ArrayList<Term>> groupsTerms = new ArrayList();
+        ArrayList<Term> termsTemp = new ArrayList<>();
+        ArrayList<ArrayList<Term>> groupsTerms = new ArrayList<>();
 
         for (int i = 0; i < terms.size(); i++)
         {
@@ -214,13 +214,13 @@ class Resolution
             }
             else
             {
-                groupsTerms.add(new ArrayList(termsTemp));          //Le groupe est complet. Met le dans le ArrayList de groupes.
+                groupsTerms.add(new ArrayList<>(termsTemp));          //Le groupe est complet. Met le dans le ArrayList de groupes.
 
                 termsTemp.clear();                                  //Puis effaces-le.
                 i--;                                                //Recommence pour le meme terme, donc decremente i.
             }
         }
-        groupsTerms.add(new ArrayList(termsTemp));                  //Le dernier groupe est complet. Met le dans le ArrayList de groupes.
+        groupsTerms.add(new ArrayList<>(termsTemp));                  //Le dernier groupe est complet. Met le dans le ArrayList de groupes.
 
         groupsTerms = sortInGroups(groupsTerms);
 
@@ -237,7 +237,7 @@ class Resolution
         return terms;
     }
 
-    ArrayList<ArrayList<Term>> sortInGroups(ArrayList<ArrayList<Term>> groups)
+    private ArrayList<ArrayList<Term>> sortInGroups(ArrayList<ArrayList<Term>> groups)
     {
         Term temp;
         ArrayList<Term> groupTemp;
@@ -275,13 +275,13 @@ class Resolution
                 //Si l'operateur n'est pas "/" et si l'exposant du terme est plus petit que l'exposant du terme suivant, sinon si la valeur absolue du coefficient du terme est plus petit que la valeur absolue du coefficient du terme suivant.
                 if ((!groups.get(j + 1).get(0).getOperator().equals("/")) && groups.get(j).get(0).getExponent() < groups.get(j + 1).get(0).getExponent() || (groups.get(j).get(0).getExponent() == groups.get(j + 1).get(0).getExponent() && Math.abs(groups.get(j).get(0).getCoefficient()) < Math.abs(groups.get(j + 1).get(0).getCoefficient())))
                 {
-                    groupTemp = new ArrayList(groups.get(j));
+                    groupTemp = new ArrayList<>(groups.get(j));
 
                     groups.remove(j);
-                    groups.add(j, new ArrayList(groups.get(j)));
+                    groups.add(j, new ArrayList<>(groups.get(j)));
 
                     groups.remove(j + 1);
-                    groups.add(j + 1, new ArrayList(groupTemp));
+                    groups.add(j + 1, new ArrayList<>(groupTemp));
                 }
             }
         }
@@ -289,7 +289,7 @@ class Resolution
         return groups;
     }
 
-    String exponent(ArrayList<Term> terms)
+    private String exponent(ArrayList<Term> terms)
     {
         for (int i = 0; i < terms.size(); i++)
         {
@@ -316,7 +316,7 @@ class Resolution
         return "";
     }
 
-    String multiplicationDivision(ArrayList<Term> terms)
+    private String multiplicationDivision(ArrayList<Term> terms)
     {
         for (int i = 0; i < terms.size() - 1; i++)
         {
@@ -360,7 +360,7 @@ class Resolution
         return "";
     }
 
-    String additionSubstraction(ArrayList<Term> terms)
+    private String additionSubstraction(ArrayList<Term> terms)
     {
         for (int i = 0; i < terms.size() - 1; i++)
         {
@@ -386,7 +386,7 @@ class Resolution
         return "";
     }
 
-    ArrayList<Term> removeRedundantTerms(ArrayList<Term> terms)
+    private ArrayList<Term> removeRedundantTerms(ArrayList<Term> terms)
     {
         for (int i = 0; i < terms.size(); i++)
         {
@@ -401,7 +401,7 @@ class Resolution
         return terms;
     }
 
-    void solve()
+    public void solve()
     {
         String etape = "";
 
@@ -447,7 +447,7 @@ class Resolution
         }
     }
 
-    void solveDegreeOne()
+    private void solveDegreeOne()
     {
         String etape = "";
         Term temp = new Term();
@@ -490,7 +490,7 @@ class Resolution
         }
     }
 
-    void mainVariableToLeft()
+    private void mainVariableToLeft()
     {
         //Gauche du egal.
         for (int i = 0; i < _leftTerms.size(); i++)
@@ -513,7 +513,7 @@ class Resolution
         }
     }
 
-    void transferTerm(int t)
+    private void transferTerm(int t)
     {
         String etape = "";
         Term temp;
@@ -566,7 +566,7 @@ class Resolution
         while(!etape.equals(""));
     }
 
-    void solveDegreeTwo()
+    private void solveDegreeTwo()
     {
         String s = "", A = "", B = "", C = "";
         double val1 = 0, val2 = 0, a = 0, b = 0, c = 0;
@@ -610,7 +610,7 @@ class Resolution
         }
     }
 
-    void displaySolutionsDegreeTwo(double a, double b, double c, double sol1, double sol2)
+    private void displaySolutionsDegreeTwo(double a, double b, double c, double sol1, double sol2)
     {
         if (sol1 == sol2)
         {
@@ -622,14 +622,14 @@ class Resolution
         }
     }
 
-    void manageParenthesis()
+    public void manageParenthesis()
     {
         updateEquation("Equation recue");
 
         String lastEquation = "", etape = "";
-        ArrayList<Term> termsInParenthesis = new ArrayList();
+        ArrayList<Term> termsInParenthesis = new ArrayList<>();
         ArrayList<Term> termsTemp;
-        ArrayList<Term> groupPriority = new ArrayList();
+        ArrayList<Term> groupPriority = new ArrayList<>();
 
         //Enlever toutes les parentheses possibles.
         while(parenthesisLeft() && !lastEquation.equals(_equation))
@@ -664,7 +664,7 @@ class Resolution
                     //Si le terme a une parenthese fermante.
                     if (!_leftTerms.get(i).getCloseParenthesis().isEmpty())
                     {
-                        termsTemp = new ArrayList(termsInParenthesis);
+                        termsTemp = new ArrayList<>(termsInParenthesis);
                         etape = simplify(termsInParenthesis);
 
                         //Si les termes entre parentheses ont pu etre simplifies.
@@ -735,7 +735,7 @@ class Resolution
                                 else if (_leftTerms.get(i + 1).getOpenParenthesis().isEmpty() && _leftTerms.get(i + 1).getCoefficient() == Math.floor(_leftTerms.get(i + 1).getCoefficient()) && _leftTerms.get(i + 1).getCoefficient() > 0)
                                 {
                                     //Exposants.
-                                    termsTemp = new ArrayList(termsInParenthesis);
+                                    termsTemp = new ArrayList<>(termsInParenthesis);
                                     termsTemp.get(0).getOpenParenthesis().remove(termsTemp.get(0).getOpenParenthesis().size() - 1);
                                     termsTemp.get(0).getOpenParenthesis().add(termsTemp.get(0).getOpenParenthesis().size() - 1, "*");
 
@@ -841,7 +841,7 @@ class Resolution
                     //Si le terme a une parenthese fermante.
                     if (!_rightTerms.get(i).getCloseParenthesis().isEmpty())
                     {
-                        termsTemp = new ArrayList(termsInParenthesis);
+                        termsTemp = new ArrayList<>(termsInParenthesis);
                         etape = simplify(termsInParenthesis);
 
                         //Si les termes entre parentheses ont pu etre simplifies.
@@ -917,7 +917,7 @@ class Resolution
 
                                     for (int j = 0; j < _rightTerms.get(i + 1).getCoefficient() - 1; j++)
                                     {
-                                        _rightTerms.addAll((i + 1 + (termsTemp.size() * j)), new ArrayList(termsInParenthesis));
+                                        _rightTerms.addAll((i + 1 + (termsTemp.size() * j)), new ArrayList<>(termsInParenthesis));
                                     }
 
                                     _rightTerms.remove(i + 1 + (termsInParenthesis.size() * (int)_rightTerms.get(i + 1).getCoefficient()));
@@ -990,7 +990,7 @@ class Resolution
         }
     }
 
-    boolean parenthesisLeft()
+    private boolean parenthesisLeft()
     {
         for (Term term : _leftTerms)
         {
@@ -1011,10 +1011,10 @@ class Resolution
         return false;
     }
 
-    ArrayList<Term> distribute(ArrayList<Term> terms1, ArrayList<Term> terms2)
+    private ArrayList<Term> distribute(ArrayList<Term> terms1, ArrayList<Term> terms2)
     {
-        ArrayList<ArrayList<Term>> groups = new ArrayList();
-        ArrayList<Term> temp = new ArrayList();
+        ArrayList<ArrayList<Term>> groups = new ArrayList<>();
+        ArrayList<Term> temp = new ArrayList<>();
 
         if (!terms1.get(0).getOpenParenthesis().isEmpty() && !terms1.get(terms1.size() - 1).getCloseParenthesis().isEmpty())
         {
@@ -1045,7 +1045,7 @@ class Resolution
                 temp.add(new Term(terms1.get(i)));
                 temp.add(new Term(terms2.get(j)));
 
-                groups.add(new ArrayList(temp));
+                groups.add(new ArrayList<>(temp));
                 temp.clear();
             }
         }
@@ -1061,7 +1061,7 @@ class Resolution
         return temp;
     }
 
-    void updateEquation(String etape)
+    private void updateEquation(String etape)
     {
         String lastEquation = _equation;
         _equation = "";                                         //Efface l'equation
@@ -1091,7 +1091,7 @@ class Resolution
         }
     }
 
-    void displayEquation(String etape)
+    private void displayEquation(String etape)
     {
         String equation = "";
 
@@ -1240,9 +1240,9 @@ class Resolution
         }
 
         //Pour l'alignement.
-        if (_equationLegthDisplay == 0)
+        if (_equationLengthDisplay == 0)
         {
-            _equationLegthDisplay = equation.length();
+            _equationLengthDisplay = equation.length();
         }
 
         System.out.println(equation + " (" + etape + ")\n");
@@ -1252,7 +1252,7 @@ class Resolution
     {
         String equation = "x = 7 * 2";
 
-        ArrayList<String> variables = new ArrayList();
+        ArrayList<String> variables = new ArrayList<>();
         variables.add("x");
 
         Resolution resolution = new Resolution(equation, variables);

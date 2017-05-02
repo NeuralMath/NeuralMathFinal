@@ -1,4 +1,4 @@
-package resolution;
+package com.example.marc4492.neuralmath;
 
 import java.util.ArrayList;
 import java.text.DecimalFormat;
