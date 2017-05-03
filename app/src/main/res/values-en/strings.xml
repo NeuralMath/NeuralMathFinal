@@ -12,12 +12,12 @@
     <string name="droitier">Right-handed</string>
     <string name="ecrire">Write</string>
     <string name="gaucher">Left-handed</string>
-    <string name="langue">"language "</string>
+    <string name="langue">"Language "</string>
     <string name="layout">Layout</string>
     <string name="mode_par_defaut">Default mode</string>
     <string name="network_accessibility_error">Neural network</string>
     <string name="ok">OK</string>
-    <string name="parametres">Parameter</string>
+    <string name="parametres">Parameters</string>
     <string name="permission_cancelled">Permission denied</string>
     <string name="permission_granted">Permission granted</string>
     <string name="photo">Photo</string>
