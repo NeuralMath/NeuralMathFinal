@@ -28,9 +28,10 @@ public class General_Equation {
     /**
      * Méthode qui ajoute la ligne de résolution et les étapes dans des Array tout en changeant le nombre de décimales maximales à 3
      */
-    protected void PrintLine()
+    protected int PrintLine()
     {
         String tempString = m_equation;
+        String tempString2 = m_equation;
         List<String> allMatches = new ArrayList<String>();
         Matcher m = Pattern.compile("(\\d+\\.\\d+)")
                 .matcher(tempString);
@@ -40,9 +41,11 @@ public class General_Equation {
             {
                 String remplacer = allMatches.get(i).toString();
                 tempString = tempString.replace(remplacer,String.format( "%."+String.valueOf(nbDecimales)+"f", Double.parseDouble(remplacer) ));
+
             }
         }
-        m_DemarcheText.add(" " + tempString + "\n");
+        m_DemarcheText.add(tempString);
+        return tempString.length() - tempString2.length();
     }
     public ArrayList<String> getM_DemarcheText() {
         return m_DemarcheText;
