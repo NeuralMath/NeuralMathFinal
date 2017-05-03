@@ -432,4 +432,11 @@ public class ImageDecoder {
                 results[i][Arrays.asList(charList).indexOf(list.get(i).getNewChar())] = 1;
         }
     }
+
+    public void clearData()
+    {
+        listCharDetected = new ArrayList<>();
+        line = "";
+        index = 0;
+    }
 }

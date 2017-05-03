@@ -49,4 +49,5 @@
     <string name="propos">About</string>
     <string name="Aucune">None</string>
     <string name="aboutTxt">Android project NeuralMaths created by Gabrielle Albert, Mathieu Boucher, Alexandre Charest, Marc-Antoine C. Lafrenière , Godefroy St-Pierre, for the course \"Projet d\'intégration de sciences informatiques et mathématiques\". The goal of this project was the development of an artificial intelligence created by using universitary notions in A.I. and internet researches. After having recognized a mathematic equation as a picture taken with a phone with the us of our neural network, we the resolve the equation and show the steps to resolving it. End of project : 8 May 2017</string>
+    <string name="cancel">Cancel</string>
 </resources>

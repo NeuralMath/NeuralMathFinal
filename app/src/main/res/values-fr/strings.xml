@@ -49,4 +49,5 @@
     <string name="Aucune">Aucune</string>
     <string name="AucuneMethodeResolution">Aucune réponse possible  (0 méthode de résolution)</string>
     <string name="aboutTxt">Projet android NeuralMath créé par Gabrielle Albert, Mathieu Boucher, Alexandre Charest, Marc-Antoine C. Lafrenière , Godefroy St-Pierre, dans le cadre du cours de projet d\'intégration de sciences informatiques et mathématiques. Ce projet avait pour but le développement d\'une intelligence artificielle créée à partir de notions apprises dans des cours universitaires et de recherches internet. Après avoir reconnu une équation mathématique prise avec une caméra en utilisant le réseau de neurones,  on doit résoudre l\'équation et afficher les étapes de résolution. Fin du projet : 8 Mai 2017</string>
+    <string name="cancel">Annuler</string>
 </resources>

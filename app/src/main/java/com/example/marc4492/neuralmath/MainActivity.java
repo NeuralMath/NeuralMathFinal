@@ -219,13 +219,16 @@ public class MainActivity extends AppCompatActivity {
         }
         else {
             getPref();
-            if (defautMode.equals(getResources().getString(R.string.photo)))
+
+            if (defautMode.equals(getResources().getStringArray(R.array.default_page)[0]))
+                openHome();
+            else if (defautMode.equals(getResources().getStringArray(R.array.default_page)[1]))
                 openPhoto();
-            else if (defautMode.equals(getResources().getString(R.string.ecrire)))
+            else if (defautMode.equals(getResources().getStringArray(R.array.default_page)[2]))
                 openWriting();
-            else if (defautMode.equals(getResources().getString(R.string.clavier)))
+            else if (defautMode.equals(getResources().getStringArray(R.array.default_page)[3]))
                 openKeyboard();
-            else if (defautMode.equals(getResources().getString(R.string.accueil)))
+            else
                 openHome();
 
             try {
@@ -365,6 +368,7 @@ public class MainActivity extends AppCompatActivity {
                     new AlertDialog.Builder(context)
                             .setTitle(R.string.confirmation)
                             .setMessage(getString(R.string.your_eq_confirm) + " " + eq + " ?")
+                            .setMessage(getString(R.string.your_eq_confirm)  + " " + eq + " ?")
                             .setNegativeButton(R.string.yes, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
                                     Intent i = new Intent(context, ProcedureResolutionEquation.class);
@@ -378,6 +382,11 @@ public class MainActivity extends AppCompatActivity {
                                     writingZone.getText().clear();
                                     writingZone.setText(eq);
                                     activity_main.setDisplayedChild(3);
+                                }
+                            })
+                            .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
                                 }
                             })
                             .show();
@@ -514,7 +523,7 @@ public class MainActivity extends AppCompatActivity {
      */
     void openPhoto(){
         Intent i = new Intent(context, CameraActivity.class);
-        i.putExtra("feuilleType", isBlankPage);
+        i.putExtra("FEUILLE", isBlankPage);
         startActivityForResult(i, 1);
     }
 
@@ -522,7 +531,7 @@ public class MainActivity extends AppCompatActivity {
      * Open Writing page
      */
     void openWriting(){
-        //New Intent pour gerer la sreen orientation
+        //New Intent pour gerer la screen orientation
         Intent i = new Intent(context, DrawingActivity.class);
         i.putExtra("LAYOUT", String.valueOf(isDroitier));
         startActivityForResult(i, 1);
@@ -555,7 +564,6 @@ public class MainActivity extends AppCompatActivity {
      * open about dialog
      */
     void openAbout() {
-
         new AlertDialog.Builder(context)
                 .setTitle(R.string.propos)
                 .setMessage(R.string.aboutTxt)

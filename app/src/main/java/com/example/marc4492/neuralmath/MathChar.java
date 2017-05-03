@@ -142,7 +142,7 @@ public class MathChar {
         for(int i = 0; i < image.getWidth(); i++) {
             for (int j = 0; j < image.getHeight(); j++) {
                 pixel = image.getPixel(i, j);
-                if (Color.red(pixel) +  Color.green(pixel) + Color.blue(pixel) < 320) {
+                if (Color.red(pixel) +  Color.green(pixel) + Color.blue(pixel) < 100) {
                     listBlack.add(i);
                     break;
                 }
@@ -192,7 +192,7 @@ public class MathChar {
         for(int i = 0; i < image.getHeight() ; i++) {
             for (int j = 0; j <image.getWidth(); j++) {
                 pixel = image.getPixel(j, i);
-                if(Color.red(pixel) +  Color.green(pixel) + Color.blue(pixel) < 320) {
+                if(Color.red(pixel) +  Color.green(pixel) + Color.blue(pixel) < 100) {
                     listBlack.add(i);
                     break;
                 }

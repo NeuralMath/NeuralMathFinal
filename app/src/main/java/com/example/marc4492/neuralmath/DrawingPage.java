@@ -2,12 +2,13 @@ package com.example.marc4492.neuralmath;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 /**
  * Author: Created by Mathieu on 2017-03-08.
@@ -19,7 +20,7 @@ public class DrawingPage extends LinearLayout {
 
     private DrawingView drawView;
     private LinearLayout layoutBtn;
-    private MathEditText txtEquation;
+    private TextView txtEquation;
 
     private Button btnDone;
 
@@ -36,9 +37,10 @@ public class DrawingPage extends LinearLayout {
         drawView.setLayoutParams(new LayoutParams(0, LayoutParams.MATCH_PARENT, 1f));
 
 
-        txtEquation = new MathEditText(context);
+        txtEquation = new TextView(context);
         txtEquation.setLayoutParams(new LayoutParams(0, LayoutParams.MATCH_PARENT, 0.5f));
-
+        txtEquation.setGravity(Gravity.CENTER);
+        txtEquation.setTextSize(20);
 
         /* ------------------------------------------------
          * code from: http://stackoverflow.com/a/13975236
@@ -93,7 +95,7 @@ public class DrawingPage extends LinearLayout {
      * Getter de l'edittext pour l'eq
      * @return      EditText
      */
-    public EditText getTextEquation()
+    public TextView getTextEquation()
     {
         return txtEquation;
     }
