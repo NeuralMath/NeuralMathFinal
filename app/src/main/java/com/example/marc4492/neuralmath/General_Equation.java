@@ -20,10 +20,10 @@ public class General_Equation {
 
     public General_Equation(String equationARemplir)
     {
-        nbDecimales = 3;
-        m_DemarcheText = new ArrayList<>();
-        m_EtapesText = new ArrayList<>();
-        m_equation = equationARemplir;
+        nbDecimales = 3 ;
+        m_DemarcheText = new ArrayList<>() ;
+        m_EtapesText = new ArrayList<>() ;
+        m_equation = equationARemplir ;
     }
     /**
      * Méthode qui ajoute la ligne de résolution et les étapes dans des Array tout en changeant le nombre de décimales maximales à 3

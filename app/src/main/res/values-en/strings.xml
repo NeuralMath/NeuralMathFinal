@@ -47,4 +47,6 @@
     <string name="yes">Yes</string>
     <string name="your_eq_confirm">"Is this your equation: "</string>
     <string name="sheet_type">Sheet type</string>
+    <string name="Aucune">None</string>
+    <string name="AucuneMethodeResolution">No answer possible  (There is no resolution method available)</string>
 </resources>
