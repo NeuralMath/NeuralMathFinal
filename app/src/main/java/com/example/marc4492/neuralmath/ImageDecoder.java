@@ -251,7 +251,9 @@ public class ImageDecoder {
     }
 
     public void setIndexOfString(String line, int index) {
-        MathChar.getStaticList().get(index).setIndexInString(line.length()-1);
+        ArrayList<MathChar> bob = MathChar.getStaticList();
+
+        bob.get(index).setIndexInString(line.length()-1);
     }
 
     /**

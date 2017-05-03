@@ -29,9 +29,6 @@ public class DrawingActivity extends AppCompatActivity {
             public void onClick(View view) {
                 //http://stackoverflow.com/a/14292451/5224674
                 //Pour passer la reponse à lactivité principale
-                Intent intent = new Intent();
-                intent.putExtra("EQUATION", drawPage.getTextEquation().getText().toString());
-                setResult(RESULT_OK, intent);
                 onBackPressed();
             }
         });
@@ -45,6 +42,18 @@ public class DrawingActivity extends AppCompatActivity {
             drawPage.setLayoutForRightHanded();
         else
             drawPage.setLayoutForLeftHanded();
+    }
+
+    @Override
+    public void onBackPressed() {
+        sendEquation();
+        super.onBackPressed();
+    }
+
+    public void sendEquation() {
+        Intent intent = new Intent();
+        intent.putExtra("EQUATION", drawPage.getTextEquation().getText().toString());
+        setResult(RESULT_OK, intent);
     }
 
     /**
