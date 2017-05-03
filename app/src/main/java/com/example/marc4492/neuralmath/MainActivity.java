@@ -210,7 +210,6 @@ public class MainActivity extends AppCompatActivity {
                 ((RadioButton) feuilleOption.getChildAt(0)).setChecked(true);
 
                 firstTimeOnApp();
-
             }
             catch (IOException ex)
             {

@@ -13,7 +13,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -41,8 +40,6 @@ public class MathKeyboard extends GridLayout {
     private MathEditText typingZone;
     private int screenWidth;
     private Handler backspaceHandler;
-
-    private SpannableStringBuilder exponentBuilder;
 
     private OnStringReadyListener listener;
 
@@ -254,6 +251,7 @@ public class MathKeyboard extends GridLayout {
     final OnClickListener keyClickListener = new OnClickListener() {
         public void onClick(final View v) {
             Button clickedKey = (Button) v;
+            SpannableStringBuilder exponentBuilder;
             switch(clickedKey.getText().toString()) {
                 case "#+=":
                     changeToSymbols();
@@ -554,6 +552,10 @@ public class MathKeyboard extends GridLayout {
         void done(String value);
     }
 
+    /**
+     * return the list of replaced char
+     * @return
+     */
     public ArrayList<ReplacedChar> getReplacedCharList() {
         return correctionManager.getReplacedCharList();
     }
