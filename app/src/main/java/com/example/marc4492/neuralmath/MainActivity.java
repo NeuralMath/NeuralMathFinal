@@ -14,6 +14,7 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -136,6 +137,13 @@ public class MainActivity extends AppCompatActivity {
         mathKeyboard.setListener(new MathKeyboard.OnStringReadyListener() {
             @Override
             public void done(String value) {
+                try {
+                    imageDecoder.trainNN(mathKeyboard.getReplacedCharList());
+                }
+                catch(IOException ex)
+                {
+                    Log.e("NeuralNetwork", "Training", ex);
+                }
                 Intent i = new Intent(context, ProcedureResolutionEquation.class);
                 i.putExtra("EQUATION", value);
                 startActivity(i);
@@ -344,31 +352,33 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        if (data != null) {
 
-        final String eq = data.getStringExtra("EQUATION");
+            final String eq = data.getStringExtra("EQUATION");
 
-        if(requestCode == 1) {
-            if (resultCode == RESULT_OK && eq != "") {
+            if (requestCode == 1) {
+                if (resultCode == RESULT_OK && !eq.equals("")) {
 
-                new AlertDialog.Builder(context)
-                        .setTitle(R.string.confirmation)
-                        .setMessage(getString(R.string.your_eq_confirm) + eq + " ?")
-                        .setNegativeButton(R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                Intent i = new Intent(context, ProcedureResolutionEquation.class);
-                                i.putExtra("EQUATION", eq);
-                                startActivity(i);
-                            }
-                        })
-                        .setPositiveButton(R.string.no, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                mathKeyboard.setCorrectionMode(true);
-                                writingZone.getText().clear();
-                                writingZone.setText(eq);
-                                activity_main.setDisplayedChild(3);
-                            }
-                        })
-                        .show();
+                    new AlertDialog.Builder(context)
+                            .setTitle(R.string.confirmation)
+                            .setMessage(getString(R.string.your_eq_confirm) + eq + " ?")
+                            .setNegativeButton(R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Intent i = new Intent(context, ProcedureResolutionEquation.class);
+                                    i.putExtra("EQUATION", eq);
+                                    startActivity(i);
+                                }
+                            })
+                            .setPositiveButton(R.string.no, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    mathKeyboard.setCorrectionMode(true);
+                                    writingZone.getText().clear();
+                                    writingZone.setText(eq);
+                                    activity_main.setDisplayedChild(3);
+                                }
+                            })
+                            .show();
+                }
             }
         }
     }
@@ -535,7 +545,6 @@ public class MainActivity extends AppCompatActivity {
      */
     void openHome() {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
         activity_main.setDisplayedChild(0); //the home page is 0
     }
 

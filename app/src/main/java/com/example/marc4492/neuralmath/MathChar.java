@@ -18,7 +18,7 @@ public class MathChar {
     private int yMiddle;
     private int width = 0;
 
-    private int isInFraction = 0;
+    private int isInFraction = -1;
 
     private int indexInString = 0;
 
@@ -98,6 +98,11 @@ public class MathChar {
 
     public void setIndexInString(int index) {
         indexInString = index;
+    }
+
+    public static void emptyList()
+    {
+        listFinal.clear();
     }
 
     /**

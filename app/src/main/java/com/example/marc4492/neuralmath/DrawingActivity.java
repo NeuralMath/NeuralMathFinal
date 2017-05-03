@@ -35,6 +35,7 @@ public class DrawingActivity extends AppCompatActivity {
 
         Intent i = getIntent();
         imageDecoder = MainActivity.getImageDecoder();
+        imageDecoder.setAppendMode(true);
 
         String value = i.getStringExtra("LAYOUT");
 
@@ -64,7 +65,7 @@ public class DrawingActivity extends AppCompatActivity {
     public void setBitmap(Bitmap btm)
     {
         try {
-            drawPage.getTextEquation().append(imageDecoder.findSting(btm));
+            drawPage.getTextEquation().setText(imageDecoder.findSting(btm));
         }
         catch (Exception ex)
         {

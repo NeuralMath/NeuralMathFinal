@@ -48,6 +48,7 @@ public class CameraActivity extends AppCompatActivity {
         setContentView(R.layout.camera_layout);
 
         imageDecoder = MainActivity.getImageDecoder();
+        imageDecoder.setAppendMode(false);
 
         //Button to launch cam intent
         Button camButton = (Button) findViewById(R.id.camButton);
