@@ -5,7 +5,7 @@
     <string name="callGal">GALLERY</string>
     <string name="clavier">Keyboard</string>
     <string name="clear">Erase</string>
-    <string name="confirmer">\"Confirm\"</string>
+    <string name="confirmer">Confirm</string>
     <string name="cropNotSupported">Sorry, your device don\'t support the crop</string>
     <string name="database_error">Database error</string>
     <string name="done">Finish</string>
@@ -24,7 +24,7 @@
     <string name="select_img_gallery">Select a picture from the gallery</string>
     <string name="transfer_fichier_1">Text file transfer 1/2</string>
     <string name="transfer_fichier_2">Text file transfer 2/2</string>
-    <string name="transfere_seul_fois">This transfer only happen  once</string>
+    <string name="transfere_seul_fois">This transfer only happens once</string>
     <string name="txt_file_error">Text file error</string>
     <string name="welcome">Welcome !</string>
     <string name="access_camera">CAMERA permission allow us to access CAMERA app</string>
@@ -43,8 +43,10 @@
     <string name="confirmation">Confirmation</string>
     <string name="no">No</string>
     <string name="yes">Yes</string>
-    <string name="your_eq_confirm">"Is this your equation: "</string>
+    <string name="your_eq_confirm">Is this your equation: </string>
     <string name="sheet_type">Sheet type</string>
-    <string name="Aucune">None</string>
     <string name="AucuneMethodeResolution">No answer possible  (There is no resolution method available)</string>
+    <string name="propos">About</string>
+    <string name="Aucune">None</string>
+    <string name="aboutTxt">Android project NeuralMaths created by Gabrielle Albert, Mathieu Boucher, Alexandre Charest, Marc-Antoine C. Lafrenière , Godefroy St-Pierre, for the course \"Projet d\'intégration de sciences informatiques et mathématiques\". The goal of this project was the development of an artificial intelligence created by using universitary notions in A.I. and internet researches. After having recognized a mathematic equation as a picture taken with a phone with the us of our neural network, we the resolve the equation and show the steps to resolving it. End of project : 8 May 2017</string>
 </resources>

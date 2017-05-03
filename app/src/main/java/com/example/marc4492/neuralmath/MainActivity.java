@@ -314,6 +314,9 @@ public class MainActivity extends AppCompatActivity {
             case R.id.mItemClavier:
                 openKeyboard();
                 return true;
+            case R.id.mItemAbout:
+                openAbout();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -361,7 +364,7 @@ public class MainActivity extends AppCompatActivity {
 
                     new AlertDialog.Builder(context)
                             .setTitle(R.string.confirmation)
-                            .setMessage(getString(R.string.your_eq_confirm) + eq + " ?")
+                            .setMessage(getString(R.string.your_eq_confirm) + " " + eq + " ?")
                             .setNegativeButton(R.string.yes, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
                                     Intent i = new Intent(context, ProcedureResolutionEquation.class);
@@ -546,6 +549,21 @@ public class MainActivity extends AppCompatActivity {
     void openHome() {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         activity_main.setDisplayedChild(0); //the home page is 0
+    }
+
+    /**
+     * open about dialog
+     */
+    void openAbout() {
+
+        new AlertDialog.Builder(context)
+                .setTitle(R.string.propos)
+                .setMessage(R.string.aboutTxt)
+                .setNeutralButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                })
+                .show();
     }
 
 

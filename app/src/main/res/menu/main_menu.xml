@@ -20,4 +20,8 @@
         android:id="@+id/mItemParamètres"
         android:title="@string/parametres"
         />
+    <item
+        android:id="@+id/mItemAbout"
+        android:title="@string/propos"
+        />
 </menu>
