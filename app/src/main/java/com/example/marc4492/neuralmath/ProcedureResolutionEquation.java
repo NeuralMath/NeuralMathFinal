@@ -106,7 +106,7 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
             {
                 spinnerArray.add(getString(R.string.TrouverY));
             }
-            else if(Pattern.matches("\\-?\\d+(\\,\\d*)?.*", equation) && (!equation.contains("f(x)"))&&(!equation.contains("y"))) // si ? = x   //isoler x
+            else if(Pattern.matches("\\-?\\d+(\\,\\d*)?=.*", equation) && (!equation.contains("f(x)"))&&(!equation.contains("y"))&& equation.contains("x")) // si ? = x   //isoler x
             {
                 spinnerArray.add(getString(R.string.TrouverX));
             }
@@ -164,7 +164,7 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
             int nbDeX = 0;
 
 
-            for(int i = 0; i < demarcheText.size()-1; i++) {        //Pour toutes les étapes ;
+            for(int i = 0; i < demarcheText.size(); i++) {        //Pour toutes les étapes ;
                 ExpandableTextView demarcheTextView = new ExpandableTextView(this);
                 if(demarcheText.get(i).contains("^"))               //Si l'étape contient un exposant
                 {
