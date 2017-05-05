@@ -173,14 +173,6 @@ tools:context="com.example.marc4492.neuralmath.MainActivity">
         </LinearLayout>
     </ScrollView>
 
-    <!--Photo-->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-    </LinearLayout>
-
 
 
     <!--KeyBoard-->
