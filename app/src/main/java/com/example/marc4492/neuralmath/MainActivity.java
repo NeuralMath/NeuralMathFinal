@@ -95,15 +95,15 @@ public class MainActivity extends AppCompatActivity {
 
     private String[] charList =
             {
-                    "!","(",")","+",",","-","0","1","2","3","4",
-                    "5","6","7","8","9", "=", "a","α","|",
-                    "b","β","c","cos","d","Δ","÷","e",
-                    "f","/","g","γ","≥",">","h","i",
-                    "∞","∫","j","k","l","λ","≤","lim",
-                    "log","<","m","μ","n","≠","o","p",
-                    "ϕ","π","±","·","'","q","r","→",
-                    "s","σ","sin","√","Σ","t","tan","θ",
-                    "u","v","w","x","y","z", "[", "]", "{", "}"
+                    "!", "(", ")", "+", ",", "-", "0", "1", "2", "3", "4",
+                    "5", "6", "7", "8", "9", "=", "a", "α", "|",
+                    "b", "β", "c", "cos", "d", "Δ", "÷", "e",
+                    "f", "/", "g", "γ", "≥", ">", "h", "i",
+                    "∞", "∫", "j", "k", "l", "λ", "≤", "lim",
+                    "log", "<", "m", "μ", "n", "≠", "o", "p",
+                    "ϕ", "π", "±", "·", "'", "q", "r", "→",
+                    "s", "σ", "sin", "√", "Σ", "t", "tan", "θ",
+                    "u", "v", "w", "x", "y", "z", "[", "]", "{", "}"
             };
 
 
@@ -141,9 +141,7 @@ public class MainActivity extends AppCompatActivity {
             public void done(String value) {
                 try {
                     imageDecoder.trainNN(mathKeyboard.getReplacedCharList());
-                }
-                catch(IOException ex)
-                {
+                } catch (IOException ex) {
                     Log.e("NeuralNetwork", "Training", ex);
                 }
                 Intent i = new Intent(context, ProcedureResolutionEquation.class);
@@ -181,15 +179,15 @@ public class MainActivity extends AppCompatActivity {
                 switch (position) {
                     case 0:         //Photo element selected
                         //if(imageDecoder.isReady())
-                            openPhoto();
+                        openPhoto();
                         //else
-                            //Toast.makeText(context, R.string.nn_not_ready, Toast.LENGTH_LONG).show();
+                        //Toast.makeText(context, R.string.nn_not_ready, Toast.LENGTH_LONG).show();
                         break;
                     case 1:         //Writing element selected
                         //if(imageDecoder.isReady())
-                            openWriting();
+                        openWriting();
                         //else
-                            //Toast.makeText(context, R.string.nn_not_ready, Toast.LENGTH_LONG).show();
+                        //Toast.makeText(context, R.string.nn_not_ready, Toast.LENGTH_LONG).show();
                         break;
                     case 2:         //Keyboard element selected
                         openKeyboard();
@@ -215,16 +213,13 @@ public class MainActivity extends AppCompatActivity {
                 ((RadioButton) feuilleOption.getChildAt(0)).setChecked(true);
 
                 firstTimeOnApp();
-            }
-            catch (IOException ex)
-            {
+            } catch (IOException ex) {
                 Toast.makeText(this, R.string.database_error, Toast.LENGTH_SHORT).show();
             }
-        }
-        else {
+        } else {
             getPref();
 
-            if(checkPrefDefault) {
+            if (checkPrefDefault) {
                 checkPrefDefault = false;
                 if (defautMode.equals(getResources().getStringArray(R.array.default_page)[0]))
                     openHome();
@@ -257,7 +252,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 v.onTouchEvent(event);
-                InputMethodManager imm = (InputMethodManager)v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                 if (imm != null) {
                     imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
                 }
@@ -289,8 +284,9 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * handling click events for the main menu items
-     * @param item  L'Item pressed
-     * @return  boolean Return false to allow normal menu processing to proceed, true to consume it here
+     *
+     * @param item L'Item pressed
+     * @return boolean Return false to allow normal menu processing to proceed, true to consume it here
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -321,8 +317,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if(activity_main.getDisplayedChild() == 1)
-        {
+        if (activity_main.getDisplayedChild() == 1) {
             SharedPreferences.Editor editor = sharedPrefs.edit();
             //Ajouter les nouvelle valeur dans les pref
 
@@ -339,8 +334,7 @@ public class MainActivity extends AppCompatActivity {
             editor.apply();
             getPref();
             openHome();
-        }
-        else if(activity_main.getDisplayedChild() != 0)
+        } else if (activity_main.getDisplayedChild() != 0)
             openHome();
         else
             super.onBackPressed();
@@ -388,8 +382,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public static ImageDecoder getImageDecoder()
-    {
+    public static ImageDecoder getImageDecoder() {
         return imageDecoder;
     }
 
@@ -405,9 +398,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     *
-     * @throws IOException              Problème de lecture de fichier
-     * @throws NumberFormatException    Mauvais format de données
+     * @throws IOException           Problème de lecture de fichier
+     * @throws NumberFormatException Mauvais format de données
      */
     private void firstTimeOnApp() throws IOException, NumberFormatException {
         Toast.makeText(context, R.string.welcome, Toast.LENGTH_LONG).show();
@@ -447,9 +439,7 @@ public class MainActivity extends AppCompatActivity {
                     });
 
                     createNetworkDecoder();
-                }
-                catch(IOException ex)
-                {
+                } catch (IOException ex) {
                     Toast.makeText(context, R.string.txt_file_error, Toast.LENGTH_SHORT).show();
                 }
             }
@@ -461,13 +451,12 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Lecture d'un tableau deux dimension depuis un fichier texte.
      *
-     * @param inputStream                   L'inputStream venant des ressources
-     * @param nameTable                     Nom de la table à écrire dans la DB
-     * @throws IOException                  S'il y a des problème de lecture dans le fichier ou que le fichier n'a pas les bonnes tailles. (nbs lignes/colonnes)
-     * @throws NumberFormatException        Si le texte n'est pas en double
+     * @param inputStream L'inputStream venant des ressources
+     * @param nameTable   Nom de la table à écrire dans la DB
+     * @throws IOException           S'il y a des problème de lecture dans le fichier ou que le fichier n'a pas les bonnes tailles. (nbs lignes/colonnes)
+     * @throws NumberFormatException Si le texte n'est pas en double
      */
-    private void readFileAndTransferDB(InputStream inputStream, String nameTable, ProgressDialog progress) throws IOException, NumberFormatException
-    {
+    private void readFileAndTransferDB(InputStream inputStream, String nameTable, ProgressDialog progress) throws IOException, NumberFormatException {
         database.execSQL("DROP TABLE IF EXISTS " + nameTable);
         database.execSQL("CREATE TABLE " + nameTable + "(valeur DOUBLE)");
 
@@ -510,11 +499,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     /**
      * Open the photo mode page
      */
-    void openPhoto(){
+    void openPhoto() {
         Intent i = new Intent(context, CameraActivity.class);
         i.putExtra("FEUILLE", isBlankPage);
         startActivityForResult(i, 1);
@@ -523,7 +511,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Open Writing page
      */
-    void openWriting(){
+    void openWriting() {
         //New Intent pour gerer la screen orientation
         Intent i = new Intent(context, DrawingActivity.class);
         i.putExtra("LAYOUT", String.valueOf(isDroitier));
@@ -533,7 +521,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Open Keyboard page
      */
-    void openKeyboard(){
+    void openKeyboard() {
         activity_main.setDisplayedChild(3);
         mathKeyboard.setCorrectionMode(false);
     }
@@ -541,7 +529,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * open parameter page
      */
-    void openParameter(){
+    void openParameter() {
         activity_main.setDisplayedChild(1); //the parameter page is 1
     }
 
@@ -570,27 +558,28 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Adjust the text size depending on the screen size
+     *
      * @param height the height of the screen
      */
-    void adjustTextToScreen(int height){
-        int textViewSize = height/45;
-        int radioBtnTxtSize = height/65;
+    void adjustTextToScreen(int height) {
+        int textViewSize = height / 45;
+        int radioBtnTxtSize = height / 65;
         layoutOptionsText.setTextSize(textViewSize);
         languageOptionsText.setTextSize(textViewSize);
         defaultModeOptionsText.setTextSize(textViewSize);
         feuilleOptionsText.setTextSize(textViewSize);
 
 
-        for(int i = 0; i < layoutOption.getChildCount(); i++)
+        for (int i = 0; i < layoutOption.getChildCount(); i++)
             ((RadioButton) layoutOption.getChildAt(i)).setTextSize(radioBtnTxtSize);
 
-        for(int i = 0; i < langueOption.getChildCount(); i++)
+        for (int i = 0; i < langueOption.getChildCount(); i++)
             ((RadioButton) langueOption.getChildAt(i)).setTextSize(radioBtnTxtSize);
 
-        for(int i = 0; i < defaultOption.getChildCount(); i++)
+        for (int i = 0; i < defaultOption.getChildCount(); i++)
             ((RadioButton) defaultOption.getChildAt(i)).setTextSize(radioBtnTxtSize);
 
-        for(int i = 0; i < feuilleOption.getChildCount(); i++)
+        for (int i = 0; i < feuilleOption.getChildCount(); i++)
             ((RadioButton) feuilleOption.getChildAt(i)).setTextSize(radioBtnTxtSize);
     }
 
@@ -619,9 +608,9 @@ public class MainActivity extends AppCompatActivity {
 
         String languageToLoad = "fr";
 
-        if(langue.equals(getResources().getStringArray(R.array.langue)[0])){
+        if (langue.equals(getResources().getStringArray(R.array.langue)[0])) {
             languageToLoad = "fr";
-        }else if(langue.equals(getResources().getStringArray(R.array.langue)[1])){
+        } else if (langue.equals(getResources().getStringArray(R.array.langue)[1])) {
             languageToLoad = "en";
         }
 
@@ -631,7 +620,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Changement de lanque
      *
-     * @param languageToLoad        Langue à afficher
+     * @param languageToLoad Langue à afficher
      */
     private void changementDeLangue(String languageToLoad) {
         Locale locale = new Locale(languageToLoad);
@@ -640,11 +629,13 @@ public class MainActivity extends AppCompatActivity {
         temp = temp.substring(0, 2);
         String temp2 = locale.toString();
         temp2 = temp2.substring(0, 2);
-        if(!temp2.equals(temp)){
+        if (!temp2.equals(temp)) {
             Configuration config = new Configuration();
             config.locale = locale;
-            context.getResources().updateConfiguration(config,context.getResources().getDisplayMetrics());
+            context.getResources().updateConfiguration(config, context.getResources().getDisplayMetrics());
 
+
+            finish();
             Intent intent = new Intent(context, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);

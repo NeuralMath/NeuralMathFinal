@@ -37,7 +37,7 @@ public class DrawingActivity extends AppCompatActivity {
 
         String value = i.getStringExtra("LAYOUT");
 
-        if(value.equals("true"))
+        if (value.equals("true"))
             drawPage.setLayoutForRightHanded();
         else
             drawPage.setLayoutForLeftHanded();
@@ -59,15 +59,12 @@ public class DrawingActivity extends AppCompatActivity {
     /**
      * Set le bitmap pour l'AI
      *
-     * @param btm       L'image
+     * @param btm L'image
      */
-    public void setBitmap(Bitmap btm)
-    {
+    public void setBitmap(Bitmap btm) {
         try {
             drawPage.getTextEquation().append(imageDecoder.findSting(btm));
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             Log.e("DrawingActivity", "SetBitmap", ex);
         }
     }
