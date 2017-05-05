@@ -512,7 +512,7 @@ public class MainActivity extends AppCompatActivity {
      * Open Keyboard page
      */
     void openKeyboard() {
-        activity_main.setDisplayedChild(3);
+        activity_main.setDisplayedChild(2);
         mathKeyboard.setCorrectionMode(false);
     }
 

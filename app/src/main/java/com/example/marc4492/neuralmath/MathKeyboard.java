@@ -538,7 +538,7 @@ public class MathKeyboard extends GridLayout {
 
     /**
      * able or disable the correction mode
-     * @param mode true ---> the correction mode is on false ---> the correction mode is off
+     * @param mode true ---> the correction mode is on; false ---> the correction mode is off
      */
     public void setCorrectionMode(boolean mode){
         correctionMode = mode;
