@@ -368,9 +368,9 @@ public class TrouverY extends General_Equation {
 
     private void ajouterUneEtape(int m_debut, int m_fin, String m_explication)
     {
-        PrintLine();
+        int nbDecimales = PrintLine() + 1;
         m_EtapesText.add(m_explication);
-        mettreEnGras(m_debut,m_fin);
+        mettreEnGras(m_debut,m_fin+nbDecimales);
     }
 
     //Getters, Setters
