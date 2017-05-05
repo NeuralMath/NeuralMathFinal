@@ -20,7 +20,7 @@ import java.util.Comparator;
  * 10 février 2017
  */
 
-public class ImageDecoder {
+class ImageDecoder {
     private String[] charList;
     private NeuralNetwork network;
 
@@ -45,14 +45,14 @@ public class ImageDecoder {
      *
      * @throws IOException S'il y a des problèmes de fichier, ...
      */
-    public ImageDecoder(Context c, final int input, final int hidden, final int output, final double training, final SQLiteDatabase database, String[] charListing) throws IOException {
+    ImageDecoder(Context c, final int input, final int hidden, final int output, final double training, final SQLiteDatabase database, String[] charListing) throws IOException {
         context = c;
         charList = charListing;
         network = new NeuralNetwork(input, hidden, output, training, database);
         OUTPUT = output;
     }
 
-    public void setAppendMode(boolean appendM) {
+    void setAppendMode(boolean appendM) {
         appendMode = appendM;
     }
 
@@ -63,7 +63,7 @@ public class ImageDecoder {
      * @return l'équation en String
      * @throws IOException S'il y a des problème avec l'image
      */
-    public String findSting(Bitmap btm) throws IOException {
+    String findSting(Bitmap btm) throws IOException {
         ArrayList<MathChar> listChar;
         int totalHeight = btm.getHeight();
         int totalWidth = btm.getWidth();
@@ -208,7 +208,7 @@ public class ImageDecoder {
      * @param index                 Index de la premiere postion à vérifier dans la list
      * @return                      La String complèter avec les exposants
      */
-    public String findExposant(ArrayList<MathChar> listChar, String line,  int toleranceHeight, int index)
+    private String findExposant(ArrayList<MathChar> listChar, String line, int toleranceHeight, int index)
     {
         line += "^(" + listChar.get(index).getValue();
         setIndexOfString(line, index);
@@ -245,7 +245,7 @@ public class ImageDecoder {
      * @param index                 Index de la premiere postion à vérifier dans la list
      * @return                      La String complèter avec les indices
      */
-    public String findIndice(ArrayList<MathChar> listChar, String line,  int toleranceHeight, int index)
+    private String findIndice(ArrayList<MathChar> listChar, String line, int toleranceHeight, int index)
     {
         line += "_(" + listChar.get(index).getValue();
         setIndexOfString(line, index);
@@ -274,7 +274,7 @@ public class ImageDecoder {
         return line;
     }
 
-    public void setIndexOfString(String line, int index) {
+    private void setIndexOfString(String line, int index) {
         listCharDetected.get(index).setIndexInString((line.length()-1)+lastIndex);
     }
 
@@ -405,24 +405,35 @@ public class ImageDecoder {
         }
     }
 
-    public void trainNN(ArrayList<ReplacedChar> list) throws IOException
+    void trainNN(ArrayList<ReplacedChar> list) throws IOException
     {
         int[][] trainning = new int[list.size()][];
         int[][] results = new int[list.size()][OUTPUT];
+        MathChar wanted = null;
 
         for(int[] val : results)
-        Arrays.fill(val, 0);
+            Arrays.fill(val, 0);
+
 
         for(int i = 0; i < list.size(); i++)
         {
-            trainning[i] = getIOPixels(fillImage(listCharDetected.get(list.get(i).getPosition()).getImage()));
+            for(MathChar mC : listCharDetected) {
+                if (mC.getIndexInString() == list.get(i).getPosition()) {
+                    wanted = mC;
+                    break;
+                }
+            }
+
+            trainning[i] = getIOPixels(fillImage(wanted.getImage()));
 
             if(Arrays.asList(charList).contains(list.get(i).getNewChar()))
                 results[i][Arrays.asList(charList).indexOf(list.get(i).getNewChar())] = 1;
+
+            network.trainAll(trainning, results);
         }
     }
 
-    public void clearData()
+    void clearData()
     {
         listCharDetected = new ArrayList<>();
     }

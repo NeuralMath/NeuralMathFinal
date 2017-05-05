@@ -13,7 +13,7 @@ import java.util.ArrayList;
  * @author Marc4492
  * 10 février 2017
  */
-public class NeuralNetwork {
+class NeuralNetwork {
 
     private SQLiteDatabase database;
 
@@ -43,10 +43,9 @@ public class NeuralNetwork {
      * @param outputLayer   Nombre de neurons dans la troisième couche
      * @param training      Vitesse de l'apprentisage
      * @param db            Database pour les données du reseau
-     * @param l             Listener pour avoir l'état du reseau
      * @throws IOException S'il ya des problème de lecture des fichiers
      */
-    public NeuralNetwork(int inputLayer, int hiddenLayer, int outputLayer, double training, SQLiteDatabase db) throws IOException {
+    NeuralNetwork(int inputLayer, int hiddenLayer, int outputLayer, double training, SQLiteDatabase db) throws IOException {
         database = db;
 
         INPUT = inputLayer;
@@ -164,7 +163,7 @@ public class NeuralNetwork {
      * @param resultat    La valeurs de chaques neurones d'output pour chaque exemple
      * @throws IOException S'il y a un problème d'écriture dans un fichier
      */
-    public void trainAll(int[][] trainingSet, int[][] resultat) throws IOException {
+    void trainAll(int[][] trainingSet, int[][] resultat) throws IOException {
         for (int i = 0; i < trainingSet.length; i++) {
             //Copier les valeurs sans touché à la valeur de bias
             System.arraycopy(trainingSet[i], 0, inputValues, 0, INPUT);
@@ -173,26 +172,6 @@ public class NeuralNetwork {
 
             deepLearningAlgo(resultat[i]);
         }
-
-        //Enregistrement des données
-        saveData(weightsItoH, tableNameItoH);
-        saveData(weightsHtoO, tableNameHtoO);
-    }
-
-    /**
-     * Entrainer le réseau une fois
-     *
-     * @param trainingSet Les données d'entrée de chaque neurone pour un exemple
-     * @param resultat    La valeurs de chaques neurones d'output pour l'exemple en question
-     * @throws IOException S'il y a un problème d'écriture dans un fichier
-     */
-    public void trainOnce(int[] trainingSet, int[] resultat) throws IOException {
-        //Copier les valeurs sans touché à la valeur de bias
-        System.arraycopy(trainingSet, 0, inputValues, 0, INPUT);
-        //Calculer les valeurs
-        computes();
-
-        deepLearningAlgo(resultat);
 
         //Enregistrement des données
         saveData(weightsItoH, tableNameItoH);
@@ -285,7 +264,7 @@ public class NeuralNetwork {
         }
     }
 
-    public boolean isReady()
+    boolean isReady()
     {
         return isReady;
     }

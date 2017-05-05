@@ -1,6 +1,7 @@
 package com.example.marc4492.neuralmath;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,17 +12,16 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 
-public class AdapterHome extends ArrayAdapter<HomeRow> {
+class AdapterHome extends ArrayAdapter<HomeRow> {
 
-    private boolean networkReady = false;
-
-    public AdapterHome(Context context, int resource, ArrayList<HomeRow> row) {
+    AdapterHome(Context context, int resource, ArrayList<HomeRow> row) {
         super(context, resource, row);
     }
 
 
+    @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
 
         if (convertView == null)
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.menu_elements_layout, parent, false);

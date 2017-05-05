@@ -102,10 +102,6 @@ public class MathKeyboard extends GridLayout {
             "", "",
     };
 
-    public void setKeyboardIsOpen(boolean keyboardIsOpen) {
-        this.keyboardIsOpen = keyboardIsOpen;
-    }
-
     public MathKeyboard(Context context, AttributeSet attrs) {
         super(context, attrs);
 
@@ -413,7 +409,7 @@ public class MathKeyboard extends GridLayout {
      * change the current keyboard key to the symbols
      */
     private void changeToSymbols(){
-        if(key[32].getText().toString() == "sin"){
+        if(key[32].getText().toString().equals("sin")){
             for(int i = 0; i < 9; i++){
                 removeViewAt(2*i);
                 addView(key[2*i], 2*i);
@@ -438,7 +434,7 @@ public class MathKeyboard extends GridLayout {
      */
     private void changeToLetters(){
 
-        if(key[32].getText().toString() == "sin"){
+        if(key[32].getText().toString().equals("sin")){
             for(int i = 0; i < 9; i++){
                 removeViewAt(2*i);
                 addView(key[2*i], 2*i);
@@ -458,7 +454,7 @@ public class MathKeyboard extends GridLayout {
      */
     private void changeToGreek(){
 
-        if(key[32].getText().toString() == "sin"){
+        if(key[32].getText().toString().equals("sin")){
             for(int i = 0; i < 9; i++){
                 removeViewAt(2*i);
                 addView(key[2*i], 2*i);
@@ -548,13 +544,13 @@ public class MathKeyboard extends GridLayout {
         correctionMode = mode;
     }
 
-    public interface OnStringReadyListener {
+    interface OnStringReadyListener {
         void done(String value);
     }
 
     /**
      * return the list of replaced char
-     * @return
+     * @return      Arraylist des char replaced
      */
     public ArrayList<ReplacedChar> getReplacedCharList() {
         return correctionManager.getReplacedCharList();

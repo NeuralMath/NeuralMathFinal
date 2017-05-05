@@ -6,14 +6,14 @@ package com.example.marc4492.neuralmath;
  * @author Marc4492
  * 10 février 2017
  */
-public class Neuron {
+class Neuron {
     private double output;
 
     /**
      * Constructeur pour les neurones
      * Set l'output à 1.0 pour les neurones de bias
      */
-    public Neuron() {
+    Neuron() {
         output = 1.0;
     }
 
@@ -22,7 +22,7 @@ public class Neuron {
      *
      * @return  L'output
      */
-    public double getOutput() {
+    double getOutput() {
         return output;
     }
 
@@ -31,7 +31,7 @@ public class Neuron {
      *
      * @param input     La valeur de l'input
      */
-    public void computes(double input) {
+    void computes(double input) {
         output = 1 / (1 + Math.exp(-input));
     }
 }

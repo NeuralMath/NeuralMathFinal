@@ -54,8 +54,8 @@ public class MathEditText extends android.support.v7.widget.AppCompatEditText{
 
     /**
      * This override function disable the text drag and drop
-     * @param event
-     * @return
+     * @param event     Draging event
+     * @return          Always true
      */
     @Override
     public boolean onDragEvent(DragEvent event) {

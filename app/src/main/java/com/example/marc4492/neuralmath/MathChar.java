@@ -6,13 +6,12 @@ import android.graphics.Color;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class MathChar {
+class MathChar {
 
     private Bitmap image;
 
     private int xStart = 0;
     private int yStart = 0;
-    private int xEnd;
     private int yEnd;
     private int xMiddle;
     private int yMiddle;
@@ -27,12 +26,12 @@ public class MathChar {
     private ArrayList<MathChar> listInner = new ArrayList<>();
     private static ArrayList<MathChar> listFinal = new ArrayList<>();
 
-    public MathChar(Bitmap b, int x, int y, int w, int h, int isFrac) {
+    MathChar(Bitmap b, int x, int y, int w, int h, int isFrac) {
         image = b;
         xStart = x;
         yStart = y;
 
-        xEnd = x + w;
+        int xEnd = x + w;
         yEnd = y + h;
 
         isInFraction = isFrac;
@@ -47,60 +46,60 @@ public class MathChar {
         return image;
     }
 
-    public static ArrayList<MathChar> getStaticList() {
+    static ArrayList<MathChar> getStaticList() {
         return listFinal;
     }
 
-    public void setValue(String value) {
+    void setValue(String value) {
         this.value = value;
     }
 
-    public String getValue()
+    String getValue()
     {
         return value;
     }
 
-    public int getXStart() {
+    int getXStart() {
         return xStart;
     }
 
-    public int getYStart() {
+    int getYStart() {
         return yStart;
     }
 
-    public int getYEnd() {
+    int getYEnd() {
         return yEnd;
     }
 
-    public int getWidth() {
+    int getWidth() {
         return width;
     }
 
-    public int getXMiddle() {
+     int getXMiddle() {
         return xMiddle;
     }
 
-    public int getYMiddle() {
+    int getYMiddle() {
         return yMiddle;
     }
 
-    public int getIsInFraction() {
+     int getIsInFraction() {
         return isInFraction;
     }
 
-    public void setIsInFraction(int inFraction) {
+    void setIsInFraction(int inFraction) {
         isInFraction = inFraction;
     }
 
-    public int getIndexInString() {
+    int getIndexInString() {
         return indexInString;
     }
 
-    public void setIndexInString(int index) {
+    void setIndexInString(int index) {
         indexInString = index;
     }
 
-    public static void emptyList()
+    static void emptyList()
     {
         listFinal.clear();
     }
@@ -110,7 +109,7 @@ public class MathChar {
      * @param isSplitVertical      Si l'on split verticalement ou pas
      * @throws IOException  S'il y a des problemes avec le splitage
      */
-    public void splitChar(boolean isSplitVertical) throws IOException {
+    void splitChar(boolean isSplitVertical) throws IOException {
         if (isSplitVertical)
             splitVertical();
         else

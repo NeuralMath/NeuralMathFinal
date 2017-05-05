@@ -34,7 +34,7 @@ public class DrawingView extends View {
     /**
      * Constructeur par défault
      *
-     * @param c     Le context de l'App
+     * @param c Le context de l'App
      */
     public DrawingView(Context c) {
         super(c);
@@ -70,7 +70,7 @@ public class DrawingView extends View {
     public boolean onTouchEvent(MotionEvent event) {
         float x = event.getX();
         float y = event.getY();
-        switch (event.getAction()){
+        switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 path.moveTo(x, y);
                 break;
@@ -96,7 +96,7 @@ public class DrawingView extends View {
     /**
      * Clear the canvas and stop the saving timer
      */
-    public void clear(){
+    public void clear() {
         setDrawingCacheEnabled(false);
         destroyDrawingCache();
         drawCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
@@ -107,10 +107,9 @@ public class DrawingView extends View {
     /**
      * Set le listener pour le callback
      *
-     * @param dL        Le listener
+     * @param dL Le listener
      */
-    public void setListener(DrawnListener dL)
-    {
+    public void setListener(DrawnListener dL) {
         listener = dL;
     }
 
@@ -130,8 +129,7 @@ public class DrawingView extends View {
     /**
      * Un listener custom pour l'event quand le user a fini d'ecrire
      */
-    public interface DrawnListener
-    {
+    interface DrawnListener {
         void drawn(Bitmap b);
     }
 }

@@ -27,8 +27,8 @@ public class DrawingPage extends LinearLayout {
     /**
      * Creation des deux parties de la page
      *
-     * @param context       Context de l'app
-     * @param attrs
+     * @param context Context de l'app
+     * @param attrs   ?
      */
     public DrawingPage(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -53,7 +53,7 @@ public class DrawingPage extends LinearLayout {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 v.onTouchEvent(event);
-                InputMethodManager imm = (InputMethodManager)v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                 if (imm != null) {
                     imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
                 }
@@ -89,39 +89,39 @@ public class DrawingPage extends LinearLayout {
         layoutBtn.addView(btnDone);
 
         setOrientation(LinearLayout.HORIZONTAL);
-}
+    }
 
     /**
      * Getter de l'edittext pour l'eq
-     * @return      EditText
+     *
+     * @return EditText
      */
-    public TextView getTextEquation()
-    {
+    public TextView getTextEquation() {
         return txtEquation;
     }
 
     /**
      * Getter du drawing view
-     * @return      Drawing View
+     *
+     * @return Drawing View
      */
-    public DrawingView getDrawView()
-    {
+    public DrawingView getDrawView() {
         return drawView;
     }
 
     /**
      * Getter du bouton finish
-     * @return      Le bouton
+     *
+     * @return Le bouton
      */
-    public Button getDoneButton()
-    {
+    public Button getDoneButton() {
         return btnDone;
     }
 
     /**
      * Set the layout for left-handed User
      */
-    public void setLayoutForLeftHanded(){
+    public void setLayoutForLeftHanded() {
         removeAllViewsInLayout();
         addView(layoutBtn);
         addView(drawView);
@@ -131,7 +131,7 @@ public class DrawingPage extends LinearLayout {
     /**
      * Set the layout for right-handed User
      */
-    public void setLayoutForRightHanded(){
+    public void setLayoutForRightHanded() {
         removeAllViewsInLayout();
         addView(txtEquation);
         addView(drawView);

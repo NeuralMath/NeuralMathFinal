@@ -46,20 +46,15 @@ Favoriser la lumière à la place de la proximité (Ça fait vrm toute la diffé
 
 
 public class CameraActivity extends AppCompatActivity {
-    private File file;
     private Uri uri;
-    private Intent camIntent, galIntent, cropIntent;
     private final int RequestPermissionCode = 1;
-    private String fileName = "";
 
     private ImageDecoder imageDecoder;
 
-    private Boolean ruledPaper = false;
-    private Button camButton;
-    private Button galButton;
-
     private double camRes = 0; //To store the camera resolution
     private Bitmap bitmap; //conversion image-bitmap, bitmap-grayscaleBitmap grayscaleBitmap-binaryBitmap
+
+    private boolean ruledPaper = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,8 +64,10 @@ public class CameraActivity extends AppCompatActivity {
         imageDecoder = MainActivity.getImageDecoder();
         imageDecoder.setAppendMode(false);
 
+        ruledPaper = getIntent().getBooleanExtra("FEUILLE", false);
+
         //Button to launch cam intent
-        camButton = (Button) findViewById(R.id.camButton);
+        Button camButton = (Button) findViewById(R.id.camButton);
         camButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -79,7 +76,7 @@ public class CameraActivity extends AppCompatActivity {
         });
 
         //Button to launch gallery intent
-        galButton = (Button) findViewById(R.id.galButton);
+        Button galButton = (Button) findViewById(R.id.galButton);
         galButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -99,7 +96,7 @@ public class CameraActivity extends AppCompatActivity {
         Camera camera = Camera.open(0);
         android.hardware.Camera.Parameters params = camera.getParameters();
         List sizes = params.getSupportedPictureSizes();
-        Camera.Size result = null;
+        Camera.Size result;
 
         ArrayList<Integer> arrayListForWidth = new ArrayList<Integer>();
         ArrayList<Integer> arrayListForHeight = new ArrayList<Integer>();
@@ -165,15 +162,15 @@ public class CameraActivity extends AppCompatActivity {
     }
 
     private void GalleryOpen() {
-        galIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        Intent galIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(Intent.createChooser(galIntent, "Select image from gallery"), 2);
 
     }
 
     private void CameraOpen() {
-        camIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        fileName = "file" + String.valueOf(System.currentTimeMillis()) + ".jpg";
-        file = new File(Environment.getExternalStorageDirectory(), fileName);
+        Intent camIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        String fileName = "file" + String.valueOf(System.currentTimeMillis()) + ".jpg";
+        File file = new File(Environment.getExternalStorageDirectory(), fileName);
         uri = Uri.fromFile(file);
 
         camIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
@@ -190,7 +187,7 @@ public class CameraActivity extends AppCompatActivity {
     private void CropImage(Uri picUri) {
         try {
 
-            cropIntent = new Intent("com.android.camera.action.CROP");
+            Intent cropIntent = new Intent("com.android.camera.action.CROP");
 
             cropIntent.setDataAndType(picUri, "image/*");
             cropIntent.putExtra("crop", "true");
@@ -266,11 +263,11 @@ public class CameraActivity extends AppCompatActivity {
         height = bmpGrayscale.getHeight();
         width = bmpGrayscale.getWidth();
 
-        if (camRes <= 8 && ruledPaper == false) //older cameras (8MP and less) user chose blank paper as default
+        if (camRes <= 8 && !ruledPaper) //older cameras (8MP and less) user chose blank paper as default
         {
             threshold = 127; //Tested w/GS3 8MP camera
         } else {
-            if (camRes <= 8 && ruledPaper == true) //older cameras (8MP and less) user chose ruled paper as default
+            if (camRes <= 8 && ruledPaper) //older cameras (8MP and less) user chose ruled paper as default
             {
                 threshold = 112; //Tested w/GS3 8MP camera
             } else //Cameras over 8MP

@@ -44,10 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
     //Info screen
     private int largeurScreen;
-    private int hauteurScreen;
 
-    private ListView listHome;
-    private ArrayList<HomeRow> homeRows;
     private ViewFlipper activity_main;
 
     private TextView layoutOptionsText;
@@ -60,8 +57,6 @@ public class MainActivity extends AppCompatActivity {
     private RadioGroup defaultOption;
     private RadioGroup feuilleOption;
 
-    private AdapterHome adapterHome;
-
 
     private MathKeyboard mathKeyboard;
     private MathEditText writingZone;
@@ -70,13 +65,9 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences sharedPrefs;
 
     private boolean isDroitier;
-    private String langue;
     private String defautMode;
     private boolean isBlankPage;
 
-
-    //Equation
-    private String equation = "";
 
     //Image decoder and NeuralNetwork
     private static ImageDecoder imageDecoder;
@@ -119,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
         //Main view
         // getting all widget
         activity_main = (ViewFlipper) findViewById(R.id.activity_main);
-        listHome = (ListView) findViewById(R.id.listHome);
+        ListView listHome = (ListView) findViewById(R.id.listHome);
 
         //TextView
         layoutOptionsText = (TextView) findViewById(R.id.layoutOptionsText);
@@ -151,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        homeRows = new ArrayList<>();
+        ArrayList<HomeRow> homeRows = new ArrayList<>();
 
         //Getting the screen dimensions
         Display display = getWindowManager().getDefaultDisplay();
@@ -166,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
         homeRows.add(new HomeRow(this, R.drawable.keyboard, getResources().getString(R.string.clavier)));
         homeRows.add(new HomeRow(this, R.drawable.wrench, getResources().getString(R.string.parametres)));
 
-        adapterHome = new AdapterHome(MainActivity.this, R.layout.menu_elements_layout, homeRows);
+        AdapterHome adapterHome = new AdapterHome(MainActivity.this, R.layout.menu_elements_layout, homeRows);
 
         listHome.setAdapter(adapterHome);
 
@@ -394,7 +385,6 @@ public class MainActivity extends AppCompatActivity {
         getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
 
         largeurScreen = displaymetrics.widthPixels;
-        hauteurScreen = displaymetrics.heightPixels;
     }
 
     /**
@@ -589,7 +579,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void getPref() {
         //set les variables de préférences******************************************************************
-        langue = sharedPrefs.getString("langue", getResources().getStringArray(R.array.langue)[0]);
+        String langue = sharedPrefs.getString("langue", getResources().getStringArray(R.array.langue)[0]);
         defautMode = sharedPrefs.getString("default", getResources().getStringArray(R.array.langue)[0]);
 
         int indexLayout = Arrays.asList((getResources().getStringArray(R.array.layout))).indexOf(sharedPrefs.getString("layout", getResources().getStringArray(R.array.langue)[0]));

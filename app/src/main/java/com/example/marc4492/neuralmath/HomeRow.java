@@ -5,6 +5,7 @@ import android.view.View;
 
 /**
  * Created by Mathieu on 2017-02-08.
+ * Contient un item de la liste du menu
  */
 
 public class HomeRow extends View {
