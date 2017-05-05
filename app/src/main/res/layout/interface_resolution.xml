@@ -15,7 +15,7 @@
         android:id="@+id/textView8"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Équation ici"
+        android:text="@string/equation_ici"
         android:gravity="left"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
 
@@ -29,7 +29,7 @@
         android:layout_alignParentEnd="true" />
 
     <TextView
-        android:text="Équation :"
+        android:text="@string/equation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -39,7 +39,7 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
     <TextView
-        android:text="Méthode de résolution"
+        android:text="@string/m_thode_de_r_solution"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/textView"
@@ -55,11 +55,11 @@
         android:layout_alignParentStart="true"
         android:layout_below="@+id/spinner"
         android:layout_marginTop="18dp"
-        android:text="Réponse(s) : "
+        android:text="@string/r_ponse_s"
         android:textAppearance="@android:style/TextAppearance.DeviceDefault.DialogWindowTitle" />
 
     <TextView
-        android:text="Erreur 404"
+        android:text="@string/erreur_404"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/textView4"
@@ -117,10 +117,9 @@
                 android:id="@+id/textView2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/deuxiemeBarre"
                 android:layout_marginTop="10dp"
                 android:gravity="left"
-                android:text="DÉMONSTRATION"
+                android:text="@string/d_monstration"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
         </LinearLayout>
     </ScrollView>

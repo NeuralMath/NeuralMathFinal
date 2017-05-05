@@ -96,7 +96,7 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
             {
                 spinnerArray.add(getString(R.string.Integrer));
             }
-            else if(Pattern.matches("(?i)(f\\(([a-e]|[h-m]|[o-r]|[t-z])\\)=.*)|(y=.*)", equation)) // si f(x) ou y //https://regex101.com/
+            else if(Pattern.matches("(?i)(\\w\\(([a-e]|[h-m]|[o-r]|[t-z])\\)=.*)|(y=.*)", equation)) // si f(x) ou y //https://regex101.com/
             {
                 spinnerArray.add(getString(R.string.Simplification));
                 spinnerArray.add(getString(R.string.Factorisation));
@@ -192,7 +192,7 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
                         Matcher m = Pattern.compile("x").matcher(demarcheText.get(0)); //http://stackoverflow.com/questions/8938498/get-the-index-of-a-pattern-in-a-string-using-regex
                         while (m.find())
                         {
-                            mettreEnGrasEtape(m_EtapesGrasI.get(nbDeX)+firstHalfEquation.length(),m_EtapesGrasF.get(nbDeX)+firstHalfEquation.length(),expString);
+                            mettreEnGrasEtape(m_EtapesGrasI.get(nbDeX)-1+firstHalfEquation.length(),m_EtapesGrasF.get(nbDeX)-1+firstHalfEquation.length(),expString);
                             nbDeX++;
                         }
                         nbDeX--;
@@ -306,6 +306,7 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
             TrouverY resolutionY = new TrouverY(equation);
             TextViewReponse.setText(String.valueOf(resolutionY.getY()));
             demarche.setText("DÉMONSTRATION : Trouver y\n ");
+            etapesText = resolutionY.getM_EtapesText();
             ajouterEtapes(resolutionY.getM_DemarcheText(),resolutionY.getM_FirstEquationHalf(),resolutionY.getM_EtapesGrasI(),resolutionY.getM_EtapesGrasF());
         }
         public void trouverX()
@@ -327,7 +328,8 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
             Resolution simplificationEQ = new Resolution(equation,var);
             demarche.setText("DÉMONSTRATION : Trouver simplification\n");
             TextViewReponse.setText(simplificationEQ.getM_equation());
-            ajouterEtapes(simplificationEQ.getM_DemarcheText(),simplificationEQ.getM_EtapesText());
+            etapesText = simplificationEQ.getM_EtapesText();
+            ajouterEtapes(simplificationEQ.getM_DemarcheText(),etapesText);
         }
         public void factorisation()
         {

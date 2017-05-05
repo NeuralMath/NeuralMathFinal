@@ -34,8 +34,8 @@
     <string name="feuille_blanche_option">White sheet</string>
     <string name="feuilles_lignees_option">Line sheet</string>
     <string name="Deriver">Derivate</string>
-    <string name="Factorisation">factor</string>
-    <string name="Integrer">Factor</string>
+    <string name="Factorisation">Factor</string>
+    <string name="Integrer">Integrate</string>
     <string name="Simplification">Simplification</string>
     <string name="TrouverX">FindX</string>
     <string name="TrouverY">FindY</string>
@@ -51,4 +51,10 @@
     <string name="aboutTxt">Android project NeuralMaths created by Gabrielle Albert, Mathieu Boucher, Alexandre Charest, Marc-Antoine C. Lafrenière , Godefroy St-Pierre, for the course \"Projet d\'intégration de sciences informatiques et mathématiques\". The goal of this project was the development of an artificial intelligence created by using universitary notions in A.I. and internet researches. After having recognized a mathematic equation as a picture taken with a phone with the us of our neural network, we the resolve the equation and show the steps to resolving it. End of project : 8 May 2017</string>
     <string name="cancel">Cancel</string>
     <string name="nn_not_ready">Sorry, neural network is not ready.</string>
+    <string name="d_monstration">DEMONSTRATION</string>
+    <string name="equation">Equation</string>
+    <string name="equation_ici">Equation here</string>
+    <string name="erreur_404">Error 404</string>
+    <string name="m_thode_de_r_solution">Resolution method</string>
+    <string name="r_ponse_s">Answer(s) :</string>
 </resources>
