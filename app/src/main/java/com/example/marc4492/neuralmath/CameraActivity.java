@@ -1,10 +1,8 @@
 /*
 Gabrielle Albert
-
 2 avril 2017
 Activité qui call des Intents de Camera, Rognage, et Gallerie, qui a les fonctions
 pour convertir l'image en grayscale bitmap et binary bitmap
-
 Adapté du tutoriel youtube par EDMTDev https://www.youtube.com/watch?v=rYzkv_KuZo4
 Images de flaticon.com
  */
@@ -19,6 +17,7 @@ import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
+import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -32,15 +31,35 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+/* A mettre dans le guide d'utilisation
+Ne pas utiliser de crayons / stylos de couleur (juste noir et gris foncé - plomb)
+Éviter d'écrire pale au crayon plomb
+Luminosité optimale requise
+Éviter de couvrir l'équation avec l'ombre du telephone (VRM IMPORTANT)
+Favoriser la lumière à la place de la proximité (Ça fait vrm toute la différence)
+ */
 
 
 public class CameraActivity extends AppCompatActivity {
+    private File file;
     private Uri uri;
+    private Intent camIntent, galIntent, cropIntent;
     private final int RequestPermissionCode = 1;
+    private String fileName = "";
+
     private ImageDecoder imageDecoder;
-    private Bitmap bitmap;
+
+    private Boolean ruledPaper = false;
+    private Button camButton;
+    private Button galButton;
+
+    private double camRes = 0; //To store the camera resolution
+    private Bitmap bitmap; //conversion image-bitmap, bitmap-grayscaleBitmap grayscaleBitmap-binaryBitmap
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +70,7 @@ public class CameraActivity extends AppCompatActivity {
         imageDecoder.setAppendMode(false);
 
         //Button to launch cam intent
-        Button camButton = (Button) findViewById(R.id.camButton);
+        camButton = (Button) findViewById(R.id.camButton);
         camButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -60,7 +79,7 @@ public class CameraActivity extends AppCompatActivity {
         });
 
         //Button to launch gallery intent
-        Button galButton = (Button) findViewById(R.id.galButton);
+        galButton = (Button) findViewById(R.id.galButton);
         galButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -70,8 +89,32 @@ public class CameraActivity extends AppCompatActivity {
 
         //Permission camera
         int PermissionCheck = ContextCompat.checkSelfPermission(CameraActivity.this, android.Manifest.permission.CAMERA);
-        if (PermissionCheck == PackageManager.PERMISSION_DENIED)
+        if (PermissionCheck == PackageManager.PERMISSION_DENIED) {
             RequestRuntimePermission();
+        }
+
+//Code to check camera resolution in megapixels
+        //http://stackoverflow.com/questions/19463858/how-to-get-front-and-back-cameras-megapixel-that-is-designed-for-android-device
+
+        Camera camera = Camera.open(0);
+        android.hardware.Camera.Parameters params = camera.getParameters();
+        List sizes = params.getSupportedPictureSizes();
+        Camera.Size result = null;
+
+        ArrayList<Integer> arrayListForWidth = new ArrayList<Integer>();
+        ArrayList<Integer> arrayListForHeight = new ArrayList<Integer>();
+
+        for (int i = 0; i < sizes.size(); i++) {
+            result = (Camera.Size) sizes.get(i);
+            arrayListForWidth.add(result.width);
+            arrayListForHeight.add(result.height);
+        }
+        if (arrayListForWidth.size() != 0 && arrayListForHeight.size() != 0) {
+            camRes = ((Collections.max(arrayListForWidth)) * (Collections.max(arrayListForHeight))) / 1024000;
+        }
+        camera.release();
+        arrayListForWidth.clear();
+        arrayListForHeight.clear();
     }
 
     //Request permission for camera if it's not allowed yet
@@ -95,21 +138,18 @@ public class CameraActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        finish();
+        Intent i = new Intent(this, MainActivity.class);
+        startActivity(i);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
-        if(bitmap != null)
-        {
-            bitmap = toGrayScale(bitmap);
+        if (bitmap != null) {
+            bitmap = toGrayscale(bitmap);
             bitmap = toBinary(bitmap);
-
-
-            FileOutputStream out;
-            try {
-                out = new FileOutputStream(Environment.getExternalStorageDirectory() + "/NeuralMath/bob.jpg");
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
 
             try {
                 //http://stackoverflow.com/a/14292451/5224674
@@ -118,24 +158,22 @@ public class CameraActivity extends AppCompatActivity {
                 intent.putExtra("EQUATION", imageDecoder.findSting(bitmap));
                 setResult(RESULT_OK, intent);
                 onBackPressed();
-            }
-            catch (IOException ex)
-            {
+            } catch (IOException ex) {
                 Toast.makeText(this, getString(R.string.problem_image_decoder), Toast.LENGTH_LONG).show();
             }
         }
     }
 
     private void GalleryOpen() {
-        Intent galIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(Intent.createChooser(galIntent, getString(R.string.select_img_gallery)), 2);
+        galIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(Intent.createChooser(galIntent, "Select image from gallery"), 2);
 
     }
 
     private void CameraOpen() {
-        Intent camIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        String fileName = "NeuralMath_" + String.valueOf(System.currentTimeMillis()) + ".jpg";
-        File file = new File(Environment.getExternalStorageDirectory(), fileName);
+        camIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        fileName = "file" + String.valueOf(System.currentTimeMillis()) + ".jpg";
+        file = new File(Environment.getExternalStorageDirectory(), fileName);
         uri = Uri.fromFile(file);
 
         camIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
@@ -152,14 +190,10 @@ public class CameraActivity extends AppCompatActivity {
     private void CropImage(Uri picUri) {
         try {
 
-            Intent cropIntent = new Intent("com.android.camera.action.CROP");
+            cropIntent = new Intent("com.android.camera.action.CROP");
 
             cropIntent.setDataAndType(picUri, "image/*");
             cropIntent.putExtra("crop", "true");
-            //cropIntent.putExtra("aspectX", 4);
-            //cropIntent.putExtra("aspectY", 1);
-            //cropIntent.putExtra("outputX", 1200);
-            //cropIntent.putExtra("outputY", 300);
             cropIntent.putExtra("scaleUpIfNeeded", true);
             cropIntent.putExtra("return-data", true);
 
@@ -174,12 +208,12 @@ public class CameraActivity extends AppCompatActivity {
 
     }
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 0 && resultCode == RESULT_OK)
+
+        if (requestCode == 0 && resultCode == RESULT_OK) {
             CropImage(uri);
-        else {
+        } else {
             if (requestCode == 2) {
                 if (data != null) {
                     uri = data.getData();
@@ -187,10 +221,8 @@ public class CameraActivity extends AppCompatActivity {
                 }
             }
         }
-
-        //SI ON ANNULE LE CROP CA CRASH****************************************************************************************
-        //http://stackoverflow.com/questions/14534625/how-to-get-correct-path-after-cropping-the-image
-        if (data != null) {
+        if (data != null) //http://stackoverflow.com/questions/14534625/how-to-get-correct-path-after-cropping-the-image
+        {
             Bundle extras = data.getExtras();
             bitmap = extras.getParcelable("data");
         }
@@ -202,7 +234,7 @@ public class CameraActivity extends AppCompatActivity {
      * @param bmpOriginal le bitmap qui sort de la camera/qui vient d'etre rognée
      * @return bitmap converti en grayscale
      */
-    public Bitmap toGrayScale(Bitmap bmpOriginal) //http://stackoverflow.com/questions/3373860/convert-a-bitmap-to-grayscale-in-android
+    public Bitmap toGrayscale(Bitmap bmpOriginal) //http://stackoverflow.com/questions/3373860/convert-a-bitmap-to-grayscale-in-android
     {
         int width, height;
         height = bmpOriginal.getHeight();
@@ -211,11 +243,14 @@ public class CameraActivity extends AppCompatActivity {
         Bitmap bmpGrayscale = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         Canvas c = new Canvas(bmpGrayscale);
         Paint paint = new Paint();
+
         ColorMatrix cm = new ColorMatrix();
         cm.setSaturation(0);
         ColorMatrixColorFilter f = new ColorMatrixColorFilter(cm);
+
         paint.setColorFilter(f);
         c.drawBitmap(bmpOriginal, 0, 0, paint);
+
         return bmpGrayscale;
     }
 
@@ -227,10 +262,22 @@ public class CameraActivity extends AppCompatActivity {
      */
     public Bitmap toBinary(Bitmap bmpGrayscale) //http://stackoverflow.com/questions/20299264/android-convert-grayscale-to-binary-image
     {
-        int width, height, threshold;
+        int width, height, threshold; //threshold = minimum value a pixel needs to be black (kept as text)
         height = bmpGrayscale.getHeight();
         width = bmpGrayscale.getWidth();
-        threshold = 127; //Best overall value (tested) with optimal lighting
+
+        if (camRes <= 8 && ruledPaper == false) //older cameras (8MP and less) user chose blank paper as default
+        {
+            threshold = 127; //Tested w/GS3 8MP camera
+        } else {
+            if (camRes <= 8 && ruledPaper == true) //older cameras (8MP and less) user chose ruled paper as default
+            {
+                threshold = 112; //Tested w/GS3 8MP camera
+            } else //Cameras over 8MP
+            {
+                threshold = 156; //Best overall value with good lighting(tested w/ GS6 16MP camera)
+            }
+        }
         Bitmap bmpBinary = Bitmap.createBitmap(bmpGrayscale);
 
         for (int x = 0; x < width; ++x) {
@@ -240,10 +287,11 @@ public class CameraActivity extends AppCompatActivity {
                 int gray = (int) (Color.red(pixel) * 0.3 + Color.green(pixel) * 0.59 + Color.blue(pixel) * 0.11);
 
                 //get binary value
-                if (gray < threshold)
-                    bmpBinary.setPixel(x, y, 0xFF000000);
-                else
-                    bmpBinary.setPixel(x, y, 0xFFFFFFFF);
+                if (gray < threshold) {
+                    bmpBinary.setPixel(x, y, 0xFF000000); //make pixel black
+                } else {
+                    bmpBinary.setPixel(x, y, 0xFFFFFFFF); //make pixel white
+                }
             }
         }
         return bmpBinary;

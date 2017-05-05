@@ -41,24 +41,6 @@ public class AdapterHome extends ArrayAdapter<HomeRow> {
             text.setTextSize(viewSize / 10);
         }
 
-        if(networkReady)
-            convertView.setBackgroundResource(0);
-        else {
-            if (position < 2)
-                convertView.setBackgroundResource(R.drawable.colored_border);
-            else
-                convertView.setBackgroundResource(0);
-        }
-
         return convertView;
-    }
-
-    public void setNetworkReady(boolean val) {
-        networkReady = val;
-    }
-
-    @Override
-    public boolean isEnabled(int position) {
-        return getItem(position).isEnabled();
     }
 }

@@ -46,10 +46,10 @@ public class ImageDecoder {
      *
      * @throws IOException S'il y a des problèmes de fichier, ...
      */
-    public ImageDecoder(Context c, final int input, final int hidden, final int output, final double training, final SQLiteDatabase database, String[] charListing, NeuralNetwork.OnNetworkReady listener) throws IOException {
+    public ImageDecoder(Context c, final int input, final int hidden, final int output, final double training, final SQLiteDatabase database, String[] charListing) throws IOException {
         context = c;
         charList = charListing;
-        network = new NeuralNetwork(input, hidden, output, training, database, listener);
+        network = new NeuralNetwork(input, hidden, output, training, database);
         OUTPUT = output;
     }
 
@@ -116,7 +116,7 @@ public class ImageDecoder {
         //si le premier char n'est pas dans un fraction
         if(listChar.get(0).getIsInFraction() == 0) {
             line += listChar.get(0).getValue();
-            setIndexOfString();
+            setIndexOfString(listChar.get(0));
             index = 1;
         }
         else
@@ -149,7 +149,7 @@ public class ImageDecoder {
             else if(isBeside(listChar.get(indexToLook), listChar.get(index), toleranceHeight)) {
                 notCheckingLast = false;
                 line += listChar.get(index).getValue();
-                setIndexOfString();
+                setIndexOfString(listChar.get(index));
             }
 
             //Si un exposant
@@ -207,7 +207,7 @@ public class ImageDecoder {
     public String findExposant(ArrayList<MathChar> listChar, int toleranceHeight, int index)
     {
         line += "^(" + listChar.get(index).getValue();
-        setIndexOfString();
+        setIndexOfString(listChar.get(index));
 
         if(index < listChar.size()-1) {
             index++;
@@ -215,7 +215,7 @@ public class ImageDecoder {
                 //S'il sont un à coté de l'autre
                 if(isBeside(listChar.get(index - 1), listChar.get(index), toleranceHeight)) {
                     line += listChar.get(index).getValue();
-                    setIndexOfString();
+                    setIndexOfString(listChar.get(index));
                 }
                 //S'il sont en exposants
                 else if(listChar.get(index).getYEnd() <= listChar.get(index-1).getYMiddle())
@@ -244,7 +244,7 @@ public class ImageDecoder {
     public String findIndice(ArrayList<MathChar> listChar, int toleranceHeight)
     {
         line += "_(" + listChar.get(index).getValue();
-        setIndexOfString();
+        setIndexOfString(listChar.get(index));
 
         if(index < listChar.size()-1) {
             index++;
@@ -252,7 +252,7 @@ public class ImageDecoder {
                 //S'il sont un à coté de l'autre
                 if(isBeside(listChar.get(index - 1), listChar.get(index), toleranceHeight)) {
                     line += listChar.get(index).getValue();
-                    setIndexOfString();
+                    setIndexOfString(listChar.get(index));
                 }
 
                 //S'il sont en indices
@@ -270,8 +270,10 @@ public class ImageDecoder {
         return line;
     }
 
-    public void setIndexOfString() {
-        listCharDetected.get(index).setIndexInString(line.length()-1);
+    public void setIndexOfString(MathChar value) {
+        for (int i = 0; i < listCharDetected.size(); i++)
+            if (listCharDetected.get(i).getImage().equals(value.getImage()))
+                listCharDetected.get(i).setIndexInString(line.length() - 1);
     }
 
     /**
@@ -438,5 +440,10 @@ public class ImageDecoder {
         listCharDetected = new ArrayList<>();
         line = "";
         index = 0;
+    }
+
+    public boolean isReady()
+    {
+        return network.isReady();
     }
 }

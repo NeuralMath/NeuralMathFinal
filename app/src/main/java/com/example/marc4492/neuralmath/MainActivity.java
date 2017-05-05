@@ -91,6 +91,8 @@ public class MainActivity extends AppCompatActivity {
 
     private SQLiteDatabase database;
 
+    private static boolean checkPrefDefault = true;
+
     private String[] charList =
             {
                     "!","(",")","+",",","-","0","1","2","3","4",
@@ -168,9 +170,6 @@ public class MainActivity extends AppCompatActivity {
 
         adapterHome = new AdapterHome(MainActivity.this, R.layout.menu_elements_layout, homeRows);
 
-        //adapterHome.getItem(0).setEnabled(false);
-        //adapterHome.getItem(1).setEnabled(false);
-
         listHome.setAdapter(adapterHome);
 
 
@@ -181,10 +180,16 @@ public class MainActivity extends AppCompatActivity {
                 // Handle item selection
                 switch (position) {
                     case 0:         //Photo element selected
-                        openPhoto();
+                        //if(imageDecoder.isReady())
+                            openPhoto();
+                        //else
+                            //Toast.makeText(context, R.string.nn_not_ready, Toast.LENGTH_LONG).show();
                         break;
                     case 1:         //Writing element selected
-                        openWriting();
+                        //if(imageDecoder.isReady())
+                            openWriting();
+                        //else
+                            //Toast.makeText(context, R.string.nn_not_ready, Toast.LENGTH_LONG).show();
                         break;
                     case 2:         //Keyboard element selected
                         openKeyboard();
@@ -220,16 +225,19 @@ public class MainActivity extends AppCompatActivity {
         else {
             getPref();
 
-            if (defautMode.equals(getResources().getStringArray(R.array.default_page)[0]))
-                openHome();
-            else if (defautMode.equals(getResources().getStringArray(R.array.default_page)[1]))
-                openPhoto();
-            else if (defautMode.equals(getResources().getStringArray(R.array.default_page)[2]))
-                openWriting();
-            else if (defautMode.equals(getResources().getStringArray(R.array.default_page)[3]))
-                openKeyboard();
-            else
-                openHome();
+            if(checkPrefDefault) {
+                checkPrefDefault = false;
+                if (defautMode.equals(getResources().getStringArray(R.array.default_page)[0]))
+                    openHome();
+                else if (defautMode.equals(getResources().getStringArray(R.array.default_page)[1]))
+                    openPhoto();
+                else if (defautMode.equals(getResources().getStringArray(R.array.default_page)[2]))
+                    openWriting();
+                else if (defautMode.equals(getResources().getStringArray(R.array.default_page)[3]))
+                    openKeyboard();
+                else
+                    openHome();
+            }
 
             try {
                 createNetworkDecoder();
@@ -270,20 +278,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void createNetworkDecoder() throws IOException {
-        imageDecoder = new ImageDecoder(context, INPUT, HIDDEN, OUTPUT, TRAININGRATE, database, charList, new NeuralNetwork.OnNetworkReady() {
-            @Override
-            public void ready(boolean value) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        adapterHome.getItem(0).setEnabled(true);
-                        adapterHome.getItem(1).setEnabled(true);
-                        adapterHome.setNetworkReady(true);
-                        adapterHome.notifyDataSetChanged();
-                    }
-                });
-            }
-        });
+        imageDecoder = new ImageDecoder(context, INPUT, HIDDEN, OUTPUT, TRAININGRATE, database, charList);
     }
 
     @Override
@@ -368,7 +363,6 @@ public class MainActivity extends AppCompatActivity {
                     new AlertDialog.Builder(context)
                             .setTitle(R.string.confirmation)
                             .setMessage(getString(R.string.your_eq_confirm) + " " + eq + " ?")
-                            .setMessage(getString(R.string.your_eq_confirm)  + " " + eq + " ?")
                             .setNegativeButton(R.string.yes, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
                                     Intent i = new Intent(context, ProcedureResolutionEquation.class);
@@ -522,8 +516,10 @@ public class MainActivity extends AppCompatActivity {
      * Open the photo mode page
      */
     void openPhoto(){
+        //finish();
         Intent i = new Intent(context, CameraActivity.class);
         i.putExtra("FEUILLE", isBlankPage);
+        //i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivityForResult(i, 1);
     }
 

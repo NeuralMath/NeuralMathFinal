@@ -33,7 +33,7 @@ public class NeuralNetwork {
     private final double trainingRate;
 
     private boolean oneArrayDone = false;
-    private OnNetworkReady listener;
+    private boolean isReady = false;
 
     /**
      * Constructeur du réseau, création des neurones
@@ -46,9 +46,8 @@ public class NeuralNetwork {
      * @param l             Listener pour avoir l'état du reseau
      * @throws IOException S'il ya des problème de lecture des fichiers
      */
-    public NeuralNetwork(int inputLayer, int hiddenLayer, int outputLayer, double training, SQLiteDatabase db, final OnNetworkReady l) throws IOException {
+    public NeuralNetwork(int inputLayer, int hiddenLayer, int outputLayer, double training, SQLiteDatabase db) throws IOException {
         database = db;
-        listener = l;
 
         INPUT = inputLayer;
         HIDDEN = hiddenLayer;
@@ -84,7 +83,7 @@ public class NeuralNetwork {
             public void run() {
                 readData(weightsItoH, tableNameItoH);
                 if (oneArrayDone)
-                    listener.ready(true);
+                    isReady = true;
                 else
                     oneArrayDone = true;
             }
@@ -95,7 +94,7 @@ public class NeuralNetwork {
             public void run() {
                 readData(weightsHtoO, tableNameHtoO);
                 if (oneArrayDone)
-                    listener.ready(true);
+                    isReady = true;
                 else
                     oneArrayDone = true;
             }
@@ -286,8 +285,8 @@ public class NeuralNetwork {
         }
     }
 
-    public interface OnNetworkReady
+    public boolean isReady()
     {
-        void ready(boolean ready);
+        return isReady;
     }
 }
