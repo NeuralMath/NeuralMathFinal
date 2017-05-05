@@ -3,9 +3,12 @@ package com.example.marc4492.neuralmath;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+
+import java.io.FileOutputStream;
 
 public class DrawingActivity extends AppCompatActivity {
 
@@ -27,8 +30,6 @@ public class DrawingActivity extends AppCompatActivity {
         drawPage.getDoneButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //http://stackoverflow.com/a/14292451/5224674
-                //Pour passer la reponse à lactivité principale
                 onBackPressed();
             }
         });
@@ -66,7 +67,16 @@ public class DrawingActivity extends AppCompatActivity {
     public void setBitmap(Bitmap btm)
     {
         try {
-            drawPage.getTextEquation().setText(imageDecoder.findSting(btm));
+            FileOutputStream out;
+            try {
+                out = new FileOutputStream(Environment.getExternalStorageDirectory() + "/NeuralMath/bob.jpg");
+                btm.compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
+                // PNG is a lossless format, the compression factor (100) is ignored
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            drawPage.getTextEquation().append(imageDecoder.findSting(btm));
         }
         catch (Exception ex)
         {

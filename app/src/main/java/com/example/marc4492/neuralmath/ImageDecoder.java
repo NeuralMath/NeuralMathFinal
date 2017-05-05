@@ -28,8 +28,7 @@ public class ImageDecoder {
 
     private int originalTolWidth;
     private boolean appendMode = false;
-    private String line = "";
-    private int index;
+    private int lastIndex = 0;
 
     private ArrayList<MathChar> listCharDetected = new ArrayList<>();
 
@@ -65,7 +64,7 @@ public class ImageDecoder {
      * @throws IOException S'il y a des problème avec l'image
      */
     public String findSting(Bitmap btm) throws IOException {
-        ArrayList<MathChar> listChar = new ArrayList<>();
+        ArrayList<MathChar> listChar;
         int totalHeight = btm.getHeight();
         int totalWidth = btm.getWidth();
 
@@ -76,11 +75,8 @@ public class ImageDecoder {
 
         if(appendMode)
             listCharDetected.addAll(listChar);
-        else {
+        else
             listCharDetected = listChar;
-            line = "";
-            index = 0;
-        }
 
         //Trier par ordre croisant de l'ordre d'arriver (x)
         Collections.sort(listChar, new Comparator<MathChar>() {
@@ -109,14 +105,16 @@ public class ImageDecoder {
      * @return              La String résultante
      */
     private String replaceChar(ArrayList<MathChar> listChar, int toleranceWidth, int toleranceHeight) {
+        String line = "";
         boolean notCheckingLast = false;
         int indexToLook = 0;
         ArrayList<MathChar> listFraction = new ArrayList<>();
 
         //si le premier char n'est pas dans un fraction
+        int index;
         if(listChar.get(0).getIsInFraction() == 0) {
             line += listChar.get(0).getValue();
-            setIndexOfString(listChar.get(0));
+            setIndexOfString(line, 0);
             index = 1;
         }
         else
@@ -137,7 +135,7 @@ public class ImageDecoder {
                     listFraction.add(listChar.get(index));
                     index++;
                 }
-                line = findFraction(listFraction, toleranceHeight/2);
+                line = findFraction(line, listFraction, toleranceHeight/2);
                 if(index < listChar.size())
                     index--;
             }
@@ -149,23 +147,29 @@ public class ImageDecoder {
             else if(isBeside(listChar.get(indexToLook), listChar.get(index), toleranceHeight)) {
                 notCheckingLast = false;
                 line += listChar.get(index).getValue();
-                setIndexOfString(listChar.get(index));
+                setIndexOfString(line, index);
             }
 
             //Si un exposant
             else if(listChar.get(index).getYEnd() <= listChar.get(indexToLook).getYMiddle()) {
                 notCheckingLast = true;
-                line = findExposant(listChar, toleranceHeight/2, index);
+                line = findExposant(listChar, line, toleranceHeight/2, index);
             }
 
             //Si un indice
             else if(listChar.get(index).getYStart() > listChar.get(indexToLook).getYMiddle()) {
                 notCheckingLast = true;
-                line = findIndice(listChar, toleranceHeight/2);
+                line = findIndice(listChar, line, toleranceHeight/2, index);
             }
             else
                 Toast.makeText(context, "Le découpage de caractère ne s'est pas déroulé normalement", Toast.LENGTH_LONG).show();
         }
+
+        if(appendMode)
+            lastIndex += line.length();
+        else
+            lastIndex = 0;
+
         return line;
     }
 
@@ -199,15 +203,15 @@ public class ImageDecoder {
      * Obtenir les exposants dans une équation
      *
      * @param listChar              List des élements à vérifier
-     * //@param line                  String comprenant le début de l'équation
+     * @param line                  String comprenant le début de l'équation
      * @param toleranceHeight       La tolérence en hauteur pour accepter qu'ils sont un a coté de l'autre
-     * //@param index                 Index de la premiere postion à vérifier dans la list
+     * @param index                 Index de la premiere postion à vérifier dans la list
      * @return                      La String complèter avec les exposants
      */
-    public String findExposant(ArrayList<MathChar> listChar, int toleranceHeight, int index)
+    public String findExposant(ArrayList<MathChar> listChar, String line,  int toleranceHeight, int index)
     {
         line += "^(" + listChar.get(index).getValue();
-        setIndexOfString(listChar.get(index));
+        setIndexOfString(line, index);
 
         if(index < listChar.size()-1) {
             index++;
@@ -215,11 +219,11 @@ public class ImageDecoder {
                 //S'il sont un à coté de l'autre
                 if(isBeside(listChar.get(index - 1), listChar.get(index), toleranceHeight)) {
                     line += listChar.get(index).getValue();
-                    setIndexOfString(listChar.get(index));
+                    setIndexOfString(line, index);
                 }
                 //S'il sont en exposants
                 else if(listChar.get(index).getYEnd() <= listChar.get(index-1).getYMiddle())
-                    line = findExposant(listChar, toleranceHeight, index);
+                    line = findExposant(listChar, line, toleranceHeight, index);
 
                 //Sinon sortir
                 else
@@ -236,15 +240,15 @@ public class ImageDecoder {
      * Obtenir les indices dans une équation
      *
      * @param listChar              List des élements à vérifier
-     * //@param line                  String comprenant le début de l'équation
+     * @param line                  String comprenant le début de l'équation
      * @param toleranceHeight       La tolérence en hauteur pour accepter qu'ils sont un a coté de l'autre
-     * //@param index                 Index de la premiere postion à vérifier dans la list
+     * @param index                 Index de la premiere postion à vérifier dans la list
      * @return                      La String complèter avec les indices
      */
-    public String findIndice(ArrayList<MathChar> listChar, int toleranceHeight)
+    public String findIndice(ArrayList<MathChar> listChar, String line,  int toleranceHeight, int index)
     {
         line += "_(" + listChar.get(index).getValue();
-        setIndexOfString(listChar.get(index));
+        setIndexOfString(line, index);
 
         if(index < listChar.size()-1) {
             index++;
@@ -252,12 +256,12 @@ public class ImageDecoder {
                 //S'il sont un à coté de l'autre
                 if(isBeside(listChar.get(index - 1), listChar.get(index), toleranceHeight)) {
                     line += listChar.get(index).getValue();
-                    setIndexOfString(listChar.get(index));
+                    setIndexOfString(line, index);
                 }
 
                 //S'il sont en indices
                 else if(listChar.get(index).getYStart() > listChar.get(index -1).getYMiddle())
-                    line = findIndice(listChar, toleranceHeight);
+                    line = findIndice(listChar, line, toleranceHeight, index);
 
                 //Sinon sortir
                 else
@@ -270,21 +274,19 @@ public class ImageDecoder {
         return line;
     }
 
-    public void setIndexOfString(MathChar value) {
-        for (int i = 0; i < listCharDetected.size(); i++)
-            if (listCharDetected.get(i).getImage().equals(value.getImage()))
-                listCharDetected.get(i).setIndexInString(line.length() - 1);
+    public void setIndexOfString(String line, int index) {
+        listCharDetected.get(index).setIndexInString((line.length()-1)+lastIndex);
     }
 
     /**
      * Obtenir les fractions dans la liste fournie
      *
-     * //@param line                      Le début de l'équation
+     * @param line                      Le début de l'équation
      * @param list                      La liste à vérifier
      * @param tolerenceHeight           La tolérence en hauteur pour accepter qu'ils sont un a coté de l'autre
      * @return                          La String complèté avec les fractions
      */
-    private String findFraction(ArrayList<MathChar> list, int tolerenceHeight)
+    private String findFraction(String line, ArrayList<MathChar> list, int tolerenceHeight)
     {
         ArrayList<MathChar> listTopFraction = new ArrayList<>();
         ArrayList<MathChar> listBottomFraction = new ArrayList<>();
@@ -309,21 +311,6 @@ public class ImageDecoder {
 
         line += ")";
         return line;
-    }
-
-    /**
-     * Vérification s'il reste une fraction dans la list
-     *
-     * @param list                  List à vérifer
-     * @return                      S'il reste une fraction
-     */
-    private ArrayList<MathChar> isHavingFraction(ArrayList<MathChar> list) {
-        ArrayList<MathChar> listFraction = new ArrayList<>();
-        for(int i = 0; i < list.size(); i++) {
-            if(list.get(i).getIsInFraction() == 1)
-                listFraction.add(list.get(i));
-        }
-        return listFraction;
     }
 
     /**
@@ -428,7 +415,7 @@ public class ImageDecoder {
 
         for(int i = 0; i < list.size(); i++)
         {
-            trainning[i] = getIOPixels(listCharDetected.get(list.get(i).getPosition()).getImage());
+            trainning[i] = getIOPixels(fillImage(listCharDetected.get(list.get(i).getPosition()).getImage()));
 
             if(Arrays.asList(charList).contains(list.get(i).getNewChar()))
                 results[i][Arrays.asList(charList).indexOf(list.get(i).getNewChar())] = 1;
@@ -438,8 +425,6 @@ public class ImageDecoder {
     public void clearData()
     {
         listCharDetected = new ArrayList<>();
-        line = "";
-        index = 0;
     }
 
     public boolean isReady()
