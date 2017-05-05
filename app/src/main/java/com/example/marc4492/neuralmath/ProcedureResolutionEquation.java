@@ -96,7 +96,7 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
             {
                 spinnerArray.add(getString(R.string.Integrer));
             }
-            else if(Pattern.matches("(?i)(f\\(([a-e]|[h-m]|[o-r]|[t-z])\\).*) | (y.*)", equation)) // si f(x) ou y //https://regex101.com/
+            else if(Pattern.matches("(?i)(f\\(([a-e]|[h-m]|[o-r]|[t-z])\\)=.*)|(y=.*)", equation)) // si f(x) ou y //https://regex101.com/
             {
                 spinnerArray.add(getString(R.string.Simplification));
                 spinnerArray.add(getString(R.string.Factorisation));
@@ -148,12 +148,27 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
             linearDemarche.removeAllViews();
             linearDemarche.addView(demarche);
         }
-        public void ajouterEtapes(ArrayList<String> m_demarche)
+        public void ajouterEtapes(ArrayList<String> m_demarche,ArrayList<String> m_etapes)
         {
             demarcheText = m_demarche;
+            etapesText = m_etapes;
             texViewList.clear();
             linearDemarche.removeAllViews();
             linearDemarche.addView(demarche);
+
+            for(int i = 0; i < demarcheText.size(); i++) {
+                ExpandableTextView demarcheTextView = new ExpandableTextView(this);
+                SpannableStringBuilder expString = new SpannableStringBuilder(  demarcheText.get(i) + "\n" + etapesText.get(i) + "\n            ----------------------------------");
+                demarcheTextView.setText(expString);
+
+                linearDemarche.addView(demarcheTextView);
+                texViewList.add(demarcheTextView);
+            }
+
+            ExpandableTextView reponseTextView = new ExpandableTextView(this);
+            reponseTextView.setText( TextViewReponse.getText());
+            linearDemarche.addView(reponseTextView);
+            texViewList.add(reponseTextView);
         }
         public void ajouterEtapes(ArrayList<String> m_demarche , String firstHalfEquation, ArrayList<Integer> m_EtapesGrasI,ArrayList<Integer> m_EtapesGrasF)//Méthode qui sert à ajouter les étapes dans les textView custom en enlevant les précédents.
         {
@@ -258,8 +273,6 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
                     else { mettreEnGrasEtape(m_EtapesGrasI.get(i+nbDeX)+firstHalfEquation.length(),m_EtapesGrasF.get(i+nbDeX)+firstHalfEquation.length(),expString); }
 
 
-
-
                     demarcheTextView.setText(expString);
                 }
 
@@ -293,7 +306,6 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
             TrouverY resolutionY = new TrouverY(equation);
             TextViewReponse.setText(String.valueOf(resolutionY.getY()));
             demarche.setText("DÉMONSTRATION : Trouver y\n ");
-            etapesText = resolutionY.getM_EtapesText();
             ajouterEtapes(resolutionY.getM_DemarcheText(),resolutionY.getM_FirstEquationHalf(),resolutionY.getM_EtapesGrasI(),resolutionY.getM_EtapesGrasF());
         }
         public void trouverX()
@@ -315,8 +327,7 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
             Resolution simplificationEQ = new Resolution(equation,var);
             demarche.setText("DÉMONSTRATION : Trouver simplification\n");
             TextViewReponse.setText(simplificationEQ.getM_equation());
-            demarcheText = new ArrayList<>(0);
-            //ajouterEtapes(simplificationEQ.getM_DemarcheText(),);
+            ajouterEtapes(simplificationEQ.getM_DemarcheText(),simplificationEQ.getM_EtapesText());
         }
         public void factorisation()
         {

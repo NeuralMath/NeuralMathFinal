@@ -10,6 +10,7 @@ public class Resolution extends General_Equation
     private ArrayList<Term> _rightTerms;                //Les termes de l'equation a droite du egal.
     private int _equationLengthDisplay;                  //La grandeur de l'equation dans l'affichage. Sert uniquement a l'affichage.
 
+
     private DecimalFormat _df = new DecimalFormat("0.####");  //Format de l'affichage.
 
     public Resolution(String equation, ArrayList<String> var)
@@ -1245,7 +1246,8 @@ public class Resolution extends General_Equation
             _equationLengthDisplay = equation.length();
         }
 
-        System.out.println(equation + " (" + etape + ")\n");
+        m_DemarcheText.add(equation);
+        m_EtapesText.add(etape);
     }
 
     public static void main(String arcs[])

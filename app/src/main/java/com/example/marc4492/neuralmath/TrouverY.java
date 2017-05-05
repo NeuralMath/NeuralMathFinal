@@ -7,6 +7,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
+ * Classe qui résout des trucs si on a un y
  * Created by Alex on 29/03/2017.
  */
 
