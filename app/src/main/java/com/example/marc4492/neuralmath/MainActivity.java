@@ -516,10 +516,8 @@ public class MainActivity extends AppCompatActivity {
      * Open the photo mode page
      */
     void openPhoto(){
-        //finish();
         Intent i = new Intent(context, CameraActivity.class);
         i.putExtra("FEUILLE", isBlankPage);
-        //i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivityForResult(i, 1);
     }
 
