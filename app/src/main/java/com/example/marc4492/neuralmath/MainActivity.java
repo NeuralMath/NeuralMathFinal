@@ -375,15 +375,28 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Get l'image decoder pour les autres intent
+     * @return      L'image decoder
+     */
     public static ImageDecoder getImageDecoder() {
         return imageDecoder;
     }
 
+    /**
+     * Get le context pour les autres intents
+     * @return      Le context de l'app
+     */
     public static Context getContext()
     {
         return context;
     }
 
+    /**
+     * Afficher le popup pour le type de correction à effectuer
+     *
+     * @param eq    L'equation à corriger
+     */
     private void correctionModePopup(final String eq)
     {
 
