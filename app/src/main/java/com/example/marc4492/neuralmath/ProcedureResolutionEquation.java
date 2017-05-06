@@ -56,6 +56,7 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
 
             equation = getIntent().getStringExtra("EQUATION");
             equation = equation.replaceAll(" ", "");  //Donne une copie de l'équation sans les espaces
+            equation = equation.replaceAll(",", ".");
             var.add("x");       //ajout de la variable
 
             demarcheText = new ArrayList<>();
@@ -67,17 +68,36 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
 
             List<String> spinnerArray =  new ArrayList<String>();
 
-
-            for(int i=0;i<equation.length()-1;i++)    //Début de la normalisation des équations : mets un * entre les lettres et les chiffres ainsi que lettres et parenthèses ou chiffre + parenthèses
+            if(Pattern.matches("(?i)\\w\\((\\-?\\d+(\\.\\d*)?|\\w)\\)=.*", equation))
             {
-                String chaineTemp = String.valueOf(equation.charAt(i))+String.valueOf(equation.charAt(i+1));
-
-                if(Pattern.matches("(?i)\\d[a-z]",chaineTemp ) ||  Pattern.matches("//",chaineTemp )  || Pattern.matches("(?i)\\d\\(",chaineTemp ) || Pattern.matches("(?i)([a-e]|[h-m]|[o-r]|[t-z])\\(",chaineTemp ))
+                String equationTemp = equation.substring(equation.indexOf("=")+1);
+                for(int i=0;i<equationTemp.length()-1;i++)    //Début de la normalisation des équations : mets un * entre les lettres et les chiffres ainsi que lettres et parenthèses ou chiffre + parenthèses
                 {
-                    String chaine1 = equation.substring(0, i+1) + "*"; // On sépare le string en 2 à la position qui respecte les conditions.
-                    String chaine2 = equation.substring(i+1);
-                    equation = chaine1 + chaine2;
-                    System.out.println(equation);
+                    String chaineTemp = String.valueOf(equationTemp.charAt(i))+String.valueOf(equationTemp.charAt(i+1));
+
+                    if(Pattern.matches("(?i)\\d[a-z]",chaineTemp ) ||  Pattern.matches("//",chaineTemp )  || Pattern.matches("(?i)\\d\\(",chaineTemp ) || Pattern.matches("(?i)([a-e]|[h-m]|[o-r]|[t-z])\\(",chaineTemp ))
+                    {
+                        String chaine1 = equationTemp.substring(0, i+1) + "*"; // On sépare le string en 2 à la position qui respecte les conditions.
+                        String chaine2 = equationTemp.substring(i+1);
+                        equationTemp = chaine1 + chaine2;
+                        System.out.println(equationTemp);
+                    }
+                }
+                equation = equation.replace(equation.substring(equation.indexOf("=")+1),equationTemp);
+            }
+            else
+            {
+                for(int i=0;i<equation.length()-1;i++)    //Début de la normalisation des équations : mets un * entre les lettres et les chiffres ainsi que lettres et parenthèses ou chiffre + parenthèses
+                {
+                    String chaineTemp = String.valueOf(equation.charAt(i))+String.valueOf(equation.charAt(i+1));
+
+                    if(Pattern.matches("(?i)\\d[a-z]",chaineTemp ) ||  Pattern.matches("//",chaineTemp )  || Pattern.matches("(?i)\\d\\(",chaineTemp ) || Pattern.matches("(?i)([a-e]|[h-m]|[o-r]|[t-z])\\(",chaineTemp ))
+                    {
+                        String chaine1 = equation.substring(0, i+1) + "*"; // On sépare le string en 2 à la position qui respecte les conditions.
+                        String chaine2 = equation.substring(i+1);
+                        equation = chaine1 + chaine2;
+                        System.out.println(equation);
+                    }
                 }
             }
 
@@ -102,11 +122,11 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
                 spinnerArray.add(getString(R.string.Factorisation));
                 spinnerArray.add(getString(R.string.TrouverZéros));
             }
-            else if(Pattern.matches("(?i)\\w\\(\\-?\\d+(\\,\\d*)?\\)=.*", equation)) // si f( ? ) //https://regex101.com/ //Remplacer x pour trouver y
+            else if(Pattern.matches("(?i)\\w\\(\\-?\\d+(\\.\\d*)?\\)=.*", equation)) // si f( ? ) //https://regex101.com/ //Remplacer x pour trouver y
             {
                 spinnerArray.add(getString(R.string.TrouverY));
             }
-            else if(Pattern.matches("\\-?\\d+(\\,\\d*)?=.*", equation) && (!equation.contains("f(x)"))&&(!equation.contains("y"))&& equation.contains("x")) // si ? = x   //isoler x
+            else if(Pattern.matches("\\-?\\d+(\\.\\d*)?=.*", equation) && (!equation.contains("f(x)"))&&(!equation.contains("y"))&& equation.contains("x")) // si ? = x   //isoler x
             {
                 spinnerArray.add(getString(R.string.TrouverX));
             }

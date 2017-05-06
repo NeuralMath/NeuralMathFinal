@@ -24,15 +24,16 @@ public class Resolution extends General_Equation
         _equationLengthDisplay = 0;
 
         normalize(m_equation);
-
         System.out.println("Equation:\t" + m_equation + "\n");
+        fillAllTerms();
+        manageParenthesis();
+        solve();
+
+
     }
 
     private void normalize(String e)
     {
-        //String e = "x = 7 * 2";
-        //String equation = "+1*x^1=+7*x^0*2*x^0";
-
         m_equation = e;
     }
 
@@ -1248,20 +1249,6 @@ public class Resolution extends General_Equation
 
         m_DemarcheText.add(equation);
         m_EtapesText.add(etape);
-    }
-
-    public static void main(String arcs[])
-    {
-        String equation = "x = 7 * 2";
-
-        ArrayList<String> variables = new ArrayList<>();
-        variables.add("x");
-
-        Resolution resolution = new Resolution(equation, variables);
-
-        resolution.fillAllTerms();
-        resolution.manageParenthesis();
-        resolution.solve();
     }
 
     public String getM_equation() {
