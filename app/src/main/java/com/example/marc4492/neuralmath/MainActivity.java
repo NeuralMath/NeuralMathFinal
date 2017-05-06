@@ -130,15 +130,17 @@ public class MainActivity extends AppCompatActivity {
         mathKeyboard.setListener(new MathKeyboard.OnStringReadyListener() {
             @Override
             public void done(String value) {
-                try {
-                    imageDecoder.trainNN(mathKeyboard.getReplacedCharList());
-                } catch (IOException ex) {
-                    Log.e("NeuralNetwork", "Training", ex);
+                if(!value.equals("")) {
+                    try {
+                        imageDecoder.trainNN(mathKeyboard.getReplacedCharList());
+                    } catch (IOException ex) {
+                        Log.e("NeuralNetwork", "Training", ex);
+                    }
+                    Intent i = new Intent(context, ProcedureResolutionEquation.class);
+                    i.putExtra("EQUATION", value);
+                    startActivity(i);
+                    onBackPressed();
                 }
-                Intent i = new Intent(context, ProcedureResolutionEquation.class);
-                i.putExtra("EQUATION", value);
-                startActivity(i);
-                onBackPressed();
             }
         });
 
