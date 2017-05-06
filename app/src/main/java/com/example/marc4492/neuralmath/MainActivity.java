@@ -362,18 +362,14 @@ public class MainActivity extends AppCompatActivity {
                             })
                             .setPositiveButton(R.string.no, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
-                                    mathKeyboard.setCorrectionMode(true);
-                                    writingZone.getText().clear();
-                                    writingZone.setText(eq);
-                                    activity_main.setDisplayedChild(2);
+                                    correctionModePopup(eq);
                                 }
                             })
                             .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                 }
-                            })
-                            .show();
+                            }).show();
                 }
             }
         }
@@ -386,6 +382,35 @@ public class MainActivity extends AppCompatActivity {
     public static Context getContext()
     {
         return context;
+    }
+
+    private void correctionModePopup(final String eq)
+    {
+
+        new AlertDialog.Builder(context)
+                .setTitle(R.string.type_correction)
+                .setMessage(getString(R.string.your_eq_confirm) + " " + eq + " ?")
+                .setNegativeButton(R.string.corriger, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        mathKeyboard.setCorrectionMode(true);
+                        writingZone.getText().clear();
+                        writingZone.setText(eq);
+                        activity_main.setDisplayedChild(2);
+                    }
+                })
+                .setPositiveButton(R.string.editer, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        mathKeyboard.setCorrectionMode(false);
+                        writingZone.getText().clear();
+                        writingZone.setText(eq);
+                        activity_main.setDisplayedChild(2);
+                    }
+                })
+                .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                    }
+                }).show();
     }
 
     /**

@@ -58,4 +58,8 @@
     <string name="m_thode_de_r_solution">Resolution method</string>
     <string name="r_ponse_s">Answer(s) :</string>
     <string name="btn_clear_eq">Clear equation</string>
+    <string name="editer">Edit</string>
+    <string name="english" translatable="false"></string>
+    <string name="corriger">Correct</string>
+    <string name="type_correction">Correction type</string>
 </resources>

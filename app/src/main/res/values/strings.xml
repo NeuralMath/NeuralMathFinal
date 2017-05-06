@@ -60,4 +60,7 @@
     <string name="erreur_404">Erreur 404</string>
     <string name="d_monstration">DÉMONSTRATION</string>
     <string name="btn_clear_eq">Effacer l\'équation</string>
+    <string name="corriger">Corriger</string>
+    <string name="editer">Éditer</string>
+    <string name="type_correction">Type de correction</string>
 </resources>

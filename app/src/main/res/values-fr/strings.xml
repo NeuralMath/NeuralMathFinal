@@ -58,4 +58,7 @@
     <string name="m_thode_de_r_solution">Méthode de résolution</string>
     <string name="r_ponse_s">Réponse(s) :</string>
     <string name="btn_clear_eq">Effacer l\'équation</string>
+    <string name="editer">Éditer</string>
+    <string name="corriger">Corriger</string>
+    <string name="type_correction">Type de correction</string>
 </resources>
