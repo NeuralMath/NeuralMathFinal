@@ -6,14 +6,14 @@ import java.util.Scanner;
 
 class Resolution extends General_Equation
 {
-    ArrayList<String> _variables;               //Les variables dans l'equation.
-    ArrayList<Term> _leftTerms;                 //Les termes de l'equation a gauche du egal.
-    ArrayList<Term> _rightTerms;                //Les termes de l'equation a droite du egal.
-    int _equationLegthDisplay;                  //La grandeur de l'equation dans l'affichage. Sert uniquement a l'affichage.
+    private ArrayList<String> _variables;               //Les variables dans l'equation.
+    private ArrayList<Term> _leftTerms;                 //Les termes de l'equation a gauche du egal.
+    private ArrayList<Term> _rightTerms;                //Les termes de l'equation a droite du egal.
+    private int _equationLegthDisplay;                  //La grandeur de l'equation dans l'affichage. Sert uniquement a l'affichage.
 
-    DecimalFormat _df = new DecimalFormat("0.####");    //Format de l'affichage.
+    private DecimalFormat _df = new DecimalFormat("0.####");    //Format de l'affichage.
 
-    ArrayList<Character> _letters = new ArrayList();    //Lettres pouvant etre une variable.
+    private ArrayList<Character> _letters = new ArrayList<>();    //Lettres pouvant etre une variable.
 
     Resolution(String equation)
     {
@@ -44,18 +44,18 @@ class Resolution extends General_Equation
         _letters.add('θ');
 
 
-        _variables = new ArrayList();
+        _variables = new ArrayList<>();
 
-        _leftTerms = new ArrayList();
-        _rightTerms = new ArrayList();
+        _leftTerms = new ArrayList<>();
+        _rightTerms = new ArrayList<>();
 
         _equationLegthDisplay = 0;
     }
 
-    void fillVariables()
+    private void fillVariables()
     {
-        String temp = "";
-        int input = 0;
+        String temp;
+        int input;
 
         for (int j = 0; j < _letters.size(); j++)
         {
@@ -88,7 +88,7 @@ class Resolution extends General_Equation
         }
     }
 
-    void normalize(String e)
+    private void normalize(String e)
     {
         String temp = "";
 
@@ -166,7 +166,7 @@ class Resolution extends General_Equation
         m_equation = e;
     }
 
-    int findCharPositionInString(String c, String s, int begin)
+    private int findCharPositionInString(String c, String s, int begin)
     {
         for (int i = begin; i < s.length(); i++)
         {
@@ -179,7 +179,7 @@ class Resolution extends General_Equation
         return 0;
     }
 
-    void fillAllTerms()
+    private void fillAllTerms()
     {
         Term temp = new Term();
 
@@ -245,11 +245,11 @@ class Resolution extends General_Equation
         updateEquation("Equation recue");
     }
 
-    Term fillTerm(int pos, String s)//Permettre les parentheses multiples.
+    private  Term fillTerm(int pos, String s)//Permettre les parentheses multiples.
     {
-        double coeff = 0, exp = 0;
-        String temp = "", op = "";
-        ArrayList<String> open = new ArrayList(), close = new ArrayList();
+        double coeff, exp;
+        String temp = "", op;
+        ArrayList<String> open = new ArrayList<>(), close = new ArrayList<>();
 
         //Trouve le coefficient du terme.
         for (int i = pos - 3; i >= 0; i--)  //Recule de 2 positions avant la variable puis ramasse tous les chiffres.
@@ -319,7 +319,7 @@ class Resolution extends General_Equation
         return new Term(pos, "" + s.charAt(pos - 1), coeff, exp, op, open, close);
     }
 
-    void fixSignOperators()
+    private void fixSignOperators()
     {
         //Gauche du egal.
         for (int i = 0; i < _leftTerms.size(); i++)
@@ -342,9 +342,9 @@ class Resolution extends General_Equation
         }
     }
 
-    String simplify(ArrayList<Term> terms)
+    private String simplify(ArrayList<Term> terms)
     {
-        String  etape = "";
+        String  etape;
 
         etape = exponent(terms);
 
@@ -361,10 +361,10 @@ class Resolution extends General_Equation
         return etape;
     }
 
-    ArrayList<Term> sortTermsViaGroups(ArrayList<Term> terms)
+    private ArrayList<Term> sortTermsViaGroups(ArrayList<Term> terms)
     {
-        ArrayList<Term> termsTemp = new ArrayList();
-        ArrayList<ArrayList<Term>> groupsTerms = new ArrayList();
+        ArrayList<Term> termsTemp = new ArrayList<>();
+        ArrayList<ArrayList<Term>> groupsTerms = new ArrayList<>();
 
         for (int i = 0; i < terms.size(); i++)
         {
@@ -375,13 +375,13 @@ class Resolution extends General_Equation
             }
             else
             {
-                groupsTerms.add(new ArrayList(termsTemp));          //Le groupe est complet. Met le dans le ArrayList de groupes.
+                groupsTerms.add(new ArrayList<>(termsTemp));          //Le groupe est complet. Met le dans le ArrayList de groupes.
 
                 termsTemp.clear();                                  //Puis effaces-le.
                 i--;                                                //Recommence pour le meme terme, donc decremente i.
             }
         }
-        groupsTerms.add(new ArrayList(termsTemp));                  //Le dernier groupe est complet. Met le dans le ArrayList de groupes.
+        groupsTerms.add(new ArrayList<>(termsTemp));                  //Le dernier groupe est complet. Met le dans le ArrayList de groupes.
 
         groupsTerms = sortInGroups(groupsTerms);
 
@@ -398,7 +398,7 @@ class Resolution extends General_Equation
         return terms;
     }
 
-    ArrayList<ArrayList<Term>> sortInGroups(ArrayList<ArrayList<Term>> groups)
+    private ArrayList<ArrayList<Term>> sortInGroups(ArrayList<ArrayList<Term>> groups)
     {
         Term temp;
         ArrayList<Term> groupTemp;
@@ -436,13 +436,13 @@ class Resolution extends General_Equation
                 //Si l'operateur n'est pas "/" et si l'exposant du terme est plus petit que l'exposant du terme suivant, sinon si la valeur absolue du coefficient du terme est plus petit que la valeur absolue du coefficient du terme suivant.
                 if ((!groups.get(j + 1).get(0).getOperator().equals("/")) && groups.get(j).get(0).getExponent() < groups.get(j + 1).get(0).getExponent() || (groups.get(j).get(0).getExponent() == groups.get(j + 1).get(0).getExponent() && Math.abs(groups.get(j).get(0).getCoefficient()) < Math.abs(groups.get(j + 1).get(0).getCoefficient())))
                 {
-                    groupTemp = new ArrayList(groups.get(j));
+                    groupTemp = new ArrayList<>(groups.get(j));
 
                     groups.remove(j);
-                    groups.add(j, new ArrayList(groups.get(j)));
+                    groups.add(j, new ArrayList<>(groups.get(j)));
 
                     groups.remove(j + 1);
-                    groups.add(j + 1, new ArrayList(groupTemp));
+                    groups.add(j + 1, new ArrayList<>(groupTemp));
                 }
             }
         }
@@ -450,7 +450,7 @@ class Resolution extends General_Equation
         return groups;
     }
 
-    String exponent(ArrayList<Term> terms)
+    private String exponent(ArrayList<Term> terms)
     {
         for (int i = 0; i < terms.size(); i++)
         {
@@ -477,7 +477,7 @@ class Resolution extends General_Equation
         return "";
     }
 
-    String multiplicationDivision(ArrayList<Term> terms)
+    private String multiplicationDivision(ArrayList<Term> terms)
     {
         String etape = "";
 
@@ -533,7 +533,7 @@ class Resolution extends General_Equation
         return etape;
     }
 
-    String additionSubstraction(ArrayList<Term> terms)
+    private String additionSubstraction(ArrayList<Term> terms)
     {
         String etape = "";
 
@@ -561,7 +561,7 @@ class Resolution extends General_Equation
         return etape;
     }
 
-    ArrayList<Term> removeRedundantTerms(ArrayList<Term> terms)
+    private ArrayList<Term> removeRedundantTerms(ArrayList<Term> terms)
     {
         for (int i = 0; i < terms.size(); i++)
         {
@@ -576,9 +576,9 @@ class Resolution extends General_Equation
         return terms;
     }
 
-    void solve()
+    private void solve()
     {
-        String etape = "";
+        String etape;
 
         do
         {
@@ -622,7 +622,7 @@ class Resolution extends General_Equation
         }
     }
 
-    void mainVariableToLeft()
+    private void mainVariableToLeft()
     {
         /*
         //Gauche du egal.
@@ -667,9 +667,9 @@ class Resolution extends General_Equation
         }
     }
 
-    void transferTerm(int t)
+    private void transferTerm(int t)
     {
-        String etape = "";
+        String etape;
         Term temp;
 
         //Si le terme recherche est a gauche du egal.
@@ -720,10 +720,10 @@ class Resolution extends General_Equation
         while(!etape.equals(""));
     }
 
-    void solveDegreeOne()
+    private void solveDegreeOne()
     {
-        String etape = "";
-        Term temp = new Term();
+        String etape;
+        Term temp;
 
         //Transfert du scalaire a droite.
         for (int i = 0; i < _leftTerms.size(); i++)
@@ -772,10 +772,10 @@ class Resolution extends General_Equation
         }
     }
 
-    void solveDegreeTwo()
+    private void solveDegreeTwo()
     {
         String s = "", A = "", B = "", C = "";
-        double val1 = 0, val2 = 0, a = 0, b = 0, c = 0;
+        double val1, val2, a, b, c;
 
         for (int i = 0; i < _leftTerms.size(); i++)
         {
@@ -816,7 +816,7 @@ class Resolution extends General_Equation
         }
     }
 
-    void displaySolutionsDegreeTwo(double a, double b, double c, double sol1, double sol2)
+    private void displaySolutionsDegreeTwo(double a, double b, double c, double sol1, double sol2)
     {
         if (sol1 == sol2)
         {
@@ -828,12 +828,12 @@ class Resolution extends General_Equation
         }
     }
 
-    void manageParenthesis()
+    private void manageParenthesis()
     {
         String lastEquation = "", etape = "";
-        ArrayList<Term> termsInParenthesis = new ArrayList();
+        ArrayList<Term> termsInParenthesis = new ArrayList<>();
         ArrayList<Term> termsTemp;
-        ArrayList<Term> groupPriority = new ArrayList();
+        ArrayList<Term> groupPriority = new ArrayList<>();
 
         //Enlever toutes les parentheses possibles.
         while(parenthesisLeft() && !lastEquation.equals(m_equation))
@@ -868,7 +868,7 @@ class Resolution extends General_Equation
                     //Si le terme a une parenthese fermante.
                     if (!_leftTerms.get(i).getCloseParenthesis().isEmpty())
                     {
-                        termsTemp = new ArrayList(termsInParenthesis);
+                        termsTemp = new ArrayList<>(termsInParenthesis);
                         etape = simplify(termsInParenthesis);
 
                         //Si les termes entre parentheses ont pu etre simplifies.
@@ -939,7 +939,7 @@ class Resolution extends General_Equation
                                 else if (_leftTerms.get(i + 1).getOpenParenthesis().isEmpty() && _leftTerms.get(i + 1).getCoefficient() == Math.floor(_leftTerms.get(i + 1).getCoefficient()) && _leftTerms.get(i + 1).getCoefficient() > 0)
                                 {
                                     //Exposants.
-                                    termsTemp = new ArrayList(termsInParenthesis);
+                                    termsTemp = new ArrayList<>(termsInParenthesis);
                                     termsTemp.get(0).getOpenParenthesis().remove(termsTemp.get(0).getOpenParenthesis().size() - 1);
                                     termsTemp.get(0).getOpenParenthesis().add(termsTemp.get(0).getOpenParenthesis().size() - 1, "*");
 
@@ -1045,7 +1045,7 @@ class Resolution extends General_Equation
                     //Si le terme a une parenthese fermante.
                     if (!_rightTerms.get(i).getCloseParenthesis().isEmpty())
                     {
-                        termsTemp = new ArrayList(termsInParenthesis);
+                        termsTemp = new ArrayList<>(termsInParenthesis);
                         etape = simplify(termsInParenthesis);
 
                         //Si les termes entre parentheses ont pu etre simplifies.
@@ -1121,7 +1121,7 @@ class Resolution extends General_Equation
 
                                     for (int j = 0; j < _rightTerms.get(i + 1).getCoefficient() - 1; j++)
                                     {
-                                        _rightTerms.addAll((i + 1 + (termsTemp.size() * j)), new ArrayList(termsInParenthesis));
+                                        _rightTerms.addAll((i + 1 + (termsTemp.size() * j)), new ArrayList<>(termsInParenthesis));
                                     }
 
                                     _rightTerms.remove(i + 1 + (termsInParenthesis.size() * (int)_rightTerms.get(i + 1).getCoefficient()));
@@ -1194,7 +1194,7 @@ class Resolution extends General_Equation
         }
     }
 
-    boolean parenthesisLeft()
+    private boolean parenthesisLeft()
     {
         for (Term term : _leftTerms)
         {
@@ -1215,10 +1215,10 @@ class Resolution extends General_Equation
         return false;
     }
 
-    ArrayList<Term> distribute(ArrayList<Term> terms1, ArrayList<Term> terms2)
+    private ArrayList<Term> distribute(ArrayList<Term> terms1, ArrayList<Term> terms2)
     {
-        ArrayList<ArrayList<Term>> groups = new ArrayList();
-        ArrayList<Term> temp = new ArrayList();
+        ArrayList<ArrayList<Term>> groups = new ArrayList<>();
+        ArrayList<Term> temp = new ArrayList<>();
 
         if (!terms1.get(0).getOpenParenthesis().isEmpty() && !terms1.get(terms1.size() - 1).getCloseParenthesis().isEmpty())
         {
@@ -1249,7 +1249,7 @@ class Resolution extends General_Equation
                 temp.add(new Term(terms1.get(i)));
                 temp.add(new Term(terms2.get(j)));
 
-                groups.add(new ArrayList(temp));
+                groups.add(new ArrayList<>(temp));
                 temp.clear();
             }
         }
@@ -1265,7 +1265,7 @@ class Resolution extends General_Equation
         return temp;
     }
 
-    void updateEquation(String etape)
+    private void updateEquation(String etape)
     {
         String lastEquation = m_equation;
         m_equation = "";                                         //Efface l'equation
@@ -1295,7 +1295,7 @@ class Resolution extends General_Equation
         }
     }
 
-    void displayEquation(String etape)
+    private void displayEquation(String etape)
     {
         String equation = "";
 
