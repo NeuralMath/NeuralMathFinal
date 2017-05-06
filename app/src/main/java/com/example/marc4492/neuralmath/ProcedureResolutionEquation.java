@@ -312,16 +312,20 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
         public void trouverX()
         {
             demarche.setText("DÉMONSTRATION : Trouver x\n");
-            TextViewReponse.setText("Erreur 404");
-            demarcheText = new ArrayList<>(0);
-            ajouterEtapes();
+            Resolution simplificationEQ = new Resolution(equation,var);
+
+            TextViewReponse.setText(simplificationEQ.getM_equation());
+            etapesText = simplificationEQ.getM_EtapesText();
+            ajouterEtapes(simplificationEQ.getM_DemarcheText(),etapesText);
         }
         public void trouverZeros()
         {
             demarche.setText("DÉMONSTRATION : Trouver zeros\n");
-            TextViewReponse.setText("Erreur 404");
-            demarcheText = new ArrayList<>(0);
-            ajouterEtapes();
+            Resolution simplificationEQ = new Resolution(equation,var);
+
+            TextViewReponse.setText(simplificationEQ.getM_equation());
+            etapesText = simplificationEQ.getM_EtapesText();
+            ajouterEtapes(simplificationEQ.getM_DemarcheText(),etapesText);
         }
         public void simplification()
         {
@@ -334,9 +338,10 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
         public void factorisation()
         {
             demarche.setText("DÉMONSTRATION : factoriser\n");
-            TextViewReponse.setText("Erreur 404");
-            demarcheText = new ArrayList<>(0);
-            ajouterEtapes();
+            Resolution simplificationEQ = new Resolution(equation,var);
+            TextViewReponse.setText(simplificationEQ.getM_equation());
+            etapesText = simplificationEQ.getM_EtapesText();
+            ajouterEtapes(simplificationEQ.getM_DemarcheText(),etapesText);
         }
         public void deriver()
         {
