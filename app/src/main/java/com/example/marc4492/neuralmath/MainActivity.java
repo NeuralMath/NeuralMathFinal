@@ -96,8 +96,6 @@ public class MainActivity extends AppCompatActivity {
                     "s", "σ", "sin", "√", "Σ", "t", "tan", "θ",
                     "u", "v", "w", "x", "y", "z", "[", "]", "{", "}"
             };
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -86,13 +86,6 @@ public class DrawingPage extends LinearLayout {
 
         btnDone = new Button(context);
         btnDone.setText(R.string.done);
-        //setting the button click listener
-        btnDone.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                drawView.clear();
-
-            }
-        });
 
         //Creation of the button layout
         layoutBtn = new LinearLayout(context);

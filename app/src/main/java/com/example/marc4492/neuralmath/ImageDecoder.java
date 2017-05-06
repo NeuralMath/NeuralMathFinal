@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -81,8 +82,8 @@ class ImageDecoder {
         //Trier par ordre croisant de l'ordre d'arriver (x)
         Collections.sort(listChar, new Comparator<MathChar>() {
             @Override
-            public int compare(MathChar mathChar, MathChar t1) {
-                return mathChar.getXStart() - t1.getXStart();
+            public int compare(MathChar mathChar, MathChar otherMatChar) {
+                return mathChar.getXStart() - otherMatChar.getXStart();
             }
         });
 
@@ -405,32 +406,48 @@ class ImageDecoder {
         }
     }
 
-    void trainNN(ArrayList<ReplacedChar> list) throws IOException
-    {
-        int[][] trainning = new int[list.size()][];
-        int[][] results = new int[list.size()][OUTPUT];
+    /**
+     *
+     *
+     * @param list
+     * @throws IOException
+     */
+    void trainNN(ArrayList<ReplacedChar> list) throws IOException {
+        final int[][] trainning = new int[list.size()][];
+        final int[][] results = new int[list.size()][OUTPUT];
         MathChar wanted = null;
 
-        for(int[] val : results)
+        for (int[] val : results)
             Arrays.fill(val, 0);
 
 
-        for(int i = 0; i < list.size(); i++)
-        {
-            for(MathChar mC : listCharDetected) {
+        for (int i = 0; i < list.size(); i++) {
+            for (MathChar mC : listCharDetected) {
                 if (mC.getIndexInString() == list.get(i).getPosition()) {
                     wanted = mC;
                     break;
                 }
             }
 
-            trainning[i] = getIOPixels(fillImage(wanted.getImage()));
+            if (wanted != null) {
+                trainning[i] = getIOPixels(fillImage(wanted.getImage()));
 
-            if(Arrays.asList(charList).contains(list.get(i).getNewChar()))
-                results[i][Arrays.asList(charList).indexOf(list.get(i).getNewChar())] = 1;
+                if (Arrays.asList(charList).contains(list.get(i).getNewChar()))
+                    results[i][Arrays.asList(charList).indexOf(list.get(i).getNewChar())] = 1;
 
-            network.trainAll(trainning, results);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            network.trainAll(trainning, results);
+                        } catch (IOException ex) {
+                            Log.e("NeuralNetwork", "Trainning", ex);
+                        }
+                    }
+                });
+            }
         }
+        clearData();
     }
 
     void clearData()

@@ -55,7 +55,6 @@ public class DrawingActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         sendEquation();
-        imageDecoder.clearData();
         super.onBackPressed();
     }
 
