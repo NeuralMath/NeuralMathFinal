@@ -69,6 +69,7 @@ class ImageDecoder {
         ArrayList<MathChar> listChar;
         int totalHeight = btm.getHeight();
         int totalWidth = btm.getWidth();
+        index = 0;
 
         MathChar.emptyList();
 
@@ -271,8 +272,12 @@ class ImageDecoder {
         return line;
     }
 
+    /**
+     * Set la valeur de la position dans la string pour chaque caractere
+     * @param line      L'equation à date
+     */
     private void setIndexOfString(String line) {
-        listCharDetected.get(index).setIndexInString((line.length()-1)+lastIndex);
+        listCharDetected.get(index).setIndexInString((line.length() - 1) + lastIndex);
     }
 
     /**
@@ -288,6 +293,7 @@ class ImageDecoder {
         ArrayList<MathChar> listTopFraction = new ArrayList<>();
         ArrayList<MathChar> listBottomFraction = new ArrayList<>();
         int indexBarreFraction = 0;
+        int nowIndex = index;
 
         line += "(";
 
@@ -300,13 +306,17 @@ class ImageDecoder {
             else if (list.get(i).getYStart() > list.get(indexBarreFraction).getYEnd())
                 listBottomFraction.add(list.get(i));
         }
+        index = 0;
         line += replaceChar(listTopFraction, originalTolWidth, tolerenceHeight/2);
 
         line += ")/(";
 
+        index = 0;
         line += replaceChar(listBottomFraction, originalTolWidth, tolerenceHeight/2);
 
         line += ")";
+
+        index = nowIndex;
         return line;
     }
 
@@ -403,10 +413,10 @@ class ImageDecoder {
     }
 
     /**
+     *  Train Neural Network lorsque le user corrige l'equation
      *
-     *
-     * @param list
-     * @throws IOException
+     * @param list              List des changements
+     * @throws IOException      S'il y a un probleme avec l'image
      */
     void trainNN(ArrayList<ReplacedChar> list) throws IOException {
         final int[][] trainning = new int[list.size()][];
