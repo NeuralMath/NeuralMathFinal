@@ -436,6 +436,7 @@ class ImageDecoder {
     void clearData()
     {
         listCharDetected = new ArrayList<>();
+        lastIndex = 0;
     }
 
     public boolean isReady()

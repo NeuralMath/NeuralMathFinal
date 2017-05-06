@@ -23,6 +23,7 @@ public class DrawingPage extends LinearLayout {
     private TextView txtEquation;
 
     private Button btnDone;
+    private Button btnClearText;
 
     /**
      * Creation des deux parties de la page
@@ -72,6 +73,17 @@ public class DrawingPage extends LinearLayout {
             }
         });
 
+        btnClearText = new Button(context);
+        btnClearText.setText(R.string.btn_clear_eq);
+        btnClearText.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                txtEquation.setText("");
+
+            }
+        });
+
+
         btnDone = new Button(context);
         btnDone.setText(R.string.done);
         //setting the button click listener
@@ -86,9 +98,15 @@ public class DrawingPage extends LinearLayout {
         layoutBtn = new LinearLayout(context);
         layoutBtn.setOrientation(LinearLayout.VERTICAL);
         layoutBtn.addView(btnRetry);
+        layoutBtn.addView(btnClearText);
         layoutBtn.addView(btnDone);
 
         setOrientation(LinearLayout.HORIZONTAL);
+    }
+
+    Button getButtonClearText()
+    {
+        return btnClearText;
     }
 
     /**

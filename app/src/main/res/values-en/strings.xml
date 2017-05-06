@@ -57,4 +57,5 @@
     <string name="erreur_404">Error 404</string>
     <string name="m_thode_de_r_solution">Resolution method</string>
     <string name="r_ponse_s">Answer(s) :</string>
+    <string name="btn_clear_eq">Clear equation</string>
 </resources>

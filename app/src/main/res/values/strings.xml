@@ -59,4 +59,5 @@
     <string name="r_ponse_s">Réponse(s) :</string>
     <string name="erreur_404">Erreur 404</string>
     <string name="d_monstration">DÉMONSTRATION</string>
+    <string name="btn_clear_eq">Effacer l\'équation</string>
 </resources>

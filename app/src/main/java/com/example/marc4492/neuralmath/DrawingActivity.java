@@ -17,7 +17,13 @@ public class DrawingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.drawing_layout);
 
+        Intent i = getIntent();
+        imageDecoder = MainActivity.getImageDecoder();
+        imageDecoder.setAppendMode(true);
+        String value = i.getStringExtra("LAYOUT");
         drawPage = (DrawingPage) findViewById(R.id.drawPage);
+
+
         drawPage.getDrawView().setListener(new DrawingView.DrawnListener() {
             @Override
             public void drawn(Bitmap b) {
@@ -30,12 +36,15 @@ public class DrawingActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
+        drawPage.getButtonClearText().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                drawPage.getTextEquation().setText("");
+                imageDecoder.clearData();
+            }
+        });
 
-        Intent i = getIntent();
-        imageDecoder = MainActivity.getImageDecoder();
-        imageDecoder.setAppendMode(true);
 
-        String value = i.getStringExtra("LAYOUT");
 
         if (value.equals("true"))
             drawPage.setLayoutForRightHanded();
