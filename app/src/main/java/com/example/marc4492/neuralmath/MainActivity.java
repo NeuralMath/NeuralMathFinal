@@ -140,6 +140,7 @@ public class MainActivity extends AppCompatActivity {
                     i.putExtra("EQUATION", value);
                     startActivity(i);
                     onBackPressed();
+                    writingZone.setText("");
                 }
             }
         });
