@@ -43,13 +43,19 @@ class Resolution extends General_Equation
         _letters.add('β');
         _letters.add('θ');
 
-
         _variables = new ArrayList<>();
 
         _leftTerms = new ArrayList<>();
         _rightTerms = new ArrayList<>();
-
         _equationLegthDisplay = 0;
+
+        fillVariables();
+        normalize(equation);
+        fillAllTerms();
+        manageParenthesis();
+        solve();
+
+
     }
 
     private void fillVariables()
@@ -624,27 +630,6 @@ class Resolution extends General_Equation
 
     private void mainVariableToLeft()
     {
-        /*
-        //Gauche du egal.
-        for (int i = 0; i < _leftTerms.size(); i++)
-        {
-            if (!_leftTerms.get(i).getCharacter().equals(_variables.get(0)) && (_leftTerms.size() != 1 || _leftTerms.get(0).getCoefficient() != 0) && (_leftTerms.get(0).getExponent() <= 1 && _rightTerms.get(0).getExponent() <= 1 && _leftTerms.size() != 1 && _rightTerms.size() != 1))
-            {
-                transferTerm(i);
-                i--;
-            }
-        }
-
-        //Droite du egal.
-        for (int i = 0; i < _rightTerms.size(); i++)
-        {
-            if (_rightTerms.get(i).getCharacter().equals(_variables.get(0)) && (_rightTerms.size() != 1 || _rightTerms.get(0).getCoefficient() != 0) && (_leftTerms.get(0).getExponent() <= 1 && _rightTerms.get(0).getExponent() <= 1 && _leftTerms.size() != 1 && _rightTerms.size() != 1))
-            {
-                transferTerm(_leftTerms.size() + i);
-                i--;
-            }
-        }
-        */
 
         //Gauche du egal.
         for (int i = 0; i < _leftTerms.size(); i++)
@@ -1452,20 +1437,6 @@ class Resolution extends General_Equation
         System.out.println(equation + " (" + etape + ")\n");
     }
 
-    public static void main(String arcs[])
-    {
-        String equation = "7 + y = 2 * x + 5";
-
-        Resolution resolution = new Resolution(equation);
-
-        System.out.println("Equation:\t" + resolution.m_equation + "\n");
-
-        resolution.fillVariables();
-        resolution.normalize(equation);
-        resolution.fillAllTerms();
-        resolution.manageParenthesis();
-        resolution.solve();
-    }
 }
 
 //DecimalFormat: http://stackoverflow.com/questions/14204905/java-how-to-remove-trailing-zeros-from-a-double

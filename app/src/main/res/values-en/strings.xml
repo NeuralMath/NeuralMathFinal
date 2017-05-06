@@ -62,4 +62,5 @@
     <string name="english" translatable="false"></string>
     <string name="corriger">Correct</string>
     <string name="type_correction">Correction type</string>
+    <string name="IsolerVariable">Isolate Variable</string>
 </resources>

@@ -130,6 +130,10 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
             {
                 spinnerArray.add(getString(R.string.TrouverX));
             }
+            else if(Pattern.matches("(i?)\\(?(\\-?\\w+(\\.\\w+)?)\\)?(((\\+|\\-|\\*|\\/|\\^|\\_))\\(?(\\-?\\w+(\\.\\w+)?)\\)*)*=.*",equation))
+            {
+                spinnerArray.add(getString(R.string.IsolerVariable));
+            }
             else          //Aucune méthode de résolution possible.
             {
                 spinnerArray.add(getString(R.string.Aucune));
@@ -158,11 +162,15 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
                             else if(item.toString() == getString(R.string.Factorisation)) factorisation();
                             else if(item.toString() == getString(R.string.Deriver))deriver();
                             else if(item.toString() == getString(R.string.Integrer))integrer();
+                            else if(item.toString() == getString(R.string.IsolerVariable))isoler();
                         }
                         public void onNothingSelected(AdapterView<?> parent) {}
                     });
         }
-        public void ajouterEtapes()     //Méthode qui sert à ajouter les étapes dans les textView custom en enlevant les précédents. (utilisée pour vider )
+
+
+
+    public void ajouterEtapes()     //Méthode qui sert à ajouter les étapes dans les textView custom en enlevant les précédents. (utilisée pour vider )
         {
             texViewList.clear();
             linearDemarche.removeAllViews();
@@ -375,6 +383,12 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
             demarcheText = new ArrayList<>(0);
             ajouterEtapes();
         }
-
+        private void isoler() {
+            demarche.setText(getString(R.string.d_monstration)+" isolation\n");
+            Resolution simplificationEQ = new Resolution(equation);
+            TextViewReponse.setText(simplificationEQ.getM_equation());
+            etapesText = simplificationEQ.getM_EtapesText();
+            ajouterEtapes(simplificationEQ.getM_DemarcheText(),etapesText);
+        }
 
 }
