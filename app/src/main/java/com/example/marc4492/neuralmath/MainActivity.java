@@ -361,7 +361,7 @@ public class MainActivity extends AppCompatActivity {
                                     mathKeyboard.setCorrectionMode(true);
                                     writingZone.getText().clear();
                                     writingZone.setText(eq);
-                                    activity_main.setDisplayedChild(3);
+                                    activity_main.setDisplayedChild(2);
                                 }
                             })
                             .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {

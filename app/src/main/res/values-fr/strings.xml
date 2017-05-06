@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="ecrire">Écrire</string>
-    <string name="feuille_blanche_option">Feuille blanche</string>
+    <string name="feuille_blanche_option">Feuilles blanches</string>
     <string name="feuilles_lignees_option">Feuilles lignées</string>
     <string name="gaucher">Gaucher</string>
     <string name="langue">Langue</string>
