@@ -54,4 +54,12 @@ public class General_Equation {
     public ArrayList<String> getM_EtapesText() {
         return m_EtapesText;
     }
+
+    public String getM_equation() {
+        return m_equation;
+    }
+
+    public void setM_equation(String m_equation) {
+        this.m_equation = m_equation;
+    }
 }

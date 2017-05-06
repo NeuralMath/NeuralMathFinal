@@ -2,40 +2,171 @@ package com.example.marc4492.neuralmath;
 
 import java.util.ArrayList;
 import java.text.DecimalFormat;
+import java.util.Scanner;
 
 class Resolution extends General_Equation
 {
-    private ArrayList<String> _variables;               //Les variables dans l'equation.
-    private ArrayList<Term> _leftTerms;                 //Les termes de l'equation a gauche du egal.
-    private ArrayList<Term> _rightTerms;                //Les termes de l'equation a droite du egal.
-    private int _equationLengthDisplay;                  //La grandeur de l'equation dans l'affichage. Sert uniquement a l'affichage.
+    ArrayList<String> _variables;               //Les variables dans l'equation.
+    ArrayList<Term> _leftTerms;                 //Les termes de l'equation a gauche du egal.
+    ArrayList<Term> _rightTerms;                //Les termes de l'equation a droite du egal.
+    int _equationLegthDisplay;                  //La grandeur de l'equation dans l'affichage. Sert uniquement a l'affichage.
 
+    DecimalFormat _df = new DecimalFormat("0.####");    //Format de l'affichage.
 
-    private DecimalFormat _df = new DecimalFormat("0.####");  //Format de l'affichage.
+    ArrayList<Character> _letters = new ArrayList();    //Lettres pouvant etre une variable.
 
-    Resolution(String equation, ArrayList<String> var)
+    Resolution(String equation)
     {
         super(equation);
-        _variables = new ArrayList<>(var);
+        //Liste des lettres pouvant etre une variable.
+        _letters.add('a');
+        _letters.add('b');
+        _letters.add('c');
+        _letters.add('d');
+        _letters.add('f');
+        _letters.add('g');
+        _letters.add('h');
+        _letters.add('i');
+        _letters.add('j');
+        _letters.add('l');
+        _letters.add('n');
+        _letters.add('o');
+        _letters.add('p');
+        _letters.add('r');
+        _letters.add('s');
+        _letters.add('t');
+        _letters.add('w');
+        _letters.add('x');
+        _letters.add('y');
+        _letters.add('z');
+        _letters.add('α');
+        _letters.add('β');
+        _letters.add('θ');
 
-        _leftTerms = new ArrayList<>();
-        _rightTerms = new ArrayList<>();
 
-        _equationLengthDisplay = 0;
+        _variables = new ArrayList();
 
-        normalize(m_equation);
-        System.out.println("Equation:\t" + m_equation + "\n");
-        fillAllTerms();
-        manageParenthesis();
-        solve();
+        _leftTerms = new ArrayList();
+        _rightTerms = new ArrayList();
+
+        _equationLegthDisplay = 0;
     }
 
-    private void normalize(String e)
+    void fillVariables()
     {
+        String temp = "";
+        int input = 0;
+
+        for (int j = 0; j < _letters.size(); j++)
+        {
+            for (int i = 0; i < m_equation.length(); i++)
+            {
+                if (m_equation.charAt(i) == _letters.get(j))
+                {
+                    _variables.add(m_equation.charAt(i) + "");
+                    break;
+                }
+            }
+        }
+
+        if (_variables.size() != 1)
+        {
+            System.out.println("Quelle variable voulez-vous isoler?");
+
+            for (int i = 0; i < _variables.size(); i++)
+            {
+                System.out.println((i + 1) + ". " + _variables.get(i));
+            }
+
+            Scanner s = new Scanner(System.in);
+            input = s.nextInt();
+            System.out.print("\n");
+
+            temp = _variables.get(input - 1);
+            _variables.remove(input - 1);
+            _variables.add(0, temp);
+        }
+    }
+
+    void normalize(String e)
+    {
+        String temp = "";
+
+        for (int i = 0; i < e.length(); i++)
+        {
+            //Si c'est une variable.
+            for (int j = 0; j < _variables.size(); j++)
+            {
+                //S'il y a une variable precedee d'un espace.
+                if (e.charAt(i) == _variables.get(j).charAt(0) && (i == 0 || e.charAt(i - 1) == ' '))
+                {
+                    //S'il n'y a pas d'operateur devant le terme.
+                    if (i == 0 || (e.charAt(i - 2) != '+' && e.charAt(i - 2) != '-' && e.charAt(i - 2) != '*' && e.charAt(i - 2) != '/' && e.charAt(i) != '^'))
+                    {
+                        e = e.substring(0, i) + "+" + e.substring(i, e.length());
+                        i++;
+                    }
+
+                    e = e.substring(0, i) + "1*" + e.substring(i, e.length());
+                    i += 2;
+                }
+                //S'il y a une variable suivie d'un espace.
+                if (e.charAt(i) == _variables.get(j).charAt(0) && (i == e.length() - 1 || e.charAt(i + 1) == ' '))
+                {
+                    e = e.substring(0, i + 1) + "^1" + e.substring(i + 1, e.length());
+                    i += 2;
+                }
+            }
+
+            //Si c'est un chiffre soit suivi d'un espace ou suivi d'un chiffre.
+            if (Character.isDigit(e.charAt(i)) && ((i == 0 || e.charAt(i - 1) == ' ') || !temp.equals("")))
+            {
+                temp += e.charAt(i);
+
+                if (i == e.length() - 1)
+                {
+                    //S'il n'y a pas d'operateur devant le terme.
+                    if (i - temp.length() - 1 < 0 || (e.charAt(i - temp.length() - 1) != '+' && e.charAt(i - temp.length() - 1) != '-' && e.charAt(i - temp.length() - 1) != '*' && e.charAt(i - temp.length() - 1) != '/' && e.charAt(i - temp.length() - 1) != '^'))
+                    {
+                        e = e.substring(0, i - temp.length()) + "+" + e.substring(i - temp.length(), e.length());
+                        i++;
+                    }
+
+                    e = e.substring(0, i - temp.length() + 2) + "*" + _variables.get(_variables.size() - 1) + "^0" + e.substring(i - temp.length() + 2, e.length());
+                    i += 4;
+
+                    temp = "";
+                }
+            }
+            //Sinon si on a termine le nombre.
+            else if (!temp.equals(""))
+            {
+                //S'il n'y a pas d'operateur devant le terme.
+                if (i - temp.length() - 1 < 0 || (e.charAt(i - temp.length() - 1) != '+' && e.charAt(i - temp.length() - 1) != '-' && e.charAt(i - temp.length() - 1) != '*' && e.charAt(i - temp.length() - 1) != '/' && e.charAt(i - temp.length() - 1) != '^'))
+                {
+                    e = e.substring(0, i - temp.length()) + "+" + e.substring(i - temp.length(), e.length());
+                    i++;
+                }
+
+                e = e.substring(0, i - temp.length() + 1) + "*" + _variables.get(_variables.size() - 1) + "^0" + e.substring(i - temp.length() + 1, e.length());
+                i += 4;
+
+                temp = "";
+            }
+        }
+
+        for (int i = 0; i < e.length(); i++)
+        {
+            if (e.charAt(i) == ' ')
+            {
+                e = e.substring(0, i) + e.substring(i + 1, e.length());
+            }
+        }
+
         m_equation = e;
     }
 
-    private int findCharPositionInString(String c, String s, int begin)
+    int findCharPositionInString(String c, String s, int begin)
     {
         for (int i = begin; i < s.length(); i++)
         {
@@ -48,7 +179,7 @@ class Resolution extends General_Equation
         return 0;
     }
 
-    private void fillAllTerms()
+    void fillAllTerms()
     {
         Term temp = new Term();
 
@@ -81,14 +212,44 @@ class Resolution extends General_Equation
             }
         }
 
+        //Gauche du egal.
+        for (int i = 0; i < _leftTerms.size(); i++)
+        {
+            for (int j = 0; j < (_leftTerms.size() - i) - 1; j++)
+            {
+                if (_leftTerms.get(j).getPosition() > _leftTerms.get(j + 1).getPosition())
+                {
+                    temp = new Term(_leftTerms.get(j));
+                    _leftTerms.remove(j);
+                    _leftTerms.add(j + 1, new Term(temp));
+                }
+            }
+        }
+
+        //Droite du egal.
+        for (int i = 0; i < _rightTerms.size(); i++)
+        {
+            for (int j = 0; j < (_rightTerms.size() - i) - 1; j++)
+            {
+                if (_rightTerms.get(j).getPosition() > _rightTerms.get(j + 1).getPosition())
+                {
+                    temp = new Term(_rightTerms.get(j));
+                    _rightTerms.remove(j);
+                    _rightTerms.add(j + 1, new Term(temp));
+                }
+            }
+        }
+
         fixSignOperators();
+
+        updateEquation("Equation recue");
     }
 
-    private Term fillTerm(int pos, String s)//Permettre les parentheses multiples.
+    Term fillTerm(int pos, String s)//Permettre les parentheses multiples.
     {
-        double coeff, exp;
-        String temp = "", op;
-        ArrayList<String> open = new ArrayList<>(), close = new ArrayList<>();
+        double coeff = 0, exp = 0;
+        String temp = "", op = "";
+        ArrayList<String> open = new ArrayList(), close = new ArrayList();
 
         //Trouve le coefficient du terme.
         for (int i = pos - 3; i >= 0; i--)  //Recule de 2 positions avant la variable puis ramasse tous les chiffres.
@@ -158,7 +319,7 @@ class Resolution extends General_Equation
         return new Term(pos, "" + s.charAt(pos - 1), coeff, exp, op, open, close);
     }
 
-    private void fixSignOperators()
+    void fixSignOperators()
     {
         //Gauche du egal.
         for (int i = 0; i < _leftTerms.size(); i++)
@@ -181,9 +342,9 @@ class Resolution extends General_Equation
         }
     }
 
-    private String simplify(ArrayList<Term> terms)
+    String simplify(ArrayList<Term> terms)
     {
-        String  etape;
+        String  etape = "";
 
         etape = exponent(terms);
 
@@ -200,10 +361,10 @@ class Resolution extends General_Equation
         return etape;
     }
 
-    private ArrayList<Term> sortTermsViaGroups(ArrayList<Term> terms)
+    ArrayList<Term> sortTermsViaGroups(ArrayList<Term> terms)
     {
-        ArrayList<Term> termsTemp = new ArrayList<>();
-        ArrayList<ArrayList<Term>> groupsTerms = new ArrayList<>();
+        ArrayList<Term> termsTemp = new ArrayList();
+        ArrayList<ArrayList<Term>> groupsTerms = new ArrayList();
 
         for (int i = 0; i < terms.size(); i++)
         {
@@ -214,13 +375,13 @@ class Resolution extends General_Equation
             }
             else
             {
-                groupsTerms.add(new ArrayList<>(termsTemp));          //Le groupe est complet. Met le dans le ArrayList de groupes.
+                groupsTerms.add(new ArrayList(termsTemp));          //Le groupe est complet. Met le dans le ArrayList de groupes.
 
                 termsTemp.clear();                                  //Puis effaces-le.
                 i--;                                                //Recommence pour le meme terme, donc decremente i.
             }
         }
-        groupsTerms.add(new ArrayList<>(termsTemp));                  //Le dernier groupe est complet. Met le dans le ArrayList de groupes.
+        groupsTerms.add(new ArrayList(termsTemp));                  //Le dernier groupe est complet. Met le dans le ArrayList de groupes.
 
         groupsTerms = sortInGroups(groupsTerms);
 
@@ -237,7 +398,7 @@ class Resolution extends General_Equation
         return terms;
     }
 
-    private ArrayList<ArrayList<Term>> sortInGroups(ArrayList<ArrayList<Term>> groups)
+    ArrayList<ArrayList<Term>> sortInGroups(ArrayList<ArrayList<Term>> groups)
     {
         Term temp;
         ArrayList<Term> groupTemp;
@@ -275,13 +436,13 @@ class Resolution extends General_Equation
                 //Si l'operateur n'est pas "/" et si l'exposant du terme est plus petit que l'exposant du terme suivant, sinon si la valeur absolue du coefficient du terme est plus petit que la valeur absolue du coefficient du terme suivant.
                 if ((!groups.get(j + 1).get(0).getOperator().equals("/")) && groups.get(j).get(0).getExponent() < groups.get(j + 1).get(0).getExponent() || (groups.get(j).get(0).getExponent() == groups.get(j + 1).get(0).getExponent() && Math.abs(groups.get(j).get(0).getCoefficient()) < Math.abs(groups.get(j + 1).get(0).getCoefficient())))
                 {
-                    groupTemp = new ArrayList<>(groups.get(j));
+                    groupTemp = new ArrayList(groups.get(j));
 
                     groups.remove(j);
-                    groups.add(j, new ArrayList<>(groups.get(j)));
+                    groups.add(j, new ArrayList(groups.get(j)));
 
                     groups.remove(j + 1);
-                    groups.add(j + 1, new ArrayList<>(groupTemp));
+                    groups.add(j + 1, new ArrayList(groupTemp));
                 }
             }
         }
@@ -289,7 +450,7 @@ class Resolution extends General_Equation
         return groups;
     }
 
-    private String exponent(ArrayList<Term> terms)
+    String exponent(ArrayList<Term> terms)
     {
         for (int i = 0; i < terms.size(); i++)
         {
@@ -316,13 +477,20 @@ class Resolution extends General_Equation
         return "";
     }
 
-    private String multiplicationDivision(ArrayList<Term> terms)
+    String multiplicationDivision(ArrayList<Term> terms)
     {
+        String etape = "";
+
         for (int i = 0; i < terms.size() - 1; i++)
         {
-            //Si les variables des termes sont les memes et l'operateur est "*".
-            if (terms.get(i).getCharacter().equals(terms.get(i + 1).getCharacter()) && terms.get(i + 1).getOperator().equals("*"))
+            //Si les variables des termes sont les memes (ou un des deux termes a un exposant de 0) et l'operateur est "*".
+            if ((terms.get(i).getCharacter().equals(terms.get(i + 1).getCharacter()) || terms.get(i).getExponent() == 0 || terms.get(i + 1).getExponent() == 0) && terms.get(i + 1).getOperator().equals("*"))
             {
+                if (terms.get(i).getExponent() == 0 && terms.get(i + 1).getExponent() != 0)
+                {
+                    terms.get(i).setCharacter(terms.get(i + 1).getCharacter());
+                }
+
                 terms.get(i).setCoefficient(terms.get(i).getCoefficient() * terms.get(i + 1).getCoefficient());                         //Multiplie les coefficients.
                 terms.get(i).setExponent(terms.get(i).getExponent() + terms.get(i + 1).getExponent());                                  //Aditionne les exposants.
 
@@ -336,11 +504,16 @@ class Resolution extends General_Equation
 
                 terms = removeRedundantTerms(terms);
 
-                return "Multiplication/Division";
+                etape = "Multiplication/Division";
             }
             //Si les variables des termes sont les memes et l'operateur est "/".
-            else if (terms.get(i).getCharacter().equals(terms.get(i + 1).getCharacter()) && terms.get(i + 1).getOperator().equals("/"))
+            else if ((terms.get(i).getCharacter().equals(terms.get(i + 1).getCharacter()) || terms.get(i).getExponent() == 0 || terms.get(i + 1).getExponent() == 0) && terms.get(i + 1).getOperator().equals("/"))
             {
+                if (terms.get(i).getExponent() == 0 && terms.get(i + 1).getExponent() != 0)
+                {
+                    terms.get(i).setCharacter(terms.get(i + 1).getCharacter());
+                }
+
                 terms.get(i).setCoefficient(terms.get(i).getCoefficient() / terms.get(i + 1).getCoefficient());                         //Divise les coefficients.
                 terms.get(i).setExponent(terms.get(i).getExponent() - terms.get(i + 1).getExponent());                                  //Soustrait les exposants.
 
@@ -354,14 +527,16 @@ class Resolution extends General_Equation
 
                 terms = removeRedundantTerms(terms);
 
-                return "Multiplication/Division";
+                etape = "Multiplication/Division";
             }
         }
-        return "";
+        return etape;
     }
 
-    private String additionSubstraction(ArrayList<Term> terms)
+    String additionSubstraction(ArrayList<Term> terms)
     {
+        String etape = "";
+
         for (int i = 0; i < terms.size() - 1; i++)
         {
             //Si les variables des termes sont les memes et operateurs sont '+' et les exposants sont les memes.
@@ -379,14 +554,14 @@ class Resolution extends General_Equation
 
                 terms = removeRedundantTerms(terms);
 
-                return "Adition/Soustraction";
+                etape = "Adition/Soustraction";
             }
         }
 
-        return "";
+        return etape;
     }
 
-    private ArrayList<Term> removeRedundantTerms(ArrayList<Term> terms)
+    ArrayList<Term> removeRedundantTerms(ArrayList<Term> terms)
     {
         for (int i = 0; i < terms.size(); i++)
         {
@@ -401,7 +576,7 @@ class Resolution extends General_Equation
         return terms;
     }
 
-    public void solve()
+    void solve()
     {
         String etape = "";
 
@@ -447,51 +622,9 @@ class Resolution extends General_Equation
         }
     }
 
-    private void solveDegreeOne()
+    void mainVariableToLeft()
     {
-        String etape = "";
-        Term temp = new Term();
-
-        //Transfert du scalaire a droite.
-        for (int i = 0; i < _leftTerms.size(); i++)
-        {
-            //Si on a un scalaire.
-            if (_leftTerms.get(i).getExponent() == 0)
-            {
-                transferTerm(i);
-            }
-        }
-
-        if (_leftTerms.get(0).getCoefficient() != 1)
-        {
-            //Division par le coefficient de gauche a droite.
-            temp = new Term(_leftTerms.get(0));
-
-            temp.setExponent(0);
-            temp.setOperator("/");
-
-            _leftTerms.add(new Term(temp));
-            _rightTerms.add(new Term(temp));
-            updateEquation("Transfert de terme");
-
-            do
-            {
-                etape = simplify(_leftTerms);
-                updateEquation(etape);
-            }
-            while(!etape.equals(""));
-
-            do
-            {
-                etape = simplify(_rightTerms);
-                updateEquation(etape);
-            }
-            while(!etape.equals(""));
-        }
-    }
-
-    private void mainVariableToLeft()
-    {
+        /*
         //Gauche du egal.
         for (int i = 0; i < _leftTerms.size(); i++)
         {
@@ -511,9 +644,30 @@ class Resolution extends General_Equation
                 i--;
             }
         }
+        */
+
+        //Gauche du egal.
+        for (int i = 0; i < _leftTerms.size(); i++)
+        {
+            if (!_leftTerms.get(i).getCharacter().equals(_variables.get(0)) && (_leftTerms.size() != 1 || _leftTerms.get(0).getCoefficient() != 0))
+            {
+                transferTerm(i);
+                i--;
+            }
+        }
+
+        //Droite du egal.
+        for (int i = 0; i < _rightTerms.size(); i++)
+        {
+            if (_rightTerms.get(i).getCharacter().equals(_variables.get(0)) && (_rightTerms.size() != 1 || _rightTerms.get(0).getCoefficient() != 0))
+            {
+                transferTerm(_leftTerms.size() + i);
+                i--;
+            }
+        }
     }
 
-    private void transferTerm(int t)
+    void transferTerm(int t)
     {
         String etape = "";
         Term temp;
@@ -566,7 +720,59 @@ class Resolution extends General_Equation
         while(!etape.equals(""));
     }
 
-    private void solveDegreeTwo()
+    void solveDegreeOne()
+    {
+        String etape = "";
+        Term temp = new Term();
+
+        //Transfert du scalaire a droite.
+        for (int i = 0; i < _leftTerms.size(); i++)
+        {
+            //Si on a un scalaire.
+            if (_leftTerms.get(i).getExponent() == 0)
+            {
+                transferTerm(i);
+            }
+        }
+
+        if (_leftTerms.get(0).getCoefficient() != 1)
+        {
+            //Division par le coefficient de gauche a droite.
+            temp = new Term(_leftTerms.get(0));
+
+            temp.setExponent(0);
+            temp.setOperator("/");
+
+            for (int i = 0; i < _leftTerms.size(); i++)
+            {
+                _leftTerms.add(i + 1, new Term(temp));
+                i++;
+            }
+
+            for (int i = 0; i < _rightTerms.size(); i++)
+            {
+                _rightTerms.add(i + 1, new Term(temp));
+                i++;
+            }
+            updateEquation("Transfert de terme");
+
+            do
+            {
+                etape = simplify(_leftTerms);
+                updateEquation(etape);
+            }
+            while(!etape.equals(""));
+
+            do
+            {
+                etape = simplify(_rightTerms);
+                updateEquation(etape);
+            }
+            while(!etape.equals(""));
+        }
+    }
+
+    void solveDegreeTwo()
     {
         String s = "", A = "", B = "", C = "";
         double val1 = 0, val2 = 0, a = 0, b = 0, c = 0;
@@ -606,11 +812,11 @@ class Resolution extends General_Equation
         }
         else
         {
-            System.out.println("Aucune solution réelle\n" + _variables.get(0) + " = " + _df.format((-1 * b) / (a * 2)) + " ± sqrt(" + _df.format(Math.pow(b, 2) - (4 * a * c)) + ") / " + _df.format(a * 2));
+            System.out.println("Aucune solution reelle\n" + _variables.get(0) + " = " + _df.format((-1 * b) / (a * 2)) + " ± sqrt(" + _df.format(Math.pow(b, 2) - (4 * a * c)) + ") / " + _df.format(a * 2));
         }
     }
 
-    private void displaySolutionsDegreeTwo(double a, double b, double c, double sol1, double sol2)
+    void displaySolutionsDegreeTwo(double a, double b, double c, double sol1, double sol2)
     {
         if (sol1 == sol2)
         {
@@ -622,14 +828,12 @@ class Resolution extends General_Equation
         }
     }
 
-    public void manageParenthesis()
+    void manageParenthesis()
     {
-        updateEquation("Equation recue");
-
         String lastEquation = "", etape = "";
-        ArrayList<Term> termsInParenthesis = new ArrayList<>();
+        ArrayList<Term> termsInParenthesis = new ArrayList();
         ArrayList<Term> termsTemp;
-        ArrayList<Term> groupPriority = new ArrayList<>();
+        ArrayList<Term> groupPriority = new ArrayList();
 
         //Enlever toutes les parentheses possibles.
         while(parenthesisLeft() && !lastEquation.equals(m_equation))
@@ -664,7 +868,7 @@ class Resolution extends General_Equation
                     //Si le terme a une parenthese fermante.
                     if (!_leftTerms.get(i).getCloseParenthesis().isEmpty())
                     {
-                        termsTemp = new ArrayList<>(termsInParenthesis);
+                        termsTemp = new ArrayList(termsInParenthesis);
                         etape = simplify(termsInParenthesis);
 
                         //Si les termes entre parentheses ont pu etre simplifies.
@@ -735,7 +939,7 @@ class Resolution extends General_Equation
                                 else if (_leftTerms.get(i + 1).getOpenParenthesis().isEmpty() && _leftTerms.get(i + 1).getCoefficient() == Math.floor(_leftTerms.get(i + 1).getCoefficient()) && _leftTerms.get(i + 1).getCoefficient() > 0)
                                 {
                                     //Exposants.
-                                    termsTemp = new ArrayList<>(termsInParenthesis);
+                                    termsTemp = new ArrayList(termsInParenthesis);
                                     termsTemp.get(0).getOpenParenthesis().remove(termsTemp.get(0).getOpenParenthesis().size() - 1);
                                     termsTemp.get(0).getOpenParenthesis().add(termsTemp.get(0).getOpenParenthesis().size() - 1, "*");
 
@@ -841,7 +1045,7 @@ class Resolution extends General_Equation
                     //Si le terme a une parenthese fermante.
                     if (!_rightTerms.get(i).getCloseParenthesis().isEmpty())
                     {
-                        termsTemp = new ArrayList<>(termsInParenthesis);
+                        termsTemp = new ArrayList(termsInParenthesis);
                         etape = simplify(termsInParenthesis);
 
                         //Si les termes entre parentheses ont pu etre simplifies.
@@ -917,7 +1121,7 @@ class Resolution extends General_Equation
 
                                     for (int j = 0; j < _rightTerms.get(i + 1).getCoefficient() - 1; j++)
                                     {
-                                        _rightTerms.addAll((i + 1 + (termsTemp.size() * j)), new ArrayList<>(termsInParenthesis));
+                                        _rightTerms.addAll((i + 1 + (termsTemp.size() * j)), new ArrayList(termsInParenthesis));
                                     }
 
                                     _rightTerms.remove(i + 1 + (termsInParenthesis.size() * (int)_rightTerms.get(i + 1).getCoefficient()));
@@ -990,7 +1194,7 @@ class Resolution extends General_Equation
         }
     }
 
-    private boolean parenthesisLeft()
+    boolean parenthesisLeft()
     {
         for (Term term : _leftTerms)
         {
@@ -1011,10 +1215,10 @@ class Resolution extends General_Equation
         return false;
     }
 
-    private ArrayList<Term> distribute(ArrayList<Term> terms1, ArrayList<Term> terms2)
+    ArrayList<Term> distribute(ArrayList<Term> terms1, ArrayList<Term> terms2)
     {
-        ArrayList<ArrayList<Term>> groups = new ArrayList<>();
-        ArrayList<Term> temp = new ArrayList<>();
+        ArrayList<ArrayList<Term>> groups = new ArrayList();
+        ArrayList<Term> temp = new ArrayList();
 
         if (!terms1.get(0).getOpenParenthesis().isEmpty() && !terms1.get(terms1.size() - 1).getCloseParenthesis().isEmpty())
         {
@@ -1045,7 +1249,7 @@ class Resolution extends General_Equation
                 temp.add(new Term(terms1.get(i)));
                 temp.add(new Term(terms2.get(j)));
 
-                groups.add(new ArrayList<>(temp));
+                groups.add(new ArrayList(temp));
                 temp.clear();
             }
         }
@@ -1061,7 +1265,7 @@ class Resolution extends General_Equation
         return temp;
     }
 
-    private void updateEquation(String etape)
+    void updateEquation(String etape)
     {
         String lastEquation = m_equation;
         m_equation = "";                                         //Efface l'equation
@@ -1091,7 +1295,7 @@ class Resolution extends General_Equation
         }
     }
 
-    private void displayEquation(String etape)
+    void displayEquation(String etape)
     {
         String equation = "";
 
@@ -1240,19 +1444,28 @@ class Resolution extends General_Equation
         }
 
         //Pour l'alignement.
-        if (_equationLengthDisplay == 0)
+        if (_equationLegthDisplay == 0)
         {
-            _equationLengthDisplay = equation.length();
+            _equationLegthDisplay = equation.length();
         }
 
-        m_DemarcheText.add(equation);
-        m_EtapesText.add(etape);
+        System.out.println(equation + " (" + etape + ")\n");
     }
 
-    public String getM_equation() {
-        return m_equation;
-    }
+    public static void main(String arcs[])
+    {
+        String equation = "7 + y = 2 * x + 5";
 
+        Resolution resolution = new Resolution(equation);
+
+        System.out.println("Equation:\t" + resolution.m_equation + "\n");
+
+        resolution.fillVariables();
+        resolution.normalize(equation);
+        resolution.fillAllTerms();
+        resolution.manageParenthesis();
+        resolution.solve();
+    }
 }
 
 //DecimalFormat: http://stackoverflow.com/questions/14204905/java-how-to-remove-trailing-zeros-from-a-double

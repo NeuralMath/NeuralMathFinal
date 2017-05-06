@@ -332,7 +332,7 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
         public void trouverX()
         {
             demarche.setText(getString(R.string.d_monstration)+": Trouver x\n");
-            Resolution simplificationEQ = new Resolution(equation,var);
+            Resolution simplificationEQ = new Resolution(equation);
             TextViewReponse.setText(simplificationEQ.getM_equation());
             etapesText = simplificationEQ.getM_EtapesText();
             ajouterEtapes(simplificationEQ.getM_DemarcheText(),etapesText);
@@ -340,14 +340,14 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
         public void trouverZeros()
         {
             demarche.setText(getString(R.string.d_monstration)+": Trouver zeros\n");
-            Resolution simplificationEQ = new Resolution(equation,var);
+            Resolution simplificationEQ = new Resolution(equation);
             TextViewReponse.setText(simplificationEQ.getM_equation());
             etapesText = simplificationEQ.getM_EtapesText();
             ajouterEtapes(simplificationEQ.getM_DemarcheText(),etapesText);
         }
         public void simplification()
         {
-            Resolution simplificationEQ = new Resolution(equation,var);
+            Resolution simplificationEQ = new Resolution(equation);
             demarche.setText(getString(R.string.d_monstration)+" Trouver simplification\n");
             TextViewReponse.setText(simplificationEQ.getM_equation());
             etapesText = simplificationEQ.getM_EtapesText();
@@ -356,7 +356,7 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
         public void factorisation()
         {
             demarche.setText(getString(R.string.d_monstration)+" factoriser\n");
-            Resolution simplificationEQ = new Resolution(equation,var);
+            Resolution simplificationEQ = new Resolution(equation);
             TextViewReponse.setText(simplificationEQ.getM_equation());
             etapesText = simplificationEQ.getM_EtapesText();
             ajouterEtapes(simplificationEQ.getM_DemarcheText(),etapesText);
