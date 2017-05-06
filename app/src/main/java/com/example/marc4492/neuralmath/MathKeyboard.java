@@ -46,21 +46,21 @@ public class MathKeyboard extends GridLayout {
     private String[] keyText = {
 
 
-            "a", "b", //0 to 25 for letters
-            "c", "d",
-            "e", "f",
-            "g", "h",
-            "i", "j",
-            "k", "l",
-            "m", "n",
+            "q", "w", //0 to 25 for letters
+            "e", "r",
+            "t", "y",
+            "u", "i",
             "o", "p",
-            "q", "r",
-            "s", "t",
-            "u", "v",
-            "w", "x",
-            "y", "z",
+            "a", "s",
+            "d", "f",
+            "g", "h",
+            "j", "k",
+            "l", ".",
+            "z", "x",
+            "c", "v",
+            "b", "n",
 
-            ",", ".",
+            "m", ",",
 
             "1", "2", // 28 to 37 for number
             "3", "4",

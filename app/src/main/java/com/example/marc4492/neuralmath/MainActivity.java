@@ -171,6 +171,10 @@ public class MainActivity extends AppCompatActivity {
                 // Handle item selection
                 switch (position) {
                     case 0:         //Photo element selected
+
+                        //TODO
+                        //enlever les commentaires sur les if
+
                         //if(imageDecoder.isReady())
                         openPhoto();
                         //else

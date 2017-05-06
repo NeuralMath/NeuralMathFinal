@@ -5,7 +5,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 /**
  * Class qui contient le réseau de neurones et qui peut obtenir la valeur de sortie du réseau
@@ -38,11 +37,11 @@ class NeuralNetwork {
     /**
      * Constructeur du réseau, création des neurones
      *
-     * @param inputLayer    Nombre de neurons dans la première couche
-     * @param hiddenLayer   Nombre de neurons dans la deuxième couche
-     * @param outputLayer   Nombre de neurons dans la troisième couche
-     * @param training      Vitesse de l'apprentisage
-     * @param db            Database pour les données du reseau
+     * @param inputLayer  Nombre de neurons dans la première couche
+     * @param hiddenLayer Nombre de neurons dans la deuxième couche
+     * @param outputLayer Nombre de neurons dans la troisième couche
+     * @param training    Vitesse de l'apprentisage
+     * @param db          Database pour les données du reseau
      * @throws IOException S'il ya des problème de lecture des fichiers
      */
     NeuralNetwork(int inputLayer, int hiddenLayer, int outputLayer, double training, SQLiteDatabase db) throws IOException {
@@ -61,7 +60,7 @@ class NeuralNetwork {
         weightsItoH = new double[INPUT + 1][HIDDEN + 1];
         weightsHtoO = new double[HIDDEN + 1][OUTPUT];
 
-        //updateWeights();
+        updateWeights();
 
         //Création des layer du réseau avec une neurone de plus dans le hidden layer pour le bias
         reseau = new Neuron[][]
@@ -76,7 +75,7 @@ class NeuralNetwork {
                 reseau[i][j] = new Neuron();
     }
 
-    public void updateWeights() {
+    void updateWeights() {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -215,11 +214,10 @@ class NeuralNetwork {
     /**
      * Écriture d'un tableau deux dimension dans une base de données
      *
-     * @param values            Le tableau à écrire
-     * @param nameTable         Nom de la table de la BD
+     * @param values    Le tableau à écrire
+     * @param nameTable Nom de la table de la BD
      */
-    private void saveData(double[][] values, String nameTable)
-    {
+    private void saveData(double[][] values, String nameTable) {
         //From
         //http://stackoverflow.com/a/19637484
         String sql = "INSERT INTO " + nameTable + " VALUES(valeur) values (?);";
@@ -242,30 +240,33 @@ class NeuralNetwork {
     /**
      * Lecture d'un tableau deux dimension depuis une base de données.
      *
-     * @param array                     Le tableau à lire
-     * @param tableName                 Nom de la table à lire
-     * @throws NumberFormatException    Si le texte n'est pas en double
+     * @param array     Le tableau à lire
+     * @param tableName Nom de la table à lire
+     * @throws NumberFormatException Si le texte n'est pas en double
      */
     private void readData(double[][] array, String tableName) throws NumberFormatException {
         Cursor result = database.rawQuery("Select * from " + tableName, null);
-        ArrayList<Double> listData = new ArrayList<>();
 
-        while(result.moveToNext())
-            listData.add(result.getDouble(0));
-        result.close();
+        int index = 0;
+        int indexInner = -1;
+        int sizeInner = array[0].length;
 
-        for(int i = 0; i < array.length-1; i++)
-        {
-            for(int j = 0; j < array[i].length; j++)
-                array[i][j] = listData.get(j);
+        while (result.moveToNext()) {
 
-            //Pas sur que ca marche**********************************************
-            listData = new ArrayList<>(listData.subList(array[i].length-1, listData.size()));
+            if (indexInner < sizeInner-1)
+                indexInner++;
+            else {
+                index++;
+                indexInner = 0;
+            }
+
+            array[index][indexInner] = result.getDouble(0);
+
         }
+        result.close();
     }
 
-    boolean isReady()
-    {
+    boolean isReady() {
         return isReady;
     }
 }
