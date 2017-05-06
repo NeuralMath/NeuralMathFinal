@@ -30,6 +30,7 @@ class ImageDecoder {
     private int originalTolWidth;
     private boolean appendMode = false;
     private int lastIndex = 0;
+    private int index = 0;
 
     private ArrayList<MathChar> listCharDetected = new ArrayList<>();
 
@@ -88,8 +89,8 @@ class ImageDecoder {
         });
 
         for(int i = 0; i < listChar.size(); i++) {
-            //int index = network.getAnwser(getIOPixels(listChar.get(i).getImage()));
-            //listChar.get(i).setValue(charList[index]);
+            //int indexOfChar = network.getAnwser(getIOPixels(listChar.get(i).getImage()));
+            //listChar.get(i).setValue(charList[indexOfChar]);
             listChar.get(i).setValue(String.valueOf(i));
         }
 
@@ -112,14 +113,11 @@ class ImageDecoder {
         ArrayList<MathChar> listFraction = new ArrayList<>();
 
         //si le premier char n'est pas dans un fraction
-        int index;
         if(listChar.get(0).getIsInFraction() == 0) {
             line += listChar.get(0).getValue();
-            setIndexOfString(line, 0);
+            setIndexOfString(line);
             index = 1;
         }
-        else
-            index = 0;
 
         //Repalcer les caractères
         for(; index < listChar.size(); index++)
@@ -148,19 +146,19 @@ class ImageDecoder {
             else if(isBeside(listChar.get(indexToLook), listChar.get(index), toleranceHeight)) {
                 notCheckingLast = false;
                 line += listChar.get(index).getValue();
-                setIndexOfString(line, index);
+                setIndexOfString(line);
             }
 
             //Si un exposant
             else if(listChar.get(index).getYEnd() <= listChar.get(indexToLook).getYMiddle()) {
                 notCheckingLast = true;
-                line = findExposant(listChar, line, toleranceHeight/2, index);
+                line = findExposant(listChar, line, toleranceHeight/2);
             }
 
             //Si un indice
             else if(listChar.get(index).getYStart() > listChar.get(indexToLook).getYMiddle()) {
                 notCheckingLast = true;
-                line = findIndice(listChar, line, toleranceHeight/2, index);
+                line = findIndice(listChar, line, toleranceHeight/2);
             }
             else
                 Toast.makeText(context, "Le découpage de caractère ne s'est pas déroulé normalement", Toast.LENGTH_LONG).show();
@@ -206,13 +204,12 @@ class ImageDecoder {
      * @param listChar              List des élements à vérifier
      * @param line                  String comprenant le début de l'équation
      * @param toleranceHeight       La tolérence en hauteur pour accepter qu'ils sont un a coté de l'autre
-     * @param index                 Index de la premiere postion à vérifier dans la list
      * @return                      La String complèter avec les exposants
      */
-    private String findExposant(ArrayList<MathChar> listChar, String line, int toleranceHeight, int index)
+    private String findExposant(ArrayList<MathChar> listChar, String line, int toleranceHeight)
     {
         line += "^(" + listChar.get(index).getValue();
-        setIndexOfString(line, index);
+        setIndexOfString(line);
 
         if(index < listChar.size()-1) {
             index++;
@@ -220,11 +217,11 @@ class ImageDecoder {
                 //S'il sont un à coté de l'autre
                 if(isBeside(listChar.get(index - 1), listChar.get(index), toleranceHeight)) {
                     line += listChar.get(index).getValue();
-                    setIndexOfString(line, index);
+                    setIndexOfString(line);
                 }
                 //S'il sont en exposants
                 else if(listChar.get(index).getYEnd() <= listChar.get(index-1).getYMiddle())
-                    line = findExposant(listChar, line, toleranceHeight, index);
+                    line = findExposant(listChar, line, toleranceHeight);
 
                 //Sinon sortir
                 else
@@ -243,13 +240,12 @@ class ImageDecoder {
      * @param listChar              List des élements à vérifier
      * @param line                  String comprenant le début de l'équation
      * @param toleranceHeight       La tolérence en hauteur pour accepter qu'ils sont un a coté de l'autre
-     * @param index                 Index de la premiere postion à vérifier dans la list
      * @return                      La String complèter avec les indices
      */
-    private String findIndice(ArrayList<MathChar> listChar, String line, int toleranceHeight, int index)
+    private String findIndice(ArrayList<MathChar> listChar, String line, int toleranceHeight)
     {
         line += "_(" + listChar.get(index).getValue();
-        setIndexOfString(line, index);
+        setIndexOfString(line);
 
         if(index < listChar.size()-1) {
             index++;
@@ -257,12 +253,12 @@ class ImageDecoder {
                 //S'il sont un à coté de l'autre
                 if(isBeside(listChar.get(index - 1), listChar.get(index), toleranceHeight)) {
                     line += listChar.get(index).getValue();
-                    setIndexOfString(line, index);
+                    setIndexOfString(line);
                 }
 
                 //S'il sont en indices
                 else if(listChar.get(index).getYStart() > listChar.get(index -1).getYMiddle())
-                    line = findIndice(listChar, line, toleranceHeight, index);
+                    line = findIndice(listChar, line, toleranceHeight);
 
                 //Sinon sortir
                 else
@@ -275,7 +271,7 @@ class ImageDecoder {
         return line;
     }
 
-    private void setIndexOfString(String line, int index) {
+    private void setIndexOfString(String line) {
         listCharDetected.get(index).setIndexInString((line.length()-1)+lastIndex);
     }
 
@@ -454,6 +450,7 @@ class ImageDecoder {
     {
         listCharDetected = new ArrayList<>();
         lastIndex = 0;
+        index = 0;
     }
 
     public boolean isReady()

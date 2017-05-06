@@ -75,13 +75,6 @@ public class DrawingPage extends LinearLayout {
 
         btnClearText = new Button(context);
         btnClearText.setText(R.string.btn_clear_eq);
-        btnClearText.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                txtEquation.setText("");
-
-            }
-        });
 
 
         btnDone = new Button(context);
@@ -97,7 +90,7 @@ public class DrawingPage extends LinearLayout {
         setOrientation(LinearLayout.HORIZONTAL);
     }
 
-    Button getButtonClearText()
+    public Button getButtonClearText()
     {
         return btnClearText;
     }

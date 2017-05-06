@@ -40,7 +40,7 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Context context;
+    private static Context context;
 
     //Info screen
     private int largeurScreen;
@@ -64,9 +64,10 @@ public class MainActivity extends AppCompatActivity {
     //Preferences
     private SharedPreferences sharedPrefs;
 
-    private boolean isDroitier;
+    private static boolean isDroitier;
     private String defautMode;
-    private boolean isBlankPage;
+    private static boolean isBlankPage;
+    private String langue;
 
 
     //Image decoder and NeuralNetwork
@@ -382,6 +383,11 @@ public class MainActivity extends AppCompatActivity {
         return imageDecoder;
     }
 
+    public static Context getContext()
+    {
+        return context;
+    }
+
     /**
      * Get largueur et hauteur de la fenêtre
      */
@@ -500,6 +506,7 @@ public class MainActivity extends AppCompatActivity {
     void openPhoto() {
         Intent i = new Intent(context, CameraActivity.class);
         i.putExtra("FEUILLE", isBlankPage);
+        i.putExtra("LANGUE", langue);
         startActivityForResult(i, 1);
     }
 
@@ -510,6 +517,7 @@ public class MainActivity extends AppCompatActivity {
         //New Intent pour gerer la screen orientation
         Intent i = new Intent(context, DrawingActivity.class);
         i.putExtra("LAYOUT", String.valueOf(isDroitier));
+        i.putExtra("LANGUE", langue);
         startActivityForResult(i, 1);
     }
 
@@ -584,7 +592,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void getPref() {
         //set les variables de préférences******************************************************************
-        String langue = sharedPrefs.getString("langue", getResources().getStringArray(R.array.langue)[0]);
+        langue = sharedPrefs.getString("langue", getResources().getStringArray(R.array.langue)[0]);
         defautMode = sharedPrefs.getString("default", getResources().getStringArray(R.array.langue)[0]);
 
         int indexLayout = Arrays.asList((getResources().getStringArray(R.array.layout))).indexOf(sharedPrefs.getString("layout", getResources().getStringArray(R.array.langue)[0]));
@@ -601,15 +609,13 @@ public class MainActivity extends AppCompatActivity {
         isDroitier = indexLayout == 0;
         isBlankPage = indexFeuille == 0;
 
-        String languageToLoad = "fr";
-
         if (langue.equals(getResources().getStringArray(R.array.langue)[0])) {
-            languageToLoad = "fr";
+            langue = "fr";
         } else if (langue.equals(getResources().getStringArray(R.array.langue)[1])) {
-            languageToLoad = "en";
+            langue = "en";
         }
 
-        changementDeLangue(languageToLoad);
+        changementDeLangue(langue, this);
     }
 
     /**
@@ -617,23 +623,30 @@ public class MainActivity extends AppCompatActivity {
      *
      * @param languageToLoad Langue à afficher
      */
-    private void changementDeLangue(String languageToLoad) {
+    public static void changementDeLangue(String languageToLoad, AppCompatActivity activity) {
         Locale locale = new Locale(languageToLoad);
         Locale.setDefault(locale);
-        String currentLocale = getResources().getConfiguration().locale.toString();
+        String currentLocale = getContext().getResources().getConfiguration().locale.toString();
         currentLocale = currentLocale.substring(0, 2);
         String newLocale = locale.toString();
         newLocale = newLocale.substring(0, 2);
         if (!newLocale.equals(currentLocale)) {
             Configuration config = new Configuration();
             config.locale = locale;
-            context.getResources().updateConfiguration(config, context.getResources().getDisplayMetrics());
+            getContext().getResources().updateConfiguration(config, context.getResources().getDisplayMetrics());
 
 
-            finish();
-            Intent intent = new Intent(context, MainActivity.class);
+            activity.finish();
+            Intent intent = new Intent(context, activity.getClass());
+            intent.putExtra("LANGUE", newLocale);
+
+            if(activity instanceof DrawingActivity)
+                intent.putExtra("LAYOUT", String.valueOf(isDroitier));
+            else if(activity instanceof CameraActivity)
+                intent.putExtra("FEUILLE", isBlankPage);
+
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+            activity.startActivity(intent);
         }
     }
 

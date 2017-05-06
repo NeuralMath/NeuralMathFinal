@@ -65,6 +65,7 @@ public class CameraActivity extends AppCompatActivity {
         imageDecoder.setAppendMode(false);
 
         ruledPaper = getIntent().getBooleanExtra("FEUILLE", false);
+        MainActivity.changementDeLangue(getIntent().getStringExtra("LANGUE"), this);
 
         //Button to launch cam intent
         Button camButton = (Button) findViewById(R.id.camButton);

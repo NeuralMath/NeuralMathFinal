@@ -23,6 +23,9 @@ public class DrawingActivity extends AppCompatActivity {
         String value = i.getStringExtra("LAYOUT");
         drawPage = (DrawingPage) findViewById(R.id.drawPage);
 
+        String langue = getIntent().getStringExtra("LANGUE");
+
+        MainActivity.changementDeLangue(langue, this);
 
         drawPage.getDrawView().setListener(new DrawingView.DrawnListener() {
             @Override
