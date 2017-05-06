@@ -12,14 +12,14 @@ public class Term
     private String _operator;                   //L'operaeur devant le terme.
     private ArrayList<String> _openParenthesis; //Tableau des parentheses ouvrantes. L'operateur devant la parenthese ouvrante ou aucune parenthese ("") devant le terme. En ordre du plus proche au plus eloigne du terme.
     private ArrayList<String> _closeParenthesis;//Tableau des parentheses fermantes. Parenthese fermante ("0") ou aucune parenthese (""). En ordre du plus proche au plus eloigne du terme.
-
+    
     DecimalFormat _df = new DecimalFormat("0.##");  //Format de l'affichage.
-
+        
     Term()
-    {
+    {        
         erase();
     }
-
+    
     Term(int p, String c, double co, double e, String o, ArrayList<String> op, ArrayList<String> cp)
     {
         _position = p;
@@ -30,7 +30,7 @@ public class Term
         _openParenthesis = op;
         _closeParenthesis = cp;
     }
-
+    
     Term(Term t)
     {
         _position = t._position;
@@ -41,7 +41,7 @@ public class Term
         _openParenthesis = new ArrayList<>(t._openParenthesis);
         _closeParenthesis = new ArrayList<>(t._closeParenthesis);
     }
-
+    
     int getPosition()
     {
         return _position;
@@ -61,7 +61,7 @@ public class Term
     {
         _character = c;
     }
-
+    
     ArrayList<String> getOpenParenthesis()
     {
         return _openParenthesis;
@@ -71,7 +71,7 @@ public class Term
     {
         _openParenthesis = new ArrayList<>(op);
     }
-
+    
     ArrayList<String> getCloseParenthesis()
     {
         return _closeParenthesis;
@@ -126,7 +126,7 @@ public class Term
     String display()
     {
         String term = "";
-
+        
         //S'il y a au moins une parenthese ouvrante.
         if (!_openParenthesis.isEmpty())
         {
@@ -135,9 +135,9 @@ public class Term
                 term += _openParenthesis.get(i) + "(";
             }
         }
-
+        
         term += _operator + _df.format(_coefficient) + "*" + _character + "^" + _df.format(_exponent);
-
+        
         //S'il y a au moins une parenthese fermante.
         if (!_closeParenthesis.isEmpty())
         {
@@ -146,7 +146,7 @@ public class Term
                 term += ")";
             }
         }
-
+         
         return term;
     }
 }
