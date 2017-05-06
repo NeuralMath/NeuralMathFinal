@@ -617,11 +617,11 @@ public class MainActivity extends AppCompatActivity {
     private void changementDeLangue(String languageToLoad) {
         Locale locale = new Locale(languageToLoad);
         Locale.setDefault(locale);
-        String temp = getResources().getConfiguration().locale.toString();
-        temp = temp.substring(0, 2);
-        String temp2 = locale.toString();
-        temp2 = temp2.substring(0, 2);
-        if (!temp2.equals(temp)) {
+        String currentLocale = getResources().getConfiguration().locale.toString();
+        currentLocale = currentLocale.substring(0, 2);
+        String newLocale = locale.toString();
+        newLocale = newLocale.substring(0, 2);
+        if (!newLocale.equals(currentLocale)) {
             Configuration config = new Configuration();
             config.locale = locale;
             context.getResources().updateConfiguration(config, context.getResources().getDisplayMetrics());
