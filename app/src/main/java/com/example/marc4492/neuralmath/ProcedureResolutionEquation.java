@@ -305,24 +305,22 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
         {
             TrouverY resolutionY = new TrouverY(equation);
             TextViewReponse.setText(String.valueOf(resolutionY.getY()));
-            demarche.setText("DÉMONSTRATION : Trouver y\n ");
+            demarche.setText(getString(R.string.d_monstration)+ ": Trouver y\n ");
             etapesText = resolutionY.getM_EtapesText();
             ajouterEtapes(resolutionY.getM_DemarcheText(),resolutionY.getM_FirstEquationHalf(),resolutionY.getM_EtapesGrasI(),resolutionY.getM_EtapesGrasF());
         }
         public void trouverX()
         {
-            demarche.setText("DÉMONSTRATION : Trouver x\n");
+            demarche.setText(getString(R.string.d_monstration)+": Trouver x\n");
             Resolution simplificationEQ = new Resolution(equation,var);
-
             TextViewReponse.setText(simplificationEQ.getM_equation());
             etapesText = simplificationEQ.getM_EtapesText();
             ajouterEtapes(simplificationEQ.getM_DemarcheText(),etapesText);
         }
         public void trouverZeros()
         {
-            demarche.setText("DÉMONSTRATION : Trouver zeros\n");
+            demarche.setText(getString(R.string.d_monstration)+": Trouver zeros\n");
             Resolution simplificationEQ = new Resolution(equation,var);
-
             TextViewReponse.setText(simplificationEQ.getM_equation());
             etapesText = simplificationEQ.getM_EtapesText();
             ajouterEtapes(simplificationEQ.getM_DemarcheText(),etapesText);
@@ -330,14 +328,14 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
         public void simplification()
         {
             Resolution simplificationEQ = new Resolution(equation,var);
-            demarche.setText("DÉMONSTRATION : Trouver simplification\n");
+            demarche.setText(getString(R.string.d_monstration)+" Trouver simplification\n");
             TextViewReponse.setText(simplificationEQ.getM_equation());
             etapesText = simplificationEQ.getM_EtapesText();
             ajouterEtapes(simplificationEQ.getM_DemarcheText(),etapesText);
         }
         public void factorisation()
         {
-            demarche.setText("DÉMONSTRATION : factoriser\n");
+            demarche.setText(getString(R.string.d_monstration)+" factoriser\n");
             Resolution simplificationEQ = new Resolution(equation,var);
             TextViewReponse.setText(simplificationEQ.getM_equation());
             etapesText = simplificationEQ.getM_EtapesText();
@@ -345,14 +343,14 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
         }
         public void deriver()
         {
-            demarche.setText("DÉMONSTRATION : deriver\n");
+            demarche.setText(getString(R.string.d_monstration)+" deriver\n");
             TextViewReponse.setText("Erreur 404");
             demarcheText = new ArrayList<>(0);
             ajouterEtapes();
         }
         public void integrer()
         {
-            demarche.setText("DÉMONSTRATION : integrer\n");
+            demarche.setText(getString(R.string.d_monstration)+ "integrer\n");
             TextViewReponse.setText("Erreur 404");
             demarcheText = new ArrayList<>(0);
             ajouterEtapes();
