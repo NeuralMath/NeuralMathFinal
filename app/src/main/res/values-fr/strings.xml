@@ -5,7 +5,7 @@
     <string name="feuilles_lignees_option">Feuilles lignées</string>
     <string name="gaucher">Gaucher</string>
     <string name="langue">Langue</string>
-    <string name="layout">Layout</string>
+    <string name="layout">Préférence manuelle</string>
     <string name="mode_par_defaut">Mode par défaut</string>
     <string name="network_accessibility_error">Réseau de neurone inacessible.</string>
     <string name="no">Non</string>

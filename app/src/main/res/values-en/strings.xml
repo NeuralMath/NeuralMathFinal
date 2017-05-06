@@ -13,7 +13,7 @@
     <string name="ecrire">Write</string>
     <string name="gaucher">Left-handed</string>
     <string name="langue">"Language "</string>
-    <string name="layout">Layout</string>
+    <string name="layout">Manual preference</string>
     <string name="mode_par_defaut">Default mode</string>
     <string name="network_accessibility_error">Neural network</string>
     <string name="ok">OK</string>
