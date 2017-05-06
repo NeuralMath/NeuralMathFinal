@@ -774,7 +774,7 @@ class Resolution extends General_Equation
 
     private void solveDegreeTwo()
     {
-        String s = "", A = "", B = "", C = "";
+        String A = "", B = "", C = "";
         double val1, val2, a, b, c;
 
         for (int i = 0; i < _leftTerms.size(); i++)

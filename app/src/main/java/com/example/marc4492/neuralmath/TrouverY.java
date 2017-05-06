@@ -210,7 +210,7 @@ public class TrouverY extends General_Equation {
             if (!operateurTrigo)
             {
                 m_separated_equation = m_separated_equation.replaceAll("E", '*' + "10^");
-                ajouterUneEtape(indexI+1,indexF+2,"Remplacer la valeur de l'équation entre les parenthèses " + m_separated_equation);
+                ajouterUneEtape(indexI,indexF,"Remplacer la valeur de l'équation entre les parenthèses " + m_separated_equation);
                 m_equation = m_equation.replace(m_separated_equation,String.valueOf(nestedValue));
             }
             nestedEquation(m_equation);
