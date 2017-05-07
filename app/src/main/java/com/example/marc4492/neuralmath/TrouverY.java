@@ -2,7 +2,6 @@ package com.example.marc4492.neuralmath;
 
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -11,14 +10,12 @@ import java.util.regex.Pattern;
  * Created by Alex on 29/03/2017.
  */
 
-public class TrouverY extends General_Equation {
+class TrouverY extends General_Equation {
     private String valueOfX = "", m_separated_equation = "", m_FirstEquationHalf ="";
     private double x , y , nestedValue;
     private int indexI , indexF ;
     private ArrayList<Integer> m_EtapesGrasI;
     private ArrayList<Integer> m_EtapesGrasF;
-    private boolean operateurTrigo = false;
-
 
 
     TrouverY(String equation)
@@ -85,7 +82,7 @@ public class TrouverY extends General_Equation {
         {
             String operator1 ="";
             String operator2 ="";
-            operateurTrigo = false;
+            boolean operateurTrigo = false;
 
             nestedEquation(m_equation);
             if(m_separated_equation.contains("E")) m_separated_equation = m_separated_equation.replaceAll("E","*10^");
@@ -108,42 +105,42 @@ public class TrouverY extends General_Equation {
                     nestedValue = Math.asin(nestedValue);
                     ajouterUneEtape(indexI - 6, indexF + nbDecimales+1, "On évalue la valeur du sinus^-1 de " + m_separated_equation + " = " + String.format( "%."+String.valueOf(nbDecimales)+"f",nestedValue));
                     m_equation = m_equation.replace(tempStringRemplacerOperateur, String.valueOf(nestedValue));
-                    operateurTrigo=true;
+                    operateurTrigo =true;
                 }else if (operator1.contains("arccos")) {
                     nestedValue = Math.acos(nestedValue);
                     ajouterUneEtape(indexI - 6, indexF + nbDecimales+1, "On évalue la valeur du cosinus^-1 de " + m_separated_equation + " = " + String.format( "%."+String.valueOf(nbDecimales)+"f",nestedValue));
                     m_equation = m_equation.replace(tempStringRemplacerOperateur, String.valueOf(nestedValue));
-                    operateurTrigo=true;
+                    operateurTrigo =true;
                 }else if (operator1.contains("arctan")) {
                     nestedValue = Math.atan(nestedValue);
                     ajouterUneEtape(indexI-6,indexF + nbDecimales+1,"On évalue la valeur de tangente^-1 de " + m_separated_equation + " = " + String.format( "%."+String.valueOf(nbDecimales)+"f",nestedValue));
                     m_equation = m_equation.replace(tempStringRemplacerOperateur,String.valueOf(nestedValue));
-                    operateurTrigo=true;
+                    operateurTrigo =true;
                 }else if (operator1.contains("sin")) {
                     nestedValue = Math.sin(nestedValue);
                     ajouterUneEtape(indexI-3,indexF + nbDecimales+1,"On évalue la valeur du sinus de " + m_separated_equation + " = " + String.format( "%."+String.valueOf(nbDecimales)+"f",nestedValue));
                     m_equation = m_equation.replace(tempStringRemplacerOperateur,String.valueOf(nestedValue));
-                    operateurTrigo=true;
+                    operateurTrigo =true;
                 } else if (operator1.contains("cos")) {
                     nestedValue = Math.cos(nestedValue);
                     ajouterUneEtape(indexI-3,indexF + nbDecimales+1,"On évalue la valeur du cosinus de " + m_separated_equation + " = " + String.format( "%."+String.valueOf(nbDecimales)+"f",nestedValue));
                     m_equation = m_equation.replace(tempStringRemplacerOperateur,String.valueOf(nestedValue));
-                    operateurTrigo=true;
+                    operateurTrigo =true;
                 } else if (operator1.contains("tan")) {
                     nestedValue = Math.tan(nestedValue);
                     ajouterUneEtape(indexI-3,indexF + nbDecimales+1,"On évalue la valeur de la tangente de " + m_separated_equation + " = " + String.format( "%."+String.valueOf(nbDecimales)+"f",nestedValue));
                     m_equation = m_equation.replace(tempStringRemplacerOperateur,String.valueOf(nestedValue));
-                    operateurTrigo=true;
+                    operateurTrigo =true;
                 }  else if (operator1.contains("ln")) {
                     nestedValue = Math.log(nestedValue);
                     ajouterUneEtape(indexI-2,indexF + nbDecimales+1,"On évalue la valeur logarithme en base e de " + m_separated_equation + " = " + String.format( "%."+String.valueOf(nbDecimales)+"f",nestedValue));
                     m_equation = m_equation.replace(tempStringRemplacerOperateur,String.valueOf(nestedValue));
-                    operateurTrigo=true;
+                    operateurTrigo =true;
                 }  else if (operator1.contains("log")) {
                     nestedValue = Math.log10(nestedValue);
                     ajouterUneEtape(indexI-3,indexF + nbDecimales+1,"On évalue la valeur logarithme en base 10 de " + m_separated_equation + " = " + String.format( "%."+String.valueOf(nbDecimales)+"f",nestedValue));
                     m_equation = m_equation.replace(tempStringRemplacerOperateur,String.valueOf(nestedValue));
-                    operateurTrigo=true;
+                    operateurTrigo =true;
 
                 } else if(m_equation.charAt(indexI-1) =='_'){
                             String s_Base = "";
@@ -168,7 +165,7 @@ public class TrouverY extends General_Equation {
                             nestedValue = (Math.log(nestedValue))/ Math.log(base);
                             m_equation = m_equation.replace(operator1.substring(1)+ m_separated_equation , String.valueOf(nestedValue));
                             m_EtapesText.add("On évalue la valeur du logarithme de " + nestedEquation(m_equation) + "\n Identité: Log en base a de b = (Log en base x de (b)) / Log en base x de (a) \n (ln"+ m_separated_equation +") / ln(" + s_Base +")" );
-                            operateurTrigo=true;
+                            operateurTrigo = true;
                             break;
                 }
                 if(m_equation.contains("NaN")){break;}
@@ -233,7 +230,7 @@ public class TrouverY extends General_Equation {
 
     /**
      * Méthode qui cherche la partie de l'équation qui est la plus entourée par des parenthèses.
-     * @param equation
+     * @param equation Une string prise en argument afin de rechercher la String la plus creuse dans les parenthèses.
      * @return Un string correspondant à la partie la plus creuse de l'équation
      */
     private String nestedEquation(String equation)
@@ -270,8 +267,8 @@ public class TrouverY extends General_Equation {
 
     /**
      * Méthode qui ajoute les index de début et de fin à leurs liste pour mettre en gras.
-     * @param m_Debut
-     * @param m_Fin
+     * @param m_Debut Index de début de la mise en gras
+     * @param m_Fin Index de fin de la mise en gras
      */
     private void mettreEnGras(int m_Debut, int m_Fin)
     {
@@ -282,10 +279,10 @@ public class TrouverY extends General_Equation {
     /**
      * Fonction qui sert à évaluer une string en tant qu'expression mathématique .
      * Le code provient de Boann à http://stackoverflow.com/questions/3422673/evaluating-a-math-expression-given-in-string-form
-     * @param str
-     * @return
+     * @param str Une string qui peut être convertie en valeur mathématique.
+     * @return La valeur en double de la String
      */
-    public double evaluateString(String str) {
+    private double evaluateString(String str) {
         final String str2 = str.replaceAll(",","."); //Remplace la décimale , par une décimale .
         return new Object() {
             int pos = -1, ch;
@@ -381,13 +378,13 @@ public class TrouverY extends General_Equation {
     public void setY(double y) {
         this.y = y;
     }
-    public String getM_FirstEquationHalf() {
+    String getM_FirstEquationHalf() {
         return m_FirstEquationHalf;
     }
-    public ArrayList<Integer> getM_EtapesGrasI() {
+    ArrayList<Integer> getM_EtapesGrasI() {
         return m_EtapesGrasI;
     }
-    public ArrayList<Integer> getM_EtapesGrasF() {
+    ArrayList<Integer> getM_EtapesGrasF() {
         return m_EtapesGrasF;
     }
 }

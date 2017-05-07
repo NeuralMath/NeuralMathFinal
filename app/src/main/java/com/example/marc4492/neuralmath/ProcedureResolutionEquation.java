@@ -20,6 +20,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
+ * Classe utilisée lors de la résolution de n'importe quelle équation.
+ * On recherche la méthode à utiliser pour résoudre l'équation
  * Created by Alex on 01/05/2017.
  */
 
@@ -28,16 +30,12 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
 
         private TextView TextViewReponse;
         private TextView demarche;
-        private TextView TextViewEquation;
 
         private ArrayList<String> etapesText;           //String des étapes de résolution d'une équation mathématique
         private ArrayList<String> demarcheText ;        //String des explications par étapes de résolution d'une équation mathématique
-
-        private ArrayList<String> var = new ArrayList<>();
         private ArrayList<ExpandableTextView> texViewList;  //Liste des textView de démarches (TextView Custom)
-        private Spinner spinnerMethode;
 
-        private LinearLayout linearDemarche;            //Layout des démarches
+    private LinearLayout linearDemarche;            //Layout des démarches
 
         private String equation ;     //Équation reçue
 
@@ -49,26 +47,26 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
 
             demarche = (TextView) findViewById(R.id.textView2);
             TextViewReponse = (TextView) findViewById(R.id.textView4);
-            TextViewEquation = (TextView) findViewById(R.id.textView8);
+            TextView textViewEquation = (TextView) findViewById(R.id.textView8);
             linearDemarche = (LinearLayout) findViewById(R.id.LayoutVertical);
 
-            texViewList = new ArrayList<ExpandableTextView>(10);
+            texViewList = new ArrayList<>(10);
 
             equation = getIntent().getStringExtra("EQUATION");
             //equation = equation.replaceAll(" ", "");  //Donne une copie de l'équation sans les espaces
             equation = equation.replaceAll(",", ".");
-            var.add("x");       //ajout de la variable
+
 
             demarcheText = new ArrayList<>();
-            TextViewEquation.setText(equation);
+            textViewEquation.setText(equation);
 
 
-            spinnerMethode = (Spinner) findViewById(R.id.spinner);
+            Spinner spinnerMethode = (Spinner) findViewById(R.id.spinner);
 
 
-            List<String> spinnerArray =  new ArrayList<String>();
+            List<String> spinnerArray = new ArrayList<>();
 
-            if(Pattern.matches("(?i)\\w\\((\\-?\\d+(\\.\\d*)?|\\w)\\)=.*", equation))
+            if(Pattern.matches("(?i)\\w\\((-?\\d+(\\.\\d*)?|\\w)\\)=.*", equation))
             {
                 String equationTemp = equation.substring(equation.indexOf("=")+1);
                 for(int i=0;i<equationTemp.length()-1;i++)    //Début de la normalisation des équations : mets un * entre les lettres et les chiffres ainsi que lettres et parenthèses ou chiffre + parenthèses
@@ -105,8 +103,8 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
             equation = equation.replace("/PI/", String.valueOf(Math.PI));
             equation = equation.replace("/e/", String.valueOf(Math.exp(1)));
 
-            Pattern p = Pattern.compile("\\(?(\\-?\\w+(\\.\\w+)?)\\)?(((\\+|\\-|\\*|\\/|\\^|\\_))\\(?(\\-?\\w+(\\.\\w+)?)\\)*)*=.*", Pattern.CASE_INSENSITIVE
-                    | Pattern.COMMENTS);
+            /*Pattern p = Pattern.compile("\\(?(\\-?\\w+(\\.\\w+)?)\\)?(((\\+|-|\\*|\\/|\\^|\\_))\\(?(\\-?\\w+(\\.\\w+)?)\\)*)*=.*", Pattern.CASE_INSENSITIVE
+                    | Pattern.COMMENTS);*/
 
             if( equation.contains("//d"))            //Si l'équation contient un symbole de dérivée
             {
@@ -123,11 +121,11 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
                 spinnerArray.add(getString(R.string.Factorisation));
                 spinnerArray.add(getString(R.string.TrouverZéros));
             }
-            else if(Pattern.matches("(?i)\\w\\(\\-?\\d+(\\.\\d*)?\\)=.*", equation)) // si f( ? ) //https://regex101.com/ //Remplacer x pour trouver y
+            else if(Pattern.matches("(?i)\\w\\(-?\\d+(\\.\\d*)?\\)=.*", equation)) // si f( ? ) //https://regex101.com/ //Remplacer x pour trouver y
             {
                 spinnerArray.add(getString(R.string.TrouverY));
             }
-            else if(Pattern.matches("\\-?\\d+(\\.\\d*)?=.*", equation) && (!equation.contains("f(x)"))&&(!equation.contains("y"))&& equation.contains("x")) // si ? = x   //isoler x
+            else if(Pattern.matches("-?\\d+(\\.\\d*)?=.*", equation) && (!equation.contains("f(x)"))&&(!equation.contains("y"))&& equation.contains("x")) // si ? = x   //isoler x
             {
                 spinnerArray.add(getString(R.string.TrouverX));
             }
@@ -139,7 +137,7 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
                 spinnerArray.add(getString(R.string.Aucune));
 
 
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(
                     this, android.R.layout.simple_spinner_item, spinnerArray);
 
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -154,15 +152,15 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
                             Object item = parent.getItemAtPosition(pos);
                             System.out.println(item.toString());     //Montre en console le choix pris
 
-                            if(item.toString() == getString(R.string.Aucune)) TextViewReponse.setText(R.string.AucuneMethodeResolution);
-                            else if(item.toString() == getString(R.string.TrouverY))trouverY();
-                            else if(item.toString() == getString(R.string.TrouverX))trouverX();
-                            else if(item.toString() == getString(R.string.TrouverZéros))trouverZeros();
-                            else if(item.toString() == getString(R.string.Simplification))simplification();
-                            else if(item.toString() == getString(R.string.Factorisation)) factorisation();
-                            else if(item.toString() == getString(R.string.Deriver))deriver();
-                            else if(item.toString() == getString(R.string.Integrer))integrer();
-                            else if(item.toString() == getString(R.string.IsolerVariable))isoler();
+                            if(item.toString().equals(getString(R.string.Aucune))) TextViewReponse.setText(R.string.AucuneMethodeResolution);
+                            else if(item.toString().equals(getString(R.string.TrouverY)))trouverY();
+                            else if(item.toString().equals(getString(R.string.TrouverX)) )trouverX();
+                            else if(item.toString().equals(getString(R.string.TrouverZéros)) )trouverZeros();
+                            else if(item.toString().equals(getString(R.string.Simplification)) )simplification();
+                            else if(item.toString().equals(getString(R.string.Factorisation)) ) factorisation();
+                            else if(item.toString().equals(getString(R.string.Deriver)) )deriver();
+                            else if(item.toString().equals(getString(R.string.Integrer)) )integrer();
+                            else if(item.toString().equals(getString(R.string.IsolerVariable)) )isoler();
                         }
                         public void onNothingSelected(AdapterView<?> parent) {}
                     });
@@ -316,9 +314,9 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
 
         /**
          * Fonction qui sert à mettre en gras une étape de résolution
-         * @param debut
-         * @param fin
-         * @param m_string
+         * @param debut index de début de la mise en gras dans le string
+         * @param fin index de fin de la mise en gras dans le string
+         * @param m_string Un string à mettre en gras
          */
         public void mettreEnGrasEtape(int debut, int fin, SpannableStringBuilder m_string)
         {
