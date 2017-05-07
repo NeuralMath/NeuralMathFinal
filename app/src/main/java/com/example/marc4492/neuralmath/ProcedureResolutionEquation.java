@@ -74,33 +74,6 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
 
         List<String> spinnerArray = new ArrayList<String>();
 
-        if (Pattern.matches("(?i)\\w\\((\\-?\\d+(\\.\\d*)?|\\w)\\)=.*", equation)) {
-            String equationTemp = equation.substring(equation.indexOf("=") + 1);
-            for (int i = 0; i < equationTemp.length() - 1; i++)    //Début de la normalisation des équations : mets un * entre les lettres et les chiffres ainsi que lettres et parenthèses ou chiffre + parenthèses
-            {
-                String chaineTemp = String.valueOf(equationTemp.charAt(i)) + String.valueOf(equationTemp.charAt(i + 1));
-
-                if (Pattern.matches("(?i)\\d[a-z]", chaineTemp) || Pattern.matches("//", chaineTemp) || Pattern.matches("(?i)\\d\\(", chaineTemp) || Pattern.matches("(?i)([a-e]|[h-m]|[o-r]|[t-z])\\(", chaineTemp)) {
-                    String chaine1 = equationTemp.substring(0, i + 1) + "*"; // On sépare le string en 2 à la position qui respecte les conditions.
-                    String chaine2 = equationTemp.substring(i + 1);
-                    equationTemp = chaine1 + chaine2;
-                    System.out.println(equationTemp);
-                }
-            }
-            equation = equation.replace(equation.substring(equation.indexOf("=") + 1), equationTemp);
-        } else {
-            for (int i = 0; i < equation.length() - 1; i++)    //Début de la normalisation des équations : mets un * entre les lettres et les chiffres ainsi que lettres et parenthèses ou chiffre + parenthèses
-            {
-                String chaineTemp = String.valueOf(equation.charAt(i)) + String.valueOf(equation.charAt(i + 1));
-
-                if (Pattern.matches("(?i)\\d[a-z]", chaineTemp) || Pattern.matches("//", chaineTemp) || Pattern.matches("(?i)\\d\\(", chaineTemp) || Pattern.matches("(?i)([a-e]|[h-m]|[o-r]|[t-z])\\(", chaineTemp)) {
-                    String chaine1 = equation.substring(0, i + 1) + "*"; // On sépare le string en 2 à la position qui respecte les conditions.
-                    String chaine2 = equation.substring(i + 1);
-                    equation = chaine1 + chaine2;
-                    System.out.println(equation);
-                }
-            }
-        }
 
         //Remplacer les symboles mathématiques par leur valeur approximative.
         equation = equation.replace("/PI/", String.valueOf(Math.PI));
@@ -391,7 +364,7 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         r.setVariable(r.getListVar()[which]);
-                        TextViewReponse.setText(r.getM_equation());
+                        TextViewReponse.setText(r.getM_DemarcheText().get(r.getM_DemarcheText().size()-1));
                         etapesText = r.getM_EtapesText();
                         ajouterEtapes(r.getM_DemarcheText(), etapesText);
                     }

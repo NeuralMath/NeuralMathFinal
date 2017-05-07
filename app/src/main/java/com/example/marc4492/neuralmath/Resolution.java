@@ -1424,15 +1424,8 @@ class Resolution extends General_Equation
             }
         }
 
-        //Pour l'alignement.
-        if (_equationLegthDisplay == 0)
-        {
-            _equationLegthDisplay = equation.length();
-        }
-
         m_DemarcheText.add(equation);
         m_EtapesText.add(etape);
-        System.out.print(equation + "(" + etape + ")");
     }
 
 }

@@ -21,7 +21,7 @@ class TrouverY extends General_Equation {
     TrouverY(String equation)
     {
         super(equation);
-        m_equation = equation;
+        m_equation = normaliserFois();
         indexI = 0;
         indexF = m_equation.length()-1;
         m_FirstEquationHalf = m_equation.substring(0,m_equation.indexOf("=")+1);
@@ -62,7 +62,7 @@ class TrouverY extends General_Equation {
         if(m_equation.contains("x"))
         {
             Matcher m = Pattern.compile("x").matcher(m_equation); //http://stackoverflow.com/questions/8938498/get-the-index-of-a-pattern-in-a-string-using-regex
-            while (m.find()) {  mettreEnGras(m.start()+1,m.end()+1); }
+            while (m.find()) {  mettreEnGras(m.start(),m.end()); }
 
             PrintLine();
             m_EtapesText.add("On remplace la valeur de x dans l'équation");
