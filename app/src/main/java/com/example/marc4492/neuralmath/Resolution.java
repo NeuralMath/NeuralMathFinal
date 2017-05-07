@@ -49,7 +49,6 @@ class Resolution extends General_Equation
         _equationLegthDisplay = 0;
 
         fillVariables();
-        m_equation = equation;
     }
 
     private void fillVariables()

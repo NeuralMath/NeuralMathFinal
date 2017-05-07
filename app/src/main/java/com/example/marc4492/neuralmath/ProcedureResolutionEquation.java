@@ -1,5 +1,8 @@
 package com.example.marc4492.neuralmath;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Spannable;
@@ -375,9 +378,7 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
         demarche.setText(getString(R.string.d_monstration) + " isolation\n");
         Resolution simplificationEQ = new Resolution(equation);
         askWhichVariable(simplificationEQ);
-        TextViewReponse.setText(simplificationEQ.getM_equation());
-        etapesText = simplificationEQ.getM_EtapesText();
-        ajouterEtapes(simplificationEQ.getM_DemarcheText(), etapesText);
+
     }
 
     private void askWhichVariable(final Resolution r) {
@@ -389,6 +390,9 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         r.setVariable(r.getListVar()[which]);
+                        TextViewReponse.setText(r.getM_equation());
+                        etapesText = r.getM_EtapesText();
+                        ajouterEtapes(r.getM_DemarcheText(), etapesText);
                     }
                 }).
                 setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -400,4 +404,5 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
                 create().show();
 
     }
+
 }
