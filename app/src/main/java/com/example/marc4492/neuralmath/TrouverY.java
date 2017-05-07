@@ -353,15 +353,22 @@ class TrouverY extends General_Equation {
                     double exposant = parseFactor();
                     x = Math.pow(x, exposant); // exponentiation
                 }
-                if (eat('!')) x = factoriel(x);
-
+                if (eat('!'))
+                    try{
+                        if(!(x % 1 == 0)) throw new NumberFormatException();
+                        x = factoriel(x);
+                        return x;
+                    } catch(NumberFormatException e) {
+                        System.out.print(x + "is not an integer");
+                        x = Double.NaN;
+                    }
                 return x;
             }
         }.parse();
     }
 
     double factoriel(double nombre) {
-        if (nombre - 1 < 1) return nombre * factoriel(nombre - 1);
+        if (nombre - 1 > 0) return nombre * factoriel(nombre - 1);
         else return 1;
     }
 
