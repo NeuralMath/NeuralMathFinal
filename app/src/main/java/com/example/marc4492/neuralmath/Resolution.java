@@ -1,8 +1,7 @@
 package com.example.marc4492.neuralmath;
 
-import java.util.ArrayList;
 import java.text.DecimalFormat;
-import java.util.Scanner;
+import java.util.ArrayList;
 
 class Resolution extends General_Equation
 {
@@ -73,24 +72,6 @@ class Resolution extends General_Equation
                     break;
                 }
             }
-        }
-
-        if (_variables.size() != 1)
-        {
-            System.out.println("Quelle variable voulez-vous isoler?");
-
-            for (int i = 0; i < _variables.size(); i++)
-            {
-                System.out.println((i + 1) + ". " + _variables.get(i));
-            }
-
-            Scanner s = new Scanner(System.in);
-            input = s.nextInt();
-            System.out.print("\n");
-
-            temp = _variables.get(input - 1);
-            _variables.remove(input - 1);
-            _variables.add(0, temp);
         }
     }
 
@@ -1434,7 +1415,9 @@ class Resolution extends General_Equation
             _equationLegthDisplay = equation.length();
         }
 
-        System.out.println(equation + " (" + etape + ")\n");
+        m_DemarcheText.add(equation);
+        m_EtapesText.add(etape);
+        System.out.print(equation + "(" + etape + ")");
     }
 
 }

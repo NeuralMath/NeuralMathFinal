@@ -55,7 +55,7 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
             texViewList = new ArrayList<ExpandableTextView>(10);
 
             equation = getIntent().getStringExtra("EQUATION");
-            equation = equation.replaceAll(" ", "");  //Donne une copie de l'équation sans les espaces
+            //equation = equation.replaceAll(" ", "");  //Donne une copie de l'équation sans les espaces
             equation = equation.replaceAll(",", ".");
             var.add("x");       //ajout de la variable
 
@@ -105,7 +105,8 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
             equation = equation.replace("/PI/", String.valueOf(Math.PI));
             equation = equation.replace("/e/", String.valueOf(Math.exp(1)));
 
-
+            Pattern p = Pattern.compile("\\(?(\\-?\\w+(\\.\\w+)?)\\)?(((\\+|\\-|\\*|\\/|\\^|\\_))\\(?(\\-?\\w+(\\.\\w+)?)\\)*)*=.*", Pattern.CASE_INSENSITIVE
+                    | Pattern.COMMENTS);
 
             if( equation.contains("//d"))            //Si l'équation contient un symbole de dérivée
             {
@@ -130,14 +131,13 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
             {
                 spinnerArray.add(getString(R.string.TrouverX));
             }
-            else if(Pattern.matches("(i?)\\(?(\\-?\\w+(\\.\\w+)?)\\)?(((\\+|\\-|\\*|\\/|\\^|\\_))\\(?(\\-?\\w+(\\.\\w+)?)\\)*)*=.*",equation))
+            else //if(Pattern.matches("(i?)\\(?(\\-?\\w+(\\.\\w+)?)\\)?(((\\+|\\-|\\*|\\/|\\^|\\_))\\(?(\\-?\\w+(\\.\\w+)?)\\)*)*=.*",equation))
             {
                 spinnerArray.add(getString(R.string.IsolerVariable));
             }
-            else          //Aucune méthode de résolution possible.
-            {
+
                 spinnerArray.add(getString(R.string.Aucune));
-            }
+
 
             ArrayAdapter<String> adapter = new ArrayAdapter<String>(
                     this, android.R.layout.simple_spinner_item, spinnerArray);
