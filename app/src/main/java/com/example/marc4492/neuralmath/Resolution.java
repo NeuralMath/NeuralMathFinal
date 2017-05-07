@@ -1426,7 +1426,9 @@ class Resolution extends General_Equation
             _equationLegthDisplay = equation.length();
         }
 
-        System.out.println(equation + " (" + etape + ")\n");
+        m_DemarcheText.add(equation);
+        m_EtapesText.add(etape);
+        System.out.print(equation + "(" + etape + ")");
     }
 
 }

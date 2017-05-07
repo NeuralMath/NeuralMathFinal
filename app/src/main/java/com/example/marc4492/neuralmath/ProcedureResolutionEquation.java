@@ -1,8 +1,5 @@
 package com.example.marc4492.neuralmath;
 
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Spannable;
@@ -23,26 +20,28 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
+ * Classe utilisée lors de la résolution de n'importe quelle équation.
+ * On recherche la méthode à utiliser pour résoudre l'équation
  * Created by Alex on 01/05/2017.
  */
 
 public class ProcedureResolutionEquation extends AppCompatActivity {
 
 
-    private TextView TextViewReponse;
-    private TextView demarche;
-    private TextView TextViewEquation;
+        private TextView TextViewReponse;
+        private TextView demarche;
+        private TextView TextViewEquation;
 
-    private ArrayList<String> etapesText;           //String des étapes de résolution d'une équation mathématique
-    private ArrayList<String> demarcheText;        //String des explications par étapes de résolution d'une équation mathématique
+        private ArrayList<String> etapesText;           //String des étapes de résolution d'une équation mathématique
+        private ArrayList<String> demarcheText ;        //String des explications par étapes de résolution d'une équation mathématique
 
-    private ArrayList<String> var = new ArrayList<>();
-    private ArrayList<ExpandableTextView> texViewList;  //Liste des textView de démarches (TextView Custom)
-    private Spinner spinnerMethode;
+        private ArrayList<String> var = new ArrayList<>();
+        private ArrayList<ExpandableTextView> texViewList;  //Liste des textView de démarches (TextView Custom)
+        private Spinner spinnerMethode;
 
     private LinearLayout linearDemarche;            //Layout des démarches
 
-    private String equation;     //Équation reçue
+        private String equation ;     //Équation reçue
 
     private String variable;
 
@@ -145,25 +144,20 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
                         Object item = parent.getItemAtPosition(pos);
                         System.out.println(item.toString());     //Montre en console le choix pris
 
-                        if (item.toString() == getString(R.string.Aucune))
-                            TextViewReponse.setText(R.string.AucuneMethodeResolution);
-                        else if (item.toString() == getString(R.string.TrouverY)) trouverY();
-                        else if (item.toString() == getString(R.string.TrouverX)) trouverX();
-                        else if (item.toString() == getString(R.string.TrouverZéros))
-                            trouverZeros();
-                        else if (item.toString() == getString(R.string.Simplification))
-                            simplification();
-                        else if (item.toString() == getString(R.string.Factorisation))
-                            factorisation();
-                        else if (item.toString() == getString(R.string.Deriver)) deriver();
-                        else if (item.toString() == getString(R.string.Integrer)) integrer();
-                        else if (item.toString() == getString(R.string.IsolerVariable)) isoler();
-                    }
+                            if(item.toString().equals(getString(R.string.Aucune))) TextViewReponse.setText(R.string.AucuneMethodeResolution);
+                            else if(item.toString().equals(getString(R.string.TrouverY)))trouverY();
+                            else if(item.toString().equals(getString(R.string.TrouverX)) )trouverX();
+                            else if(item.toString().equals(getString(R.string.TrouverZéros)) )trouverZeros();
+                            else if(item.toString().equals(getString(R.string.Simplification)) )simplification();
+                            else if(item.toString().equals(getString(R.string.Factorisation)) ) factorisation();
+                            else if(item.toString().equals(getString(R.string.Deriver)) )deriver();
+                            else if(item.toString().equals(getString(R.string.Integrer)) )integrer();
+                            else if(item.toString().equals(getString(R.string.IsolerVariable)) )isoler();
+                        }
+                        public void onNothingSelected(AdapterView<?> parent) {}
+                    });
+        }
 
-                    public void onNothingSelected(AdapterView<?> parent) {
-                    }
-                });
-    }
 
 
     public void ajouterEtapes()     //Méthode qui sert à ajouter les étapes dans les textView custom en enlevant les précédents. (utilisée pour vider )
@@ -305,17 +299,17 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
         texViewList.add(reponseTextView);
     }
 
-    /**
-     * Fonction qui sert à mettre en gras une étape de résolution
-     *
-     * @param debut
-     * @param fin
-     * @param m_string
-     */
-    public void mettreEnGrasEtape(int debut, int fin, SpannableStringBuilder m_string) {
-        StyleSpan b = new StyleSpan(android.graphics.Typeface.BOLD); //http://stackoverflow.com/questions/20850822/making-part-of-a-string-bold-in-textview
-        m_string.setSpan(b, debut, fin, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-    }
+        /**
+         * Fonction qui sert à mettre en gras une étape de résolution
+         * @param debut index de début de la mise en gras dans le string
+         * @param fin index de fin de la mise en gras dans le string
+         * @param m_string Un string à mettre en gras
+         */
+        public void mettreEnGrasEtape(int debut, int fin, SpannableStringBuilder m_string)
+        {
+            StyleSpan b = new StyleSpan(android.graphics.Typeface.BOLD); //http://stackoverflow.com/questions/20850822/making-part-of-a-string-bold-in-textview
+            m_string.setSpan(b,debut,fin,Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+        }
 
     /**
      * Fonction qui résout une équation si l'équation a une valeur de x donnée
