@@ -367,6 +367,7 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
                         TextViewReponse.setText(r.getM_DemarcheText().get(r.getM_DemarcheText().size()-1));
                         etapesText = r.getM_EtapesText();
                         ajouterEtapes(r.getM_DemarcheText(), etapesText);
+                        dialog.dismiss();
                     }
                 }).
                 setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {

@@ -26,6 +26,7 @@ class ImageDecoder {
     private NeuralNetwork network;
 
     private final int OUTPUT;
+    private int resizeValue;
 
     private int originalTolWidth;
     private boolean appendMode = false;
@@ -52,6 +53,7 @@ class ImageDecoder {
         charList = charListing;
         network = new NeuralNetwork(input, hidden, output, training, database);
         OUTPUT = output;
+        resizeValue = (int) Math.sqrt(input);
     }
 
     void setAppendMode(boolean appendM) {
@@ -90,9 +92,9 @@ class ImageDecoder {
         });
 
         for(int i = 0; i < listChar.size(); i++) {
-            //int indexOfChar = network.getAnwser(getIOPixels(listChar.get(i).getImage()));
-            //listChar.get(i).setValue(charList[indexOfChar]);
-            listChar.get(i).setValue(String.valueOf(i));
+            int indexOfChar = network.getAnwser(getIOPixels(resize(fillImage(listChar.get(i).getImage()))));
+            listChar.get(i).setValue(charList[indexOfChar]);
+            //listChar.get(i).setValue(String.valueOf(i));
         }
 
         originalTolWidth = (int) (totalWidth *0.1);
@@ -436,7 +438,7 @@ class ImageDecoder {
             }
 
             if (wanted != null) {
-                trainning[i] = getIOPixels(fillImage(wanted.getImage()));
+                trainning[i] = getIOPixels(resize(fillImage(wanted.getImage())));
 
                 if (Arrays.asList(charList).contains(list.get(i).getNewChar()))
                     results[i][Arrays.asList(charList).indexOf(list.get(i).getNewChar())] = 1;
@@ -454,6 +456,17 @@ class ImageDecoder {
             }
         }
         clearData();
+    }
+
+    /**
+     * Rogner l'image selon les paramètre
+     *
+     * @param bitmap            L'image à rogner
+     * @throws IOException      S'il y a des problèmes
+     */
+    private Bitmap resize(Bitmap bitmap) throws IOException
+    {
+        return Bitmap.createScaledBitmap(bitmap, resizeValue, resizeValue, false);
     }
 
     void clearData()

@@ -60,7 +60,7 @@ class NeuralNetwork {
         weightsItoH = new double[INPUT + 1][HIDDEN + 1];
         weightsHtoO = new double[HIDDEN + 1][OUTPUT];
 
-        //updateWeights();
+        updateWeights();
 
         //Création des layer du réseau avec une neurone de plus dans le hidden layer pour le bias
         reseau = new Neuron[][]

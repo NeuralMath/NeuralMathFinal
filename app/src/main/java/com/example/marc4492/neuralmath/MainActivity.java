@@ -73,9 +73,9 @@ public class MainActivity extends AppCompatActivity {
     //Image decoder and NeuralNetwork
     private static ImageDecoder imageDecoder;
 
-    private final static int INPUT = 2025;
-    private final static int HIDDEN = 1000;
-    private final static int OUTPUT = 76;
+    private final static int INPUT = 784;
+    private final static int HIDDEN = 100;
+    private final static int OUTPUT = 10;
     private final static double TRAININGRATE = 0.005;
 
     private final String tableNameItoH = "weights_i_to_h";
@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
 
     private String[] charList =
             {
-                    "!", "(", ")", "+", ",", "-", "0", "1", "2", "3", "4",
+                    /*"!", "(", ")", "+", ",", "-", */"0", "1", "2", "3", "4",
                     "5", "6", "7", "8", "9", "=", "a", "α", "|",
                     "b", "β", "c", "cos", "d", "Δ", "÷", "/e/",
                     "f", "/", "g", "γ", "≥", ">", "h", "i",
@@ -175,16 +175,16 @@ public class MainActivity extends AppCompatActivity {
                         //TODO
                         //enlever les commentaires sur les if
 
-                        //if(imageDecoder.isReady())
-                        openPhoto();
-                        //else
-                        //Toast.makeText(context, R.string.nn_not_ready, Toast.LENGTH_LONG).show();
+                        if(imageDecoder.isReady())
+                            openPhoto();
+                        else
+                            Toast.makeText(context, R.string.nn_not_ready, Toast.LENGTH_LONG).show();
                         break;
                     case 1:         //Writing element selected
-                        //if(imageDecoder.isReady())
-                        openWriting();
-                        //else
-                        //Toast.makeText(context, R.string.nn_not_ready, Toast.LENGTH_LONG).show();
+                        if(imageDecoder.isReady())
+                            openWriting();
+                        else
+                            Toast.makeText(context, R.string.nn_not_ready, Toast.LENGTH_LONG).show();
                         break;
                     case 2:         //Keyboard element selected
                         openKeyboard();

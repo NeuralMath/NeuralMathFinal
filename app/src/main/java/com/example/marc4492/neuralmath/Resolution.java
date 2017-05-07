@@ -87,82 +87,75 @@ class Resolution extends General_Equation
 
     void normalize(String e)
     {
-        int nbrLength = 0;
+        int nbrLength = 0, pos = 0, nbr = 0;
 
         for (int i = 0; i < e.length(); i++)
         {
-            for (int j = 0; j < _variables.size(); j++)
-            {
-                //Si on a une variable et qu'il n'y a pas de coefficient devant.
-                if (e.charAt(i) == _variables.get(j).charAt(0) && (i - 1 < 0 || !Character.isDigit(e.charAt(i - 1))))
-                {
-                    e = e.substring(0, i) + "1" + e.substring(i, e.length());
-                    i++;
-                    break;
-                }
-            }
-        }
-
-        for (int i = 0; i < e.length(); i++)
-        {
+            //Si c'est un nombre.
             if (Character.isDigit(e.charAt(i)))
             {
-                while (i + nbrLength < e.length() && Character.isDigit(e.charAt(i + nbrLength)))
+                while (i + nbrLength < e.length() && (Character.isDigit(e.charAt(i + nbrLength)) || e.charAt(i + nbrLength) == '.'))
                 {
                     nbrLength++;
                 }
 
                 //S'il n'y a pas d'operateur devant le nombre.
-                if (i < 1 || (e.charAt(i - 1) != '+' && e.charAt(i - 1) != '-' && e.charAt(i - 1) != '*' && e.charAt(i - 1) != '/' && e.charAt(i - 1) != '^'))
+                if (i < 1 || (e.charAt(i - nbrLength) != '+' && e.charAt(i - nbrLength) != '-' && e.charAt(i - nbrLength) != '*' && e.charAt(i - nbrLength) != '/' && e.charAt(i - nbrLength) != '^'))
                 {
                     e = e.substring(0, i) + "+" + e.substring(i, e.length());
                     i++;
                 }
 
-                //Si le nombre est suivi d'une variable.
-                if (i + nbrLength + 1 > e.length() || (e.charAt(i + nbrLength) != '+' && e.charAt(i + nbrLength) != '-' && e.charAt(i + nbrLength) != '*' && e.charAt(i + nbrLength) != '/' && e.charAt(i + nbrLength) != '^'))
+                for (String var : _variables)
                 {
-                    for (int j = 0; j < _variables.size(); j++)
+                    if (i + nbrLength + 1 < e.length() && e.charAt(i + nbrLength) == var.charAt(0))
                     {
-                        //Si le nombre n'est pas un exposant.
-                        if (i - nbrLength - 1 < 0 || (e.charAt(i - nbrLength) != '^') && e.charAt(i - nbrLength - 1) != _variables.get(j).charAt(0))
-                        {
-                            e = e.substring(0, i + nbrLength) + "*" + e.substring(i + nbrLength, e.length());
-                            i++;
-                            break;
-                        }
+                        nbr++;
                     }
                 }
-                else if (i + nbrLength + 1 > e.length() || (e.charAt(i + nbrLength) == '+' || e.charAt(i + nbrLength) == '-' || e.charAt(i + nbrLength) == '*' || e.charAt(i + nbrLength) == '/' || e.charAt(i + nbrLength) == '^'))
+
+                if (nbr == 0)
                 {
-                    for (int j = 0; j < _variables.size(); j++)
-                    {
-                        //Si le nombre n'est pas un exposant.
-                        if (i - nbrLength - 1 < 0 || (e.charAt(i - nbrLength) != '^' && e.charAt(i - nbrLength - 1) != _variables.get(j).charAt(0)))
-                        {
-                            e = e.substring(0, i + nbrLength) + "*" + _variables.get(1).charAt(0) + "^0" + e.substring(i + nbrLength, e.length());
-                            i += 2;
-                            break;
-                        }
-                    }
+                    e = e.substring(0, i + nbrLength) + _variables.get(_variables.size() - 1) + "^0" + e.substring(i + nbrLength, e.length());
+                    i += 4;
                 }
+
+                i = i + nbrLength - 1;
             }
 
             nbrLength = 0;
+            nbr = 0;
         }
 
-        for (int i = 0; i < e.length(); i++)
+        for (String var : _variables)
         {
-            for (int j = 0; j < _variables.size(); j++)
+            pos = findCharPositionInString(var, e, pos);
+
+            do
             {
-                //S'il n'y a pas d'exposant apres la variable.
-                if (e.charAt(i) == _variables.get(j).charAt(0) && (i + 2 > e.length() || (e.charAt(i + 1) != '^' || !Character.isDigit(e.charAt(i + 2)))))
+                //S'il n'y a pas de chiffre devant la variable.
+                if (!Character.isDigit(e.charAt(pos - 2)))
                 {
-                    e = e.substring(0, i + 1) + "^1" + e.substring(i + 1, e.length());
-                    i += 2;
-                    break;
+                    e = e.substring(0, pos - 1) + "1" + e.substring(pos - 1, e.length());
+                    pos++;
                 }
+                //S'il y a un chiffre devant la variable.
+                if (Character.isDigit(e.charAt(pos - 2)))
+                {
+                    e = e.substring(0, pos - 1) + "*" + e.substring(pos - 1, e.length());
+                    pos++;
+                }
+                //S'il n'y a pas d'exposant apres la variable.
+                if (pos > e.length() - 1 || e.charAt(pos) != '^')
+                {
+                    e = e.substring(0, pos) + "^1" + e.substring(pos, e.length());
+                }
+
+                pos = findCharPositionInString(var, e, pos);
             }
+            while (pos != 0);
+
+            pos = 0;
         }
 
         m_equation = e;
