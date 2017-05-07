@@ -355,7 +355,7 @@ class TrouverY extends General_Equation {
                 }
                 if (eat('!'))
                     try{
-                        if(!(x % 1 == 0)) throw new NumberFormatException();
+                        if(x % 1 != 0) throw new NumberFormatException();
                         x = factoriel(x);
                         return x;
                     } catch(NumberFormatException e) {
@@ -367,7 +367,7 @@ class TrouverY extends General_Equation {
         }.parse();
     }
 
-    double factoriel(double nombre) {
+    private double factoriel(double nombre) {
         if (nombre - 1 > 0) return nombre * factoriel(nombre - 1);
         else return 1;
     }
