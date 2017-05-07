@@ -87,18 +87,18 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
         } else if (equation.contains("//S"))       //Si l'équation contient un symbole d'intégrale
         {
             spinnerArray.add(getString(R.string.Integrer));
-        } else if (Pattern.matches("(?i)(\\w\\(([a-e]|[h-m]|[o-r]|[t-z])\\)=.*)|(y=.*)", equation)) // si f(x) ou y //https://regex101.com/
+        } else if (Pattern.matches("(\\w\\(([a-e]|[h-m]|[o-r]|[t-z])\\)=.*)|(y=.*)", equation)) // si f(x) ou y //https://regex101.com/
         {
             spinnerArray.add(getString(R.string.Simplification));
             spinnerArray.add(getString(R.string.Factorisation));
             spinnerArray.add(getString(R.string.TrouverZéros));
-        } else if (Pattern.matches("(?i)\\w\\(\\-?\\d+(\\.\\d*)?\\)=.*", equation)) // si f( ? ) //https://regex101.com/ //Remplacer x pour trouver y
+        } else if (Pattern.matches("\\w\\(\\-?\\d+(\\.\\d*)?\\)=.*", equation)) // si f( ? ) //https://regex101.com/ //Remplacer x pour trouver y
         {
             spinnerArray.add(getString(R.string.TrouverY));
         } else if (Pattern.matches("\\-?\\d+(\\.\\d*)?=.*", equation) && (!equation.contains("f(x)")) && (!equation.contains("y")) && equation.contains("x")) // si ? = x   //isoler x
         {
             spinnerArray.add(getString(R.string.TrouverX));
-        } else if (Pattern.matches("(i?)\\(?(\\-?\\w+(\\.\\w+)?)\\)?(((\\+|\\-|\\*|\\/|\\^|\\_))\\(?(\\-?\\w+(\\.\\w+)?)\\)*)*=.*", equation)) {
+        } else if (Pattern.matches("\\(?(\\-?\\w+(\\.\\w+)?)\\)?(((\\+|\\-|\\*|\\/|\\^|\\_))\\(?(\\-?\\w+(\\.\\w+)?)\\)*)*=.*", equation)) {
             spinnerArray.add(getString(R.string.IsolerVariable));
         } else          //Aucune méthode de résolution possible.
         {
