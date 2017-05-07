@@ -64,4 +64,5 @@
     <string name="editer">Éditer</string>
     <string name="type_correction">Type de correction</string>
     <string name="IsolerVariable">Isoler Variable</string>
+    <string name="titre_choisir_var">Choisir la variable</string>
 </resources>

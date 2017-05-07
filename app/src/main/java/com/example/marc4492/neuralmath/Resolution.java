@@ -1,8 +1,7 @@
 package com.example.marc4492.neuralmath;
 
-import java.util.ArrayList;
 import java.text.DecimalFormat;
-import java.util.Scanner;
+import java.util.ArrayList;
 
 class Resolution extends General_Equation
 {
@@ -50,19 +49,11 @@ class Resolution extends General_Equation
         _equationLegthDisplay = 0;
 
         fillVariables();
-        normalize(equation);
-        fillAllTerms();
-        manageParenthesis();
-        solve();
-
-
+        m_equation = equation;
     }
 
     private void fillVariables()
     {
-        String temp;
-        int input;
-
         for (int j = 0; j < _letters.size(); j++)
         {
             for (int i = 0; i < m_equation.length(); i++)
@@ -74,24 +65,25 @@ class Resolution extends General_Equation
                 }
             }
         }
+    }
 
-        if (_variables.size() != 1)
-        {
-            System.out.println("Quelle variable voulez-vous isoler?");
+    String[] getListVar()
+    {
+        String[] values = new String[_variables.size()];
+        return _variables.toArray(values);
+    }
 
-            for (int i = 0; i < _variables.size(); i++)
-            {
-                System.out.println((i + 1) + ". " + _variables.get(i));
-            }
+    void setVariable(String var)
+    {
+        int index = _variables.indexOf(var);
 
-            Scanner s = new Scanner(System.in);
-            input = s.nextInt();
-            System.out.print("\n");
+        _variables.remove(index);
+        _variables.add(0, var);
 
-            temp = _variables.get(input - 1);
-            _variables.remove(input - 1);
-            _variables.add(0, temp);
-        }
+        normalize(m_equation);
+        fillAllTerms();
+        manageParenthesis();
+        solve();
     }
 
     private void normalize(String e)
