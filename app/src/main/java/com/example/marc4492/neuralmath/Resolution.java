@@ -85,78 +85,83 @@ class Resolution extends General_Equation
         solve();
     }
 
-    private void normalize(String e)
+    void normalize(String e)
     {
-        String temp = "";
+        int nbrLength = 0;
 
         for (int i = 0; i < e.length(); i++)
         {
-            //Si c'est une variable.
             for (int j = 0; j < _variables.size(); j++)
             {
-                //S'il y a une variable precedee d'un espace.
-                if (e.charAt(i) == _variables.get(j).charAt(0) && (i == 0 || e.charAt(i - 1) == ' '))
+                //Si on a une variable et qu'il n'y a pas de coefficient devant.
+                if (e.charAt(i) == _variables.get(j).charAt(0) && (i - 1 < 0 || !Character.isDigit(e.charAt(i - 1))))
                 {
-                    //S'il n'y a pas d'operateur devant le terme.
-                    if (i == 0 || (e.charAt(i - 2) != '+' && e.charAt(i - 2) != '-' && e.charAt(i - 2) != '*' && e.charAt(i - 2) != '/' && e.charAt(i) != '^'))
-                    {
-                        e = e.substring(0, i) + "+" + e.substring(i, e.length());
-                        i++;
-                    }
-
-                    e = e.substring(0, i) + "1*" + e.substring(i, e.length());
-                    i += 2;
-                }
-                //S'il y a une variable suivie d'un espace.
-                if (e.charAt(i) == _variables.get(j).charAt(0) && (i == e.length() - 1 || e.charAt(i + 1) == ' '))
-                {
-                    e = e.substring(0, i + 1) + "^1" + e.substring(i + 1, e.length());
-                    i += 2;
-                }
-            }
-
-            //Si c'est un chiffre soit suivi d'un espace ou suivi d'un chiffre.
-            if (Character.isDigit(e.charAt(i)) && ((i == 0 || e.charAt(i - 1) == ' ') || !temp.equals("")))
-            {
-                temp += e.charAt(i);
-
-                if (i == e.length() - 1)
-                {
-                    //S'il n'y a pas d'operateur devant le terme.
-                    if (i - temp.length() - 1 < 0 || (e.charAt(i - temp.length() - 1) != '+' && e.charAt(i - temp.length() - 1) != '-' && e.charAt(i - temp.length() - 1) != '*' && e.charAt(i - temp.length() - 1) != '/' && e.charAt(i - temp.length() - 1) != '^'))
-                    {
-                        e = e.substring(0, i - temp.length()) + "+" + e.substring(i - temp.length(), e.length());
-                        i++;
-                    }
-
-                    e = e.substring(0, i - temp.length() + 2) + "*" + _variables.get(_variables.size() - 1) + "^0" + e.substring(i - temp.length() + 2, e.length());
-                    i += 4;
-
-                    temp = "";
-                }
-            }
-            //Sinon si on a termine le nombre.
-            else if (!temp.equals(""))
-            {
-                //S'il n'y a pas d'operateur devant le terme.
-                if (i - temp.length() - 1 < 0 || (e.charAt(i - temp.length() - 1) != '+' && e.charAt(i - temp.length() - 1) != '-' && e.charAt(i - temp.length() - 1) != '*' && e.charAt(i - temp.length() - 1) != '/' && e.charAt(i - temp.length() - 1) != '^'))
-                {
-                    e = e.substring(0, i - temp.length()) + "+" + e.substring(i - temp.length(), e.length());
+                    e = e.substring(0, i) + "1" + e.substring(i, e.length());
                     i++;
+                    break;
                 }
-
-                e = e.substring(0, i - temp.length() + 1) + "*" + _variables.get(_variables.size() - 1) + "^0" + e.substring(i - temp.length() + 1, e.length());
-                i += 4;
-
-                temp = "";
             }
         }
 
         for (int i = 0; i < e.length(); i++)
         {
-            if (e.charAt(i) == ' ')
+            if (Character.isDigit(e.charAt(i)))
             {
-                e = e.substring(0, i) + e.substring(i + 1, e.length());
+                while (i + nbrLength < e.length() && Character.isDigit(e.charAt(i + nbrLength)))
+                {
+                    nbrLength++;
+                }
+
+                //S'il n'y a pas d'operateur devant le nombre.
+                if (i < 1 || (e.charAt(i - 1) != '+' && e.charAt(i - 1) != '-' && e.charAt(i - 1) != '*' && e.charAt(i - 1) != '/' && e.charAt(i - 1) != '^'))
+                {
+                    e = e.substring(0, i) + "+" + e.substring(i, e.length());
+                    i++;
+                }
+
+                //Si le nombre est suivi d'une variable.
+                if (i + nbrLength + 1 > e.length() || (e.charAt(i + nbrLength) != '+' && e.charAt(i + nbrLength) != '-' && e.charAt(i + nbrLength) != '*' && e.charAt(i + nbrLength) != '/' && e.charAt(i + nbrLength) != '^'))
+                {
+                    for (int j = 0; j < _variables.size(); j++)
+                    {
+                        //Si le nombre n'est pas un exposant.
+                        if (i - nbrLength - 1 < 0 || (e.charAt(i - nbrLength) != '^') && e.charAt(i - nbrLength - 1) != _variables.get(j).charAt(0))
+                        {
+                            e = e.substring(0, i + nbrLength) + "*" + e.substring(i + nbrLength, e.length());
+                            i++;
+                            break;
+                        }
+                    }
+                }
+                else if (i + nbrLength + 1 > e.length() || (e.charAt(i + nbrLength) == '+' || e.charAt(i + nbrLength) == '-' || e.charAt(i + nbrLength) == '*' || e.charAt(i + nbrLength) == '/' || e.charAt(i + nbrLength) == '^'))
+                {
+                    for (int j = 0; j < _variables.size(); j++)
+                    {
+                        //Si le nombre n'est pas un exposant.
+                        if (i - nbrLength - 1 < 0 || (e.charAt(i - nbrLength) != '^' && e.charAt(i - nbrLength - 1) != _variables.get(j).charAt(0)))
+                        {
+                            e = e.substring(0, i + nbrLength) + "*" + _variables.get(1).charAt(0) + "^0" + e.substring(i + nbrLength, e.length());
+                            i += 2;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            nbrLength = 0;
+        }
+
+        for (int i = 0; i < e.length(); i++)
+        {
+            for (int j = 0; j < _variables.size(); j++)
+            {
+                //S'il n'y a pas d'exposant apres la variable.
+                if (e.charAt(i) == _variables.get(j).charAt(0) && (i + 2 > e.length() || (e.charAt(i + 1) != '^' || !Character.isDigit(e.charAt(i + 2)))))
+                {
+                    e = e.substring(0, i + 1) + "^1" + e.substring(i + 1, e.length());
+                    i += 2;
+                    break;
+                }
             }
         }
 
