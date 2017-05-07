@@ -87,7 +87,7 @@ class TrouverY extends General_Equation {
             nestedEquation(m_equation);
             if(m_separated_equation.contains("E")) m_separated_equation = m_separated_equation.replaceAll("E","*10^");
             nestedValue = evaluateString(m_separated_equation);
-            ajouterUneEtape(indexI+1,indexF-1 + nbDecimales," < Priorité des opérations >  = " + String.valueOf(String.format( "%."+String.valueOf(nbDecimales)+"f",nestedValue)));
+            ajouterUneEtape(indexI,indexF," < Priorité des opérations >  = " + String.valueOf(String.format( "%."+String.valueOf(nbDecimales)+"f",nestedValue)));
 
             if(indexI != 0) {
                 int i = indexI;
@@ -103,42 +103,42 @@ class TrouverY extends General_Equation {
 
                 if (operator1.contains("arcsin")) {
                     nestedValue = Math.asin(nestedValue);
-                    ajouterUneEtape(indexI - 6, indexF + nbDecimales+1, "On évalue la valeur du sinus^-1 de " + m_separated_equation + " = " + String.format( "%."+String.valueOf(nbDecimales)+"f",nestedValue));
+                    ajouterUneEtape(indexI - 6, indexF , "On évalue la valeur du sinus^-1 de " + m_separated_equation + " = " + String.format( "%."+String.valueOf(nbDecimales)+"f",nestedValue));
                     m_equation = m_equation.replace(tempStringRemplacerOperateur, String.valueOf(nestedValue));
                     operateurTrigo =true;
                 }else if (operator1.contains("arccos")) {
                     nestedValue = Math.acos(nestedValue);
-                    ajouterUneEtape(indexI - 6, indexF + nbDecimales+1, "On évalue la valeur du cosinus^-1 de " + m_separated_equation + " = " + String.format( "%."+String.valueOf(nbDecimales)+"f",nestedValue));
+                    ajouterUneEtape(indexI - 6, indexF , "On évalue la valeur du cosinus^-1 de " + m_separated_equation + " = " + String.format( "%."+String.valueOf(nbDecimales)+"f",nestedValue));
                     m_equation = m_equation.replace(tempStringRemplacerOperateur, String.valueOf(nestedValue));
                     operateurTrigo =true;
                 }else if (operator1.contains("arctan")) {
                     nestedValue = Math.atan(nestedValue);
-                    ajouterUneEtape(indexI-6,indexF + nbDecimales+1,"On évalue la valeur de tangente^-1 de " + m_separated_equation + " = " + String.format( "%."+String.valueOf(nbDecimales)+"f",nestedValue));
+                    ajouterUneEtape(indexI-6,indexF ,"On évalue la valeur de tangente^-1 de " + m_separated_equation + " = " + String.format( "%."+String.valueOf(nbDecimales)+"f",nestedValue));
                     m_equation = m_equation.replace(tempStringRemplacerOperateur,String.valueOf(nestedValue));
                     operateurTrigo =true;
                 }else if (operator1.contains("sin")) {
                     nestedValue = Math.sin(nestedValue);
-                    ajouterUneEtape(indexI-3,indexF + nbDecimales+1,"On évalue la valeur du sinus de " + m_separated_equation + " = " + String.format( "%."+String.valueOf(nbDecimales)+"f",nestedValue));
+                    ajouterUneEtape(indexI-3,indexF ,"On évalue la valeur du sinus de " + m_separated_equation + " = " + String.format( "%."+String.valueOf(nbDecimales)+"f",nestedValue));
                     m_equation = m_equation.replace(tempStringRemplacerOperateur,String.valueOf(nestedValue));
                     operateurTrigo =true;
                 } else if (operator1.contains("cos")) {
                     nestedValue = Math.cos(nestedValue);
-                    ajouterUneEtape(indexI-3,indexF + nbDecimales+1,"On évalue la valeur du cosinus de " + m_separated_equation + " = " + String.format( "%."+String.valueOf(nbDecimales)+"f",nestedValue));
+                    ajouterUneEtape(indexI-3,indexF ,"On évalue la valeur du cosinus de " + m_separated_equation + " = " + String.format( "%."+String.valueOf(nbDecimales)+"f",nestedValue));
                     m_equation = m_equation.replace(tempStringRemplacerOperateur,String.valueOf(nestedValue));
                     operateurTrigo =true;
                 } else if (operator1.contains("tan")) {
                     nestedValue = Math.tan(nestedValue);
-                    ajouterUneEtape(indexI-3,indexF + nbDecimales+1,"On évalue la valeur de la tangente de " + m_separated_equation + " = " + String.format( "%."+String.valueOf(nbDecimales)+"f",nestedValue));
+                    ajouterUneEtape(indexI-3,indexF ,"On évalue la valeur de la tangente de " + m_separated_equation + " = " + String.format( "%."+String.valueOf(nbDecimales)+"f",nestedValue));
                     m_equation = m_equation.replace(tempStringRemplacerOperateur,String.valueOf(nestedValue));
                     operateurTrigo =true;
                 }  else if (operator1.contains("ln")) {
                     nestedValue = Math.log(nestedValue);
-                    ajouterUneEtape(indexI-2,indexF + nbDecimales+1,"On évalue la valeur logarithme en base e de " + m_separated_equation + " = " + String.format( "%."+String.valueOf(nbDecimales)+"f",nestedValue));
+                    ajouterUneEtape(indexI-2,indexF ,"On évalue la valeur logarithme en base e de " + m_separated_equation + " = " + String.format( "%."+String.valueOf(nbDecimales)+"f",nestedValue));
                     m_equation = m_equation.replace(tempStringRemplacerOperateur,String.valueOf(nestedValue));
                     operateurTrigo =true;
                 }  else if (operator1.contains("log")) {
                     nestedValue = Math.log10(nestedValue);
-                    ajouterUneEtape(indexI-3,indexF + nbDecimales+1,"On évalue la valeur logarithme en base 10 de " + m_separated_equation + " = " + String.format( "%."+String.valueOf(nbDecimales)+"f",nestedValue));
+                    ajouterUneEtape(indexI-3,indexF ,"On évalue la valeur logarithme en base 10 de " + m_separated_equation + " = " + String.format( "%."+String.valueOf(nbDecimales)+"f",nestedValue));
                     m_equation = m_equation.replace(tempStringRemplacerOperateur,String.valueOf(nestedValue));
                     operateurTrigo =true;
 
@@ -303,7 +303,7 @@ class TrouverY extends General_Equation {
             double parse() {
                 nextChar();
                 double x = parseExpression();
-                if (pos < str2.length()) throw new RuntimeException("Unexpected: " + (char)ch);
+                if (pos < str2.length()) return Double.NaN;//throw new RuntimeException("Unexpected: " + (char)ch);
                 return x;
             }
 
@@ -350,7 +350,8 @@ class TrouverY extends General_Equation {
                     if (func.equals("sqrt")) x = Math.sqrt(x);
                     else throw new RuntimeException("Unknown function: " + func);
                 } else {
-                    throw new RuntimeException("Unexpected: " + (char)ch);
+                    return Double.NaN;
+                    //throw new RuntimeException("Unexpected: " + (char)ch);
                 }
 
                 if (eat('^'))

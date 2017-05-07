@@ -385,6 +385,7 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
         final Context context = this;
 
         AlertDialog.Builder build = new AlertDialog.Builder(context);
+        build.setCancelable(false);
         build.setTitle(R.string.titre_choisir_var).
                 setItems(r.getListVar(), new DialogInterface.OnClickListener() {
                     @Override
@@ -398,7 +399,7 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
                 setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        onBackPressed();
+                        finish();
                     }
                 }).
                 create().show();
