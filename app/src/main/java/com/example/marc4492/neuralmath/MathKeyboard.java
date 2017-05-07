@@ -395,9 +395,14 @@ public class MathKeyboard extends GridLayout {
         public void onClick(final View v) {
             String temp = typingZone.getText().toString();
 
-            temp = temp.replace("sin-1", "arcsin");
-            temp = temp.replace("cos-1", "arccos");
-            temp = temp.replace("tan-1", "arctan");
+            temp = temp.replaceAll("sin-1", "arcsin");
+            temp = temp.replaceAll("cos-1", "arccos");
+            temp = temp.replaceAll("tan-1", "arctan");
+            temp = temp.replaceAll("•", "*");
+            temp = temp.replaceAll("π", "/PI/");
+            temp = temp.replaceAll("e", "/e/");
+            temp = temp.replaceAll("÷", "/");
+
 
             typingZone.setText(temp);
 
