@@ -108,7 +108,7 @@ class Resolution extends General_Equation
 
                 for (String var : _variables)
                 {
-                    if (i + nbrLength + 1 < e.length() && e.charAt(i + nbrLength) == var.charAt(0))
+                    if (i + nbrLength < e.length() && e.charAt(i + nbrLength) == var.charAt(0))
                     {
                         nbr++;
                     }
@@ -121,6 +121,19 @@ class Resolution extends General_Equation
                 }
 
                 i = i + nbrLength - 1;
+            }
+            else if (e.charAt(i) == '(' && (i - 1 < 0 || e.charAt(i - 1) != '+' || e.charAt(i - 1) != '-' || e.charAt(i - 1) != '*' || e.charAt(i - 1) != '/' || e.charAt(i - 1) != '^'))
+            {
+                if (e.charAt(i - 1) == ')')
+                {
+                    e = e.substring(0, i) + "*" + e.substring(i, e.length());
+                    i++;
+                }
+                else
+                {
+                    e = e.substring(0, i) + "+" + e.substring(i, e.length());
+                    i++;
+                }
             }
 
             nbrLength = 0;
