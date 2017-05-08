@@ -89,6 +89,8 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
             spinnerArray.add(getString(R.string.Integrer));
         } else if (Pattern.matches("(\\w\\(([a-e]|[h-m]|[o-r]|[t-z])\\)=.*)|(y=.*)", equation)) // si f(x) ou y //https://regex101.com/
         {
+            Matcher m = Pattern.compile("\\w\\(([a-e]|[h-m]|[o-r]|[t-z])\\)=").matcher(equation); //http://stackoverflow.com/questions/8938498/get-the-index-of-a-pattern-in-a-string-using-regex
+            while (m.find()) { equation.replace(equation.substring(m.start(),m.end()),"y");}
             spinnerArray.add(getString(R.string.Simplification));
             spinnerArray.add(getString(R.string.Factorisation));
             spinnerArray.add(getString(R.string.TrouverZéros));
@@ -307,36 +309,24 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
         demarche.setText(getString(R.string.d_monstration) + ": Trouver x\n");
         Resolution simplificationEQ = new Resolution(equation);
         askWhichVariable(simplificationEQ);
-        TextViewReponse.setText(simplificationEQ.getM_equation());
-        etapesText = simplificationEQ.getM_EtapesText();
-        ajouterEtapes(simplificationEQ.getM_DemarcheText(), etapesText);
     }
 
     public void trouverZeros() {
         demarche.setText(getString(R.string.d_monstration) + ": Trouver zeros\n");
         Resolution simplificationEQ = new Resolution(equation);
         askWhichVariable(simplificationEQ);
-        TextViewReponse.setText(simplificationEQ.getM_equation());
-        etapesText = simplificationEQ.getM_EtapesText();
-        ajouterEtapes(simplificationEQ.getM_DemarcheText(), etapesText);
     }
 
     public void simplification() {
         Resolution simplificationEQ = new Resolution(equation);
         demarche.setText(getString(R.string.d_monstration) + " Trouver simplification\n");
         askWhichVariable(simplificationEQ);
-        TextViewReponse.setText(simplificationEQ.getM_equation());
-        etapesText = simplificationEQ.getM_EtapesText();
-        ajouterEtapes(simplificationEQ.getM_DemarcheText(), etapesText);
     }
 
     public void factorisation() {
         demarche.setText(getString(R.string.d_monstration) + " factoriser\n");
         Resolution simplificationEQ = new Resolution(equation);
         askWhichVariable(simplificationEQ);
-        TextViewReponse.setText(simplificationEQ.getM_equation());
-        etapesText = simplificationEQ.getM_EtapesText();
-        ajouterEtapes(simplificationEQ.getM_DemarcheText(), etapesText);
     }
 
     public void deriver() {

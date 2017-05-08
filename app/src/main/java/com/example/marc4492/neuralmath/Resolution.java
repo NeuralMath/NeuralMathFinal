@@ -2,6 +2,7 @@ package com.example.marc4492.neuralmath;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 class Resolution extends General_Equation
 {
