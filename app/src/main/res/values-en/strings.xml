@@ -64,4 +64,5 @@
     <string name="type_correction">Correction type</string>
     <string name="IsolerVariable">Isolate Variable</string>
     <string name="titre_choisir_var">Choose the variable</string>
+    <string name="changer_la_variable">Change variable</string>
 </resources>

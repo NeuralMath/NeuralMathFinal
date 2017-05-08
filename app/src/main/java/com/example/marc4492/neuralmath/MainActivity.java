@@ -85,18 +85,25 @@ public class MainActivity extends AppCompatActivity {
 
     private static boolean checkPrefDefault = true;
 
-    private String[] charList =
+    private String[] charListComplete =
             {
-                    /*"!", "(", ")", "+", ",", "-", */"0", "1", "2", "3", "4",
-                    "5", "6", "7", "8", "9", "=", "a", "α", "|",
+                    "!", "(", ")", "+", ",", "-", "0", "1", "2", "3", "4",
+                    "5", "6", "7", "8", "9", "=", "a", "α", "//d",
                     "b", "β", "c", "cos", "d", "Δ", "÷", "/e/",
                     "f", "/", "g", "γ", "≥", ">", "h", "i",
-                    "∞", "∫", "j", "k", "l", "λ", "≤", "lim",
+                    "∞", "//S", "j", "k", "l", "λ", "≤", "lim",
                     "log", "<", "m", "μ", "n", "≠", "o", "p",
                     "ϕ", "/PI/", "±", "*", "'", "q", "r", "→",
                     "s", "σ", "sin", "√", "Σ", "t", "tan", "θ",
                     "u", "v", "w", "x", "y", "z", "[", "]", "{", "}"
             };
+
+    private String[] charListSimple =
+            {
+                    "0", "1", "2", "3", "4",
+                    "5", "6", "7", "8", "9"
+            };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -269,7 +276,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void createNetworkDecoder() throws IOException {
-        imageDecoder = new ImageDecoder(context, INPUT, HIDDEN, OUTPUT, TRAININGRATE, database, charList);
+        imageDecoder = new ImageDecoder(context, INPUT, HIDDEN, OUTPUT, TRAININGRATE, database, charListSimple);
     }
 
     @Override

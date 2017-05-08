@@ -37,7 +37,7 @@
             android:configChanges="orientation|screenSize|keyboardHidden"/>
 
         <activity android:name=".ProcedureResolutionEquation"
-            android:configChanges="keyboardHidden"/>
+            android:configChanges="orientation|screenSize|keyboardHidden"/>
 
     </application>
 

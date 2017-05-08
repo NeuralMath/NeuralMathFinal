@@ -58,7 +58,7 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
         TextViewEquation = (TextView) findViewById(R.id.textView8);
         linearDemarche = (LinearLayout) findViewById(R.id.LayoutVertical);
 
-        texViewList = new ArrayList<ExpandableTextView>(10);
+        texViewList = new ArrayList<>(10);
 
         equation = getIntent().getStringExtra("EQUATION");
         equation = equation.replaceAll(" ", "");  //Donne une copie de l'équation sans les espaces
@@ -105,7 +105,7 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
             spinnerArray.add(getString(R.string.Aucune));
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
                 this, android.R.layout.simple_spinner_item, spinnerArray);
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -120,16 +120,21 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
                         Object item = parent.getItemAtPosition(pos);
                         System.out.println(item.toString());     //Montre en console le choix pris
 
-                            if(item.toString().equals(getString(R.string.Aucune))) TextViewReponse.setText(R.string.AucuneMethodeResolution);
-                            else if(item.toString().equals(getString(R.string.TrouverY)))trouverY();
-                            else if(item.toString().equals(getString(R.string.TrouverX)) )trouverX();
-                            else if(item.toString().equals(getString(R.string.TrouverZéros)) )trouverZeros();
-                            else if(item.toString().equals(getString(R.string.Simplification)) )simplification();
-                            else if(item.toString().equals(getString(R.string.Factorisation)) ) factorisation();
-                            else if(item.toString().equals(getString(R.string.Deriver)) )deriver();
-                            else if(item.toString().equals(getString(R.string.Integrer)) )integrer();
-                            else if(item.toString().equals(getString(R.string.IsolerVariable)) )isoler();
-                        }
+                        if (item.toString().equals(getString(R.string.Aucune)))
+                            TextViewReponse.setText(R.string.AucuneMethodeResolution);
+                        else if (item.toString().equals(getString(R.string.TrouverY))) trouverY();
+                        else if (item.toString().equals(getString(R.string.TrouverX))) trouverX();
+                        else if (item.toString().equals(getString(R.string.TrouverZéros)))
+                            trouverZeros();
+                        else if (item.toString().equals(getString(R.string.Simplification)))
+                            simplification();
+                        else if (item.toString().equals(getString(R.string.Factorisation)))
+                            factorisation();
+                        else if (item.toString().equals(getString(R.string.Deriver))) deriver();
+                        else if (item.toString().equals(getString(R.string.Integrer))) integrer();
+                        else if (item.toString().equals(getString(R.string.IsolerVariable)))
+                            isoler();
+                    }
                         public void onNothingSelected(AdapterView<?> parent) {}
                     });
         }
