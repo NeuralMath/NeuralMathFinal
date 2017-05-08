@@ -5,9 +5,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -92,7 +94,25 @@ class ImageDecoder {
         });
 
         for(int i = 0; i < listChar.size(); i++) {
-            int indexOfChar = network.getAnwser(getIOPixels(resize(fillImage(listChar.get(i).getImage()))));
+
+            Bitmap bob = resize(fillImage(listChar.get(i).getImage()));
+            int[] bobPix = getIOPixels(bob);
+
+            Bitmap jean = Bitmap.createBitmap(28, 28, Bitmap.Config.RGB_565);
+            jean.setPixels(bobPix, 0, 28, 0, 0, 28, 28);
+
+
+            FileOutputStream out;
+            try {
+                out = new FileOutputStream(Environment.getExternalStorageDirectory() + "/NeuralMath/bob.jpg");
+                jean.compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
+                // PNG is a lossless format, the compression factor (100) is ignored
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+
+            int indexOfChar = network.getAnwser(bobPix);
             listChar.get(i).setValue(charList[indexOfChar]);
             //listChar.get(i).setValue(String.valueOf(i));
         }
@@ -352,10 +372,10 @@ class ImageDecoder {
 
         //Selon la valeur du pixel, 1 ou 0
         int pixel;
-        for(int i = 0; i < bitmap.getWidth(); i++) {
-            for (int j = 0; j < bitmap.getHeight(); j++) {
-                pixel = bitmap.getPixel(i, j);
-                if(Color.red(pixel) < 0x0C && Color.green(pixel) < 0x0C && Color.blue(pixel) < 0x0C)
+        for(int i = 0; i < bitmap.getHeight(); i++) {
+            for (int j = 0; j < bitmap.getWidth(); j++) {
+                pixel = bitmap.getPixel(j, i);
+                if(Color.red(pixel) + Color.green(pixel) + Color.blue(pixel) < 100)
                     pixels.add(1);
                 else
                     pixels.add(0);
@@ -382,7 +402,7 @@ class ImageDecoder {
         int width = btm.getWidth();
         int height = btm.getHeight();
 
-        int borderSize = 5;
+        int borderSize = 15;
 
         Bitmap newImage;
         Canvas canvas;
