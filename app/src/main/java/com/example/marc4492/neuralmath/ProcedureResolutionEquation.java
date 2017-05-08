@@ -89,18 +89,16 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
             spinnerArray.add(getString(R.string.Integrer));
         } else if (Pattern.matches("(\\w\\(([a-e]|[h-m]|[o-r]|[t-z])\\)=.*)|(y=.*)", equation)) // si f(x) ou y //https://regex101.com/
         {
-            Matcher m = Pattern.compile("\\w\\(([a-e]|[h-m]|[o-r]|[t-z])\\)=").matcher(equation); //http://stackoverflow.com/questions/8938498/get-the-index-of-a-pattern-in-a-string-using-regex
-            while (m.find()) { equation.replace(equation.substring(m.start(),m.end()),"y");}
             spinnerArray.add(getString(R.string.Simplification));
             spinnerArray.add(getString(R.string.Factorisation));
             spinnerArray.add(getString(R.string.TrouverZéros));
-        } else if (Pattern.matches("\\w\\(\\-?\\d+(\\.\\d*)?\\)=.*", equation)) // si f( ? ) //https://regex101.com/ //Remplacer x pour trouver y
+        } else if (Pattern.matches("\\w\\(-?\\d+(\\.\\d*)?\\)=.*", equation)) // si f( ? ) //https://regex101.com/ //Remplacer x pour trouver y
         {
             spinnerArray.add(getString(R.string.TrouverY));
-        } else if (Pattern.matches("\\-?\\d+(\\.\\d*)?=.*", equation) && (!equation.contains("f(x)")) && (!equation.contains("y")) && equation.contains("x")) // si ? = x   //isoler x
+        } else if (Pattern.matches("-?\\d+(\\.\\d*)?=.*", equation) && (!equation.contains("f(x)")) && (!equation.contains("y")) && equation.contains("x")) // si ? = x   //isoler x
         {
             spinnerArray.add(getString(R.string.TrouverX));
-        } else if (Pattern.matches("\\(?(\\-?\\w+(\\.\\w+)?)\\)?(((\\+|\\-|\\*|\\/|\\^|\\_))\\(?(\\-?\\w+(\\.\\w+)?)\\)*)*=.*", equation)) {
+        } else if (Pattern.matches("\\(?(-?\\w+(\\.\\w+)?)\\)?(\\(?(-?\\w+(\\.\\w+)?)\\)*)*=.*", equation)) {
             spinnerArray.add(getString(R.string.IsolerVariable));
         } else          //Aucune méthode de résolution possible.
         {
