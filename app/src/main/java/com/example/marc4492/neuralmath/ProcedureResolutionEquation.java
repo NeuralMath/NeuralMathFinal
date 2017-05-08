@@ -319,6 +319,7 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
     public void simplification() {
         Resolution simplificationEQ = new Resolution(equation);
         demarche.setText(getString(R.string.d_monstration) + " Trouver simplification\n");
+        askWhichVariable(simplificationEQ);
         TextViewReponse.setText(simplificationEQ.getM_equation());
         etapesText = simplificationEQ.getM_EtapesText();
         ajouterEtapes(simplificationEQ.getM_DemarcheText(), etapesText);
@@ -357,26 +358,33 @@ public class ProcedureResolutionEquation extends AppCompatActivity {
     private void askWhichVariable(final Resolution r) {
         final Context context = this;
 
-        AlertDialog.Builder build = new AlertDialog.Builder(context);
-        build.setCancelable(false);
-        build.setTitle(R.string.titre_choisir_var).
-                setItems(r.getListVar(), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        r.setVariable(r.getListVar()[which]);
-                        TextViewReponse.setText(r.getM_DemarcheText().get(r.getM_DemarcheText().size()-1));
-                        etapesText = r.getM_EtapesText();
-                        ajouterEtapes(r.getM_DemarcheText(), etapesText);
-                        dialog.dismiss();
-                    }
-                }).
-                setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        finish();
-                    }
-                }).
-                create().show();
+        if (r.getListVar().length > 1) {
+            AlertDialog.Builder build = new AlertDialog.Builder(context);
+            build.setCancelable(false);
+            build.setTitle(R.string.titre_choisir_var).
+                    setItems(r.getListVar(), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                            r.setVariable(r.getListVar()[which]);
+                            TextViewReponse.setText(r.getM_DemarcheText().get(r.getM_DemarcheText().size() - 1));
+                            etapesText = r.getM_EtapesText();
+                            ajouterEtapes(r.getM_DemarcheText(), etapesText);
+                        }
+                    }).
+                    setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            finish();
+                        }
+                    }).
+                    create().show();
+        } else {
+            r.setVariable(r.getListVar()[0]);
+            TextViewReponse.setText(r.getM_DemarcheText().get(r.getM_DemarcheText().size() - 1));
+            etapesText = r.getM_EtapesText();
+            ajouterEtapes(r.getM_DemarcheText(), etapesText);
+        }
 
     }
 

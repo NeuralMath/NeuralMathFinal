@@ -22,7 +22,6 @@ class Resolution extends General_Equation
         _letters.add('b');
         _letters.add('c');
         _letters.add('d');
-        _letters.add('f');
         _letters.add('g');
         _letters.add('h');
         _letters.add('i');
@@ -85,7 +84,7 @@ class Resolution extends General_Equation
         solve();
     }
 
-    void normalize(String e)
+    private void normalize(String e)
     {
         int nbrLength = 0, pos = 0, nbr = 0;
 
@@ -122,7 +121,7 @@ class Resolution extends General_Equation
 
                 i = i + nbrLength - 1;
             }
-            else if (e.charAt(i) == '(' && (i - 1 < 0 || e.charAt(i - 1) != '+' || e.charAt(i - 1) != '-' || e.charAt(i - 1) != '*' || e.charAt(i - 1) != '/' || e.charAt(i - 1) != '^'))
+            else if (e.charAt(i) == '(' && (i - 1 < 0 || (e.charAt(i - 1) != '+' && e.charAt(i - 1) != '-' && e.charAt(i - 1) != '*' && e.charAt(i - 1) != '/' && e.charAt(i - 1) != '^')))
             {
                 if (e.charAt(i - 1) == ')')
                 {
