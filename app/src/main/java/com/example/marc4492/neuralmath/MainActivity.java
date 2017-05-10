@@ -276,6 +276,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void createNetworkDecoder() throws IOException {
+        Toast.makeText(context, "Waiting for neural network", Toast.LENGTH_LONG).show();
         imageDecoder = new ImageDecoder(context, INPUT, HIDDEN, OUTPUT, TRAININGRATE, database, charListSimple);
     }
 
@@ -406,7 +407,6 @@ public class MainActivity extends AppCompatActivity {
      */
     private void correctionModePopup(final String eq)
     {
-
         new AlertDialog.Builder(context)
                 .setTitle(R.string.type_correction)
                 .setMessage(getString(R.string.your_eq_confirm) + " " + eq + " ?")

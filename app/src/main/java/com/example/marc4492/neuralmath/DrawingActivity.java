@@ -23,6 +23,8 @@ public class DrawingActivity extends AppCompatActivity {
         String value = i.getStringExtra("LAYOUT");
         drawPage = (DrawingPage) findViewById(R.id.drawPage);
 
+        while(!imageDecoder.isReady());
+
         String langue = getIntent().getStringExtra("LANGUE");
 
         MainActivity.changementDeLangue(langue, this);
@@ -36,6 +38,7 @@ public class DrawingActivity extends AppCompatActivity {
         drawPage.getDoneButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                sendEquation();
                 onBackPressed();
             }
         });
@@ -47,6 +50,12 @@ public class DrawingActivity extends AppCompatActivity {
             }
         });
 
+        drawPage.getButtonCancel().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
 
 
         if (value.equals("true"))
@@ -57,7 +66,6 @@ public class DrawingActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        sendEquation();
         super.onBackPressed();
     }
 

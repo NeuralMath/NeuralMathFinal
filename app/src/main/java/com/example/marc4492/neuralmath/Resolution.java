@@ -2,7 +2,6 @@ package com.example.marc4492.neuralmath;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.regex.Pattern;
 
 class Resolution extends General_Equation
 {
@@ -106,11 +105,14 @@ class Resolution extends General_Equation
                     i++;
                 }
 
-                for (String var : _variables)
+                for (String var1 : _variables)
                 {
-                    if (i + nbrLength < e.length() && e.charAt(i + nbrLength) == var.charAt(0))
+                    for (String var2 : _variables)
                     {
-                        nbr++;
+                        if (i + nbrLength < e.length() && e.charAt(i + nbrLength) == var1.charAt(0) && (i - nbrLength - 1 < 0 || (e.charAt(i - nbrLength) == '^' && e.charAt(i - nbrLength - 1) == var2.charAt(0))))
+                        {
+                            nbr++;
+                        }
                     }
                 }
 

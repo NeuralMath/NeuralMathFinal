@@ -24,6 +24,7 @@ public class DrawingPage extends LinearLayout {
 
     private Button btnDone;
     private Button btnClearText;
+    private Button btnBack;
 
     /**
      * Creation des deux parties de la page
@@ -36,7 +37,6 @@ public class DrawingPage extends LinearLayout {
 
         drawView = new DrawingView(context);
         drawView.setLayoutParams(new LayoutParams(0, LayoutParams.MATCH_PARENT, 1f));
-
 
         txtEquation = new TextView(context);
         txtEquation.setLayoutParams(new LayoutParams(0, LayoutParams.MATCH_PARENT, 0.5f));
@@ -80,11 +80,25 @@ public class DrawingPage extends LinearLayout {
         btnDone = new Button(context);
         btnDone.setText(R.string.done);
 
+        btnBack = new Button(context);
+        btnBack.setText(R.string.annuler_txt);
+
+        Button btnEreaseOne = new Button(context);
+        btnEreaseOne.setText(R.string.eff_lettre);
+        btnEreaseOne.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                txtEquation.setText(txtEquation.getText().subSequence(0, txtEquation.getText().length()-1));
+            }
+        });
+
         //Creation of the button layout
         layoutBtn = new LinearLayout(context);
         layoutBtn.setOrientation(LinearLayout.VERTICAL);
         layoutBtn.addView(btnRetry);
+        layoutBtn.addView(btnEreaseOne);
         layoutBtn.addView(btnClearText);
+        layoutBtn.addView(btnBack);
         layoutBtn.addView(btnDone);
 
         setOrientation(LinearLayout.HORIZONTAL);
@@ -93,6 +107,11 @@ public class DrawingPage extends LinearLayout {
     public Button getButtonClearText()
     {
         return btnClearText;
+    }
+
+    public Button getButtonCancel()
+    {
+        return btnBack;
     }
 
     /**

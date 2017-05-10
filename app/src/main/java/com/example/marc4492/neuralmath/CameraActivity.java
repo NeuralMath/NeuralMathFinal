@@ -64,6 +64,8 @@ public class CameraActivity extends AppCompatActivity {
         imageDecoder = MainActivity.getImageDecoder();
         imageDecoder.setAppendMode(false);
 
+        while(!imageDecoder.isReady());
+
         ruledPaper = getIntent().getBooleanExtra("FEUILLE", false);
         MainActivity.changementDeLangue(getIntent().getStringExtra("LANGUE"), this);
 

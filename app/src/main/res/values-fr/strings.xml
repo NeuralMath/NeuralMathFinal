@@ -64,4 +64,6 @@
     <string name="IsolerVariable">Isoler variable</string>
     <string name="titre_choisir_var">Choisir la variable</string>
     <string name="changer_la_variable">Changer la variable</string>
+    <string name="annuler_txt">Annuler</string>
+    <string name="eff_lettre">Efface une lettre</string>
 </resources>
