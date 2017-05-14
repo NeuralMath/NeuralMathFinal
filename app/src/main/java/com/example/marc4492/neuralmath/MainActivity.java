@@ -276,7 +276,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void createNetworkDecoder() throws IOException {
-        Toast.makeText(context, "Waiting for neural network", Toast.LENGTH_LONG).show();
         imageDecoder = new ImageDecoder(context, INPUT, HIDDEN, OUTPUT, TRAININGRATE, database, charListSimple);
     }
 

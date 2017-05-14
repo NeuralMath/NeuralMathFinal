@@ -88,7 +88,10 @@ public class DrawingPage extends LinearLayout {
         btnEreaseOne.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                txtEquation.setText(txtEquation.getText().subSequence(0, txtEquation.getText().length()-1));
+                if(txtEquation.getText().length() > 0) {
+                    DrawingActivity.getImageDecoder().removeOne();
+                    txtEquation.setText(txtEquation.getText().subSequence(0, txtEquation.getText().length() - 1));
+                }
             }
         });
 

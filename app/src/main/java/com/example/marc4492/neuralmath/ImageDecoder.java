@@ -5,11 +5,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,7 +45,6 @@ class ImageDecoder {
      * @param output      Nombre de neurones d'output dans le réseau
      * @param training    Training rate du reseau
      * @param charListing List des char avec leur index dans le réseau
-     *
      * @throws IOException S'il y a des problèmes de fichier, ...
      */
     ImageDecoder(Context c, final int input, final int hidden, final int output, final double training, final SQLiteDatabase database, String[] charListing) throws IOException {
@@ -80,7 +77,7 @@ class ImageDecoder {
         //Split tous les chars
         listChar = splitChar(btm);
 
-        if(appendMode)
+        if (appendMode)
             listCharDetected.addAll(listChar);
         else
             listCharDetected = listChar;
@@ -93,31 +90,12 @@ class ImageDecoder {
             }
         });
 
-        for(int i = 0; i < listChar.size(); i++) {
-
-            Bitmap bob = resize(fillImage(listChar.get(i).getImage()));
-            int[] bobPix = getIOPixels(bob);
-
-            Bitmap jean = Bitmap.createBitmap(28, 28, Bitmap.Config.RGB_565);
-            jean.setPixels(bobPix, 0, 28, 0, 0, 28, 28);
-
-
-            FileOutputStream out;
-            try {
-                out = new FileOutputStream(Environment.getExternalStorageDirectory() + "/NeuralMath/bob.jpg");
-                jean.compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
-                // PNG is a lossless format, the compression factor (100) is ignored
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-
-            int indexOfChar = network.getAnwser(bobPix);
+        for (int i = 0; i < listChar.size(); i++) {
+            int indexOfChar = network.getAnwser(getIOPixels(resize(fillImage(listChar.get(i).getImage()))));
             listChar.get(i).setValue(charList[indexOfChar]);
-            //listChar.get(i).setValue(String.valueOf(i));
         }
 
-        originalTolWidth = (int) (totalWidth *0.1);
+        originalTolWidth = (int) (totalWidth * 0.1);
         int originalTolHeight = (int) (totalHeight * 0.1);
 
         return postTreatment(replaceChar(listChar, originalTolWidth, originalTolHeight));
@@ -126,8 +104,8 @@ class ImageDecoder {
     /**
      * Replacer les exposant, les indices et les fractions
      *
-     * @param listChar      Liste des l'élements à comparer
-     * @return              La String résultante
+     * @param listChar Liste des l'élements à comparer
+     * @return La String résultante
      */
     private String replaceChar(ArrayList<MathChar> listChar, int toleranceWidth, int toleranceHeight) {
         String line = "";
@@ -136,20 +114,19 @@ class ImageDecoder {
         ArrayList<MathChar> listFraction = new ArrayList<>();
 
         //si le premier char n'est pas dans un fraction
-        if(listChar.get(0).getIsInFraction() == 0) {
+        if (listChar.get(0).getIsInFraction() == 0) {
             line += listChar.get(0).getValue();
             setIndexOfString(line);
             index = 1;
         }
 
         //Repalcer les caractères
-        for(; index < listChar.size(); index++)
-        {
-            if(!notCheckingLast)
+        for (; index < listChar.size(); index++) {
+            if (!notCheckingLast)
                 indexToLook = index - 1;
 
             //Si fraction
-            if(listChar.get(index).getIsInFraction() > 0) {
+            if (listChar.get(index).getIsInFraction() > 0) {
                 notCheckingLast = true;
                 indexToLook = index;
                 listFraction.clear();
@@ -157,37 +134,36 @@ class ImageDecoder {
                     listFraction.add(listChar.get(index));
                     index++;
                 }
-                line = findFraction(line, listFraction, toleranceHeight/2);
-                if(index < listChar.size())
+                line = findFraction(line, listFraction, toleranceHeight / 2);
+                if (index < listChar.size())
                     index--;
             }
             //Si un =
-            else if(Math.abs(listChar.get(index).getWidth() - listChar.get(indexToLook).getWidth()) < toleranceWidth/2 && Math.abs(listChar.get(index).getXMiddle() - listChar.get(indexToLook).getXMiddle()) < toleranceWidth/2 && Math.abs(listChar.get(index).getYEnd() - listChar.get(indexToLook).getYStart()) < 1.5*toleranceHeight)
-                line = line.substring(0, line.length()-1) + "=";
+            else if (Math.abs(listChar.get(index).getWidth() - listChar.get(indexToLook).getWidth()) < toleranceWidth / 2 && Math.abs(listChar.get(index).getXMiddle() - listChar.get(indexToLook).getXMiddle()) < toleranceWidth / 2 && Math.abs(listChar.get(index).getYEnd() - listChar.get(indexToLook).getYStart()) < 1.5 * toleranceHeight)
+                line = line.substring(0, line.length() - 1) + "=";
 
-            //Si un à côté de l'autre
-            else if(isBeside(listChar.get(indexToLook), listChar.get(index), toleranceHeight)) {
+                //Si un à côté de l'autre
+            else if (isBeside(listChar.get(indexToLook), listChar.get(index), toleranceHeight)) {
                 notCheckingLast = false;
                 line += listChar.get(index).getValue();
                 setIndexOfString(line);
             }
 
             //Si un exposant
-            else if(listChar.get(index).getYEnd() <= listChar.get(indexToLook).getYMiddle()) {
+            else if (listChar.get(index).getYEnd() <= listChar.get(indexToLook).getYMiddle()) {
                 notCheckingLast = true;
-                line = findExposant(listChar, line, toleranceHeight/2);
+                line = findExposant(listChar, line, toleranceHeight / 2);
             }
 
             //Si un indice
-            else if(listChar.get(index).getYStart() > listChar.get(indexToLook).getYMiddle()) {
+            else if (listChar.get(index).getYStart() > listChar.get(indexToLook).getYMiddle()) {
                 notCheckingLast = true;
-                line = findIndice(listChar, line, toleranceHeight/2);
-            }
-            else
+                line = findIndice(listChar, line, toleranceHeight / 2);
+            } else
                 Toast.makeText(context, "Le découpage de caractère ne s'est pas déroulé normalement", Toast.LENGTH_LONG).show();
         }
 
-        if(appendMode)
+        if (appendMode)
             lastIndex += line.length();
         else
             lastIndex = 0;
@@ -198,10 +174,10 @@ class ImageDecoder {
     /**
      * Vérification si deux élements sont un à coté de l'autre selon une tolérance.
      *
-     * @param first                 Premier élement à comparer
-     * @param second                Premier élement à comparer
-     * @param tolerance             Tolérance autorisée
-     * @return                      Si les deux élements sont un à coté de l'autre
+     * @param first     Premier élement à comparer
+     * @param second    Premier élement à comparer
+     * @param tolerance Tolérance autorisée
+     * @return Si les deux élements sont un à coté de l'autre
      */
     private boolean isBeside(MathChar first, MathChar second, int tolerance) {
         return Math.abs(second.getYMiddle() - first.getYMiddle()) <= tolerance;
@@ -210,11 +186,10 @@ class ImageDecoder {
     /**
      * Split les différents caractère de l'image
      *
-     * @param btm               L'image à analyser
-     * @throws IOException        S'il y a des problèmes
+     * @param btm L'image à analyser
+     * @throws IOException S'il y a des problèmes
      */
-    private ArrayList<MathChar> splitChar(Bitmap btm) throws IOException
-    {
+    private ArrayList<MathChar> splitChar(Bitmap btm) throws IOException {
         MathChar mC = new MathChar(btm, 0, 0, btm.getWidth(), btm.getHeight(), 0);
         mC.splitChar(true);
         return MathChar.getStaticList();
@@ -224,29 +199,28 @@ class ImageDecoder {
     /**
      * Obtenir les exposants dans une équation
      *
-     * @param listChar              List des élements à vérifier
-     * @param line                  String comprenant le début de l'équation
-     * @param toleranceHeight       La tolérence en hauteur pour accepter qu'ils sont un a coté de l'autre
-     * @return                      La String complèter avec les exposants
+     * @param listChar        List des élements à vérifier
+     * @param line            String comprenant le début de l'équation
+     * @param toleranceHeight La tolérence en hauteur pour accepter qu'ils sont un a coté de l'autre
+     * @return La String complèter avec les exposants
      */
-    private String findExposant(ArrayList<MathChar> listChar, String line, int toleranceHeight)
-    {
+    private String findExposant(ArrayList<MathChar> listChar, String line, int toleranceHeight) {
         line += "^(" + listChar.get(index).getValue();
         setIndexOfString(line);
 
-        if(index < listChar.size()-1) {
+        if (index < listChar.size() - 1) {
             index++;
             while (index < listChar.size()) {
                 //S'il sont un à coté de l'autre
-                if(isBeside(listChar.get(index - 1), listChar.get(index), toleranceHeight)) {
+                if (isBeside(listChar.get(index - 1), listChar.get(index), toleranceHeight)) {
                     line += listChar.get(index).getValue();
                     setIndexOfString(line);
                 }
                 //S'il sont en exposants
-                else if(listChar.get(index).getYEnd() <= listChar.get(index-1).getYMiddle())
+                else if (listChar.get(index).getYEnd() <= listChar.get(index - 1).getYMiddle())
                     line = findExposant(listChar, line, toleranceHeight);
 
-                //Sinon sortir
+                    //Sinon sortir
                 else
                     break;
                 index++;
@@ -260,30 +234,29 @@ class ImageDecoder {
     /**
      * Obtenir les indices dans une équation
      *
-     * @param listChar              List des élements à vérifier
-     * @param line                  String comprenant le début de l'équation
-     * @param toleranceHeight       La tolérence en hauteur pour accepter qu'ils sont un a coté de l'autre
-     * @return                      La String complèter avec les indices
+     * @param listChar        List des élements à vérifier
+     * @param line            String comprenant le début de l'équation
+     * @param toleranceHeight La tolérence en hauteur pour accepter qu'ils sont un a coté de l'autre
+     * @return La String complèter avec les indices
      */
-    private String findIndice(ArrayList<MathChar> listChar, String line, int toleranceHeight)
-    {
+    private String findIndice(ArrayList<MathChar> listChar, String line, int toleranceHeight) {
         line += "_(" + listChar.get(index).getValue();
         setIndexOfString(line);
 
-        if(index < listChar.size()-1) {
+        if (index < listChar.size() - 1) {
             index++;
             while (index < listChar.size()) {
                 //S'il sont un à coté de l'autre
-                if(isBeside(listChar.get(index - 1), listChar.get(index), toleranceHeight)) {
+                if (isBeside(listChar.get(index - 1), listChar.get(index), toleranceHeight)) {
                     line += listChar.get(index).getValue();
                     setIndexOfString(line);
                 }
 
                 //S'il sont en indices
-                else if(listChar.get(index).getYStart() > listChar.get(index -1).getYMiddle())
+                else if (listChar.get(index).getYStart() > listChar.get(index - 1).getYMiddle())
                     line = findIndice(listChar, line, toleranceHeight);
 
-                //Sinon sortir
+                    //Sinon sortir
                 else
                     break;
                 index++;
@@ -296,7 +269,8 @@ class ImageDecoder {
 
     /**
      * Set la valeur de la position dans la string pour chaque caractere
-     * @param line      L'equation à date
+     *
+     * @param line L'equation à date
      */
     private void setIndexOfString(String line) {
         listCharDetected.get(index).setIndexInString((line.length() - 1) + lastIndex);
@@ -305,13 +279,12 @@ class ImageDecoder {
     /**
      * Obtenir les fractions dans la liste fournie
      *
-     * @param line                      Le début de l'équation
-     * @param list                      La liste à vérifier
-     * @param tolerenceHeight           La tolérence en hauteur pour accepter qu'ils sont un a coté de l'autre
-     * @return                          La String complèté avec les fractions
+     * @param line            Le début de l'équation
+     * @param list            La liste à vérifier
+     * @param tolerenceHeight La tolérence en hauteur pour accepter qu'ils sont un a coté de l'autre
+     * @return La String complèté avec les fractions
      */
-    private String findFraction(String line, ArrayList<MathChar> list, int tolerenceHeight)
-    {
+    private String findFraction(String line, ArrayList<MathChar> list, int tolerenceHeight) {
         ArrayList<MathChar> listTopFraction = new ArrayList<>();
         ArrayList<MathChar> listBottomFraction = new ArrayList<>();
         int indexBarreFraction = 0;
@@ -321,7 +294,7 @@ class ImageDecoder {
 
 
         //Tri up down de la ligne de fraction
-        for(int i = 1; i < list.size(); i++) {
+        for (int i = 1; i < list.size(); i++) {
             list.get(i).setIsInFraction(list.get(i).getIsInFraction() - 1);
             if (list.get(i).getYEnd() < list.get(indexBarreFraction).getYStart())
                 listTopFraction.add(list.get(i));
@@ -329,12 +302,12 @@ class ImageDecoder {
                 listBottomFraction.add(list.get(i));
         }
         index = 0;
-        line += replaceChar(listTopFraction, originalTolWidth, tolerenceHeight/2);
+        line += replaceChar(listTopFraction, originalTolWidth, tolerenceHeight / 2);
 
         line += ")/(";
 
         index = 0;
-        line += replaceChar(listBottomFraction, originalTolWidth, tolerenceHeight/2);
+        line += replaceChar(listBottomFraction, originalTolWidth, tolerenceHeight / 2);
 
         line += ")";
 
@@ -345,11 +318,10 @@ class ImageDecoder {
     /**
      * Traiter les problèmes potentielles et récurant
      *
-     * @param line      L'équation à revérifier
-     * @return          L'équation vérifié
+     * @param line L'équation à revérifier
+     * @return L'équation vérifié
      */
-    private String postTreatment(String line)
-    {
+    private String postTreatment(String line) {
         line = line.replaceAll("1og", "log");
         line = line.replaceAll("s1n", "sin");
         line = line.replace("c0s", "cos");
@@ -362,20 +334,19 @@ class ImageDecoder {
     /**
      * Get un array une dimension de la valeur binaire des pixels d'une iimage
      *
-     * @param bitmap        L'image
-     * @return              Un tableau de int selon les pixels(1 ou 0)
-     * @throws IOException    S'il y a des problèmes
+     * @param bitmap L'image
+     * @return Un tableau de int selon les pixels(1 ou 0)
+     * @throws IOException S'il y a des problèmes
      */
-    private int[]getIOPixels(Bitmap bitmap) throws IOException
-    {
+    private int[] getIOPixels(Bitmap bitmap) throws IOException {
         ArrayList<Integer> pixels = new ArrayList<>();
 
         //Selon la valeur du pixel, 1 ou 0
         int pixel;
-        for(int i = 0; i < bitmap.getHeight(); i++) {
+        for (int i = 0; i < bitmap.getHeight(); i++) {
             for (int j = 0; j < bitmap.getWidth(); j++) {
                 pixel = bitmap.getPixel(j, i);
-                if(Color.red(pixel) + Color.green(pixel) + Color.blue(pixel) < 100)
+                if (Color.red(pixel) + Color.green(pixel) + Color.blue(pixel) < 100)
                     pixels.add(1);
                 else
                     pixels.add(0);
@@ -383,8 +354,8 @@ class ImageDecoder {
         }
 
         //Transformation en array de int
-        int[] inputValues = new int[bitmap.getWidth()*bitmap.getHeight()];
-        for(int i = 0; i < pixels.size(); i++)
+        int[] inputValues = new int[bitmap.getWidth() * bitmap.getHeight()];
+        for (int i = 0; i < pixels.size(); i++)
             inputValues[i] = pixels.get(i);
 
         return inputValues;
@@ -394,11 +365,10 @@ class ImageDecoder {
     /**
      * Remplir l'image (centé) pour les grandeures de l'AI
      *
-     * @param btm       L'image à remplir
-     * @return          L'image remple
+     * @param btm L'image à remplir
+     * @return L'image remple
      */
-    private Bitmap fillImage(Bitmap btm)
-    {
+    private Bitmap fillImage(Bitmap btm) {
         int width = btm.getWidth();
         int height = btm.getHeight();
 
@@ -408,25 +378,20 @@ class ImageDecoder {
         Canvas canvas;
 
         //Pour faire un carré
-        if(width < height)
-        {
-            newImage = Bitmap.createBitmap(height + 2*borderSize, height + 2*borderSize, btm.getConfig());
+        if (width < height) {
+            newImage = Bitmap.createBitmap(height + 2 * borderSize, height + 2 * borderSize, btm.getConfig());
             canvas = new Canvas(newImage);
             canvas.drawColor(Color.WHITE);
-            canvas.drawBitmap(btm, (newImage.getWidth()-width)/2, borderSize, null);
+            canvas.drawBitmap(btm, (newImage.getWidth() - width) / 2, borderSize, null);
             return newImage;
-        }
-        else if (height < width)
-        {
-            newImage = Bitmap.createBitmap(width + 2*borderSize, width + 2*borderSize, btm.getConfig());
+        } else if (height < width) {
+            newImage = Bitmap.createBitmap(width + 2 * borderSize, width + 2 * borderSize, btm.getConfig());
             canvas = new Canvas(newImage);
             canvas.drawColor(Color.WHITE);
-            canvas.drawBitmap(btm, borderSize, (newImage.getHeight()-height)/2, null);
+            canvas.drawBitmap(btm, borderSize, (newImage.getHeight() - height) / 2, null);
             return newImage;
-        }
-        else
-        {
-            newImage = Bitmap.createBitmap(width + 2*borderSize, height + 2*borderSize, btm.getConfig());
+        } else {
+            newImage = Bitmap.createBitmap(width + 2 * borderSize, height + 2 * borderSize, btm.getConfig());
             canvas = new Canvas(newImage);
             canvas.drawColor(Color.WHITE);
             canvas.drawBitmap(btm, borderSize, borderSize, null);
@@ -435,10 +400,10 @@ class ImageDecoder {
     }
 
     /**
-     *  Train Neural Network lorsque le user corrige l'equation
+     * Train Neural Network lorsque le user corrige l'equation
      *
-     * @param list              List des changements
-     * @throws IOException      S'il y a un probleme avec l'image
+     * @param list List des changements
+     * @throws IOException S'il y a un probleme avec l'image
      */
     void trainNN(ArrayList<ReplacedChar> list) throws IOException {
         final int[][] trainning = new int[list.size()][];
@@ -481,23 +446,25 @@ class ImageDecoder {
     /**
      * Rogner l'image selon les paramètre
      *
-     * @param bitmap            L'image à rogner
-     * @throws IOException      S'il y a des problèmes
+     * @param bitmap L'image à rogner
+     * @throws IOException S'il y a des problèmes
      */
-    private Bitmap resize(Bitmap bitmap) throws IOException
-    {
+    private Bitmap resize(Bitmap bitmap) throws IOException {
         return Bitmap.createScaledBitmap(bitmap, resizeValue, resizeValue, false);
     }
 
-    void clearData()
-    {
+    void clearData() {
         listCharDetected = new ArrayList<>();
         lastIndex = 0;
         index = 0;
     }
 
-    public boolean isReady()
-    {
+    void removeOne() {
+        if (listCharDetected.size() > 0)
+            listCharDetected.remove(listCharDetected.size() - 1);
+    }
+
+    boolean isReady() {
         return network.isReady();
     }
 }

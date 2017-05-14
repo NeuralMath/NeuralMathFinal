@@ -10,7 +10,7 @@ import android.view.View;
 public class DrawingActivity extends AppCompatActivity {
 
     private DrawingPage drawPage;
-    private ImageDecoder imageDecoder;
+    private static ImageDecoder imageDecoder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,7 +23,7 @@ public class DrawingActivity extends AppCompatActivity {
         String value = i.getStringExtra("LAYOUT");
         drawPage = (DrawingPage) findViewById(R.id.drawPage);
 
-        while(!imageDecoder.isReady());
+        while (!imageDecoder.isReady()) ;
 
         String langue = getIntent().getStringExtra("LANGUE");
 
@@ -73,6 +73,10 @@ public class DrawingActivity extends AppCompatActivity {
         Intent intent = new Intent();
         intent.putExtra("EQUATION", drawPage.getTextEquation().getText().toString());
         setResult(RESULT_OK, intent);
+    }
+
+    public static ImageDecoder getImageDecoder() {
+        return imageDecoder;
     }
 
     /**
