@@ -59,7 +59,7 @@ class TrouverY extends General_Equation {
         if (m_equation.contains("x")) {
             Matcher m = Pattern.compile("x").matcher(m_equation); //http://stackoverflow.com/questions/8938498/get-the-index-of-a-pattern-in-a-string-using-regex
             while (m.find()) {
-                mettreEnGras(m.start(), m.end());
+                mettreEnGras(m.start(), m.end()+1);
             }
 
             PrintLine();
@@ -101,17 +101,17 @@ class TrouverY extends General_Equation {
 
                 if (operator1.contains("arcsin")) {
                     nestedValue = Math.asin(nestedValue);
-                    ajouterUneEtape(indexI - 6, indexF, "On évalue la valeur du sinus^-1 de " + m_separated_equation + " = " + String.format("%." + String.valueOf(nbDecimales) + "f", nestedValue));
+                    ajouterUneEtape(indexI - 6, indexF, "On évalue la valeur de arcsin de " + m_separated_equation + " = " + String.format("%." + String.valueOf(nbDecimales) + "f", nestedValue));
                     m_equation = m_equation.replace(tempStringRemplacerOperateur, String.valueOf(nestedValue));
                     operateurTrigo = true;
                 } else if (operator1.contains("arccos")) {
                     nestedValue = Math.acos(nestedValue);
-                    ajouterUneEtape(indexI - 6, indexF, "On évalue la valeur du cosinus^-1 de " + m_separated_equation + " = " + String.format("%." + String.valueOf(nbDecimales) + "f", nestedValue));
+                    ajouterUneEtape(indexI - 6, indexF, "On évalue la valeur du arccos de " + m_separated_equation + " = " + String.format("%." + String.valueOf(nbDecimales) + "f", nestedValue));
                     m_equation = m_equation.replace(tempStringRemplacerOperateur, String.valueOf(nestedValue));
                     operateurTrigo = true;
                 } else if (operator1.contains("arctan")) {
                     nestedValue = Math.atan(nestedValue);
-                    ajouterUneEtape(indexI - 6, indexF, "On évalue la valeur de tangente^-1 de " + m_separated_equation + " = " + String.format("%." + String.valueOf(nbDecimales) + "f", nestedValue));
+                    ajouterUneEtape(indexI - 6, indexF, "On évalue la valeur de arctan de " + m_separated_equation + " = " + String.format("%." + String.valueOf(nbDecimales) + "f", nestedValue));
                     m_equation = m_equation.replace(tempStringRemplacerOperateur, String.valueOf(nestedValue));
                     operateurTrigo = true;
                 } else if (operator1.contains("sin")) {
