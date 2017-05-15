@@ -22,16 +22,13 @@ class Resolution extends General_Equation
         _letters.add('b');
         _letters.add('c');
         _letters.add('d');
-        _letters.add('g');
         _letters.add('h');
         _letters.add('i');
         _letters.add('j');
         _letters.add('l');
-        _letters.add('n');
         _letters.add('o');
         _letters.add('p');
         _letters.add('r');
-        _letters.add('s');
         _letters.add('t');
         _letters.add('w');
         _letters.add('x');
